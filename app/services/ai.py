@@ -82,6 +82,11 @@ class GeminiService:
             "cough": ["cough", "khansi"],
             "fever": ["fever", "bukhar"],
             "stomach pain": ["stomach pain", "abdominal pain", "pet dard", "pet mein dard"],
+            "chest discomfort": ["chest pain", "chest pressure", "chest tightness", "chest discomfort"],
+            "breathing concern": ["shortness of breath", "breathless", "breathing problem"],
+            "urinary concern": ["burning urine", "pain while urinating", "urine pain"],
+            "skin change": ["rash", "skin lump", "new lump"],
+            "injury": ["injury", "fell down", "accident"],
         }
         symptom = next((name for name, terms in aliases.items() if any(term in lower for term in terms)), None)
         duration = None

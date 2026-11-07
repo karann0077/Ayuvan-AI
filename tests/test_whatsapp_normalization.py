@@ -17,3 +17,15 @@ def test_normalizes_document_reference_without_reading_media() -> None:
     })
     assert message.media_id == "media-1"
     assert message.metadata["filename"] == "report.pdf"
+
+
+def test_normalizes_whatsapp_flow_response_without_trusting_its_fields() -> None:
+    message = normalize_incoming_message({
+        "id": "wamid.flow", "from": "919999999999", "type": "interactive",
+        "interactive": {
+            "type": "nfm_reply",
+            "nfm_reply": {"body": "Sent", "response_json": '{"severity":"Moderate"}'},
+        },
+    })
+    assert message.metadata["reply_type"] == "flow"
+    assert message.metadata["response_json"] == '{"severity":"Moderate"}'

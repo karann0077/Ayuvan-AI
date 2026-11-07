@@ -35,13 +35,22 @@ def normalize_incoming_message(message: dict[str, Any]) -> NormalizedIncomingMes
     elif message_type == "interactive":
         interactive = message.get("interactive", {})
         kind = interactive.get("type")
-        reply = interactive.get("button_reply" if kind == "button_reply" else "list_reply", {})
-        base["content"] = reply.get("title")
-        base["metadata"] = {
-            "reply_type": "button" if kind == "button_reply" else "list",
-            "reply_id": reply.get("id"),
-            "description": reply.get("description"),
-        }
+        if kind == "nfm_reply":
+            reply = interactive.get("nfm_reply", {})
+            base["content"] = reply.get("body") or "WhatsApp Flow submission"
+            base["metadata"] = {
+                "reply_type": "flow",
+                "response_json": reply.get("response_json"),
+                "flow_token": reply.get("flow_token"),
+            }
+        else:
+            reply = interactive.get("button_reply" if kind == "button_reply" else "list_reply", {})
+            base["content"] = reply.get("title")
+            base["metadata"] = {
+                "reply_type": "button" if kind == "button_reply" else "list",
+                "reply_id": reply.get("id"),
+                "description": reply.get("description"),
+            }
     elif message_type in {"image", "audio", "document", "video"}:
         media = message.get(message_type, {})
         base["media_id"] = media.get("id")
@@ -134,6 +143,27 @@ class WhatsAppClient:
                     {"id": row_id, "title": title[:24], "description": description[:72]}
                     for row_id, title, description in rows
                 ]}]},
+            },
+        })
+
+    async def send_flow(self, to: str, text: str, flow_id: str, screen: str) -> str | None:
+        """Open a pre-published Meta Flow; its UI and fields remain Meta-managed content."""
+        return await self._send(to, {
+            "type": "interactive",
+            "interactive": {
+                "type": "flow",
+                "body": {"text": text},
+                "action": {
+                    "name": "flow",
+                    "parameters": {
+                        "flow_message_version": "3",
+                        "flow_token": f"ayuvan-intake:{flow_id}",
+                        "flow_id": flow_id,
+                        "flow_cta": "Open intake",
+                        "flow_action": "navigate",
+                        "flow_action_payload": {"screen": screen, "data": {}},
+                    },
+                },
             },
         })
 

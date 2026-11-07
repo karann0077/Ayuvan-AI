@@ -11,7 +11,7 @@ from app.schemas import NormalizedIncomingMessage
 from app.services.conversation import ConversationService
 
 
-def test_short_guided_headache_intake_closes_after_two_taps(monkeypatch) -> None:
+def test_guided_headache_intake_collects_change_and_impact_before_closing(monkeypatch) -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
     session = sessionmaker(bind=engine, expire_on_commit=False)()
@@ -65,14 +65,29 @@ def test_short_guided_headache_intake_closes_after_two_taps(monkeypatch) -> None
     ))
     asyncio.run(service.process_message(session, reply))
     assert session.query(HealthEpisode).one().summary["severity"] == "Moderate"
+    assert session.query(Conversation).one().state["pending_question"]["field"] == "progression"
+
+    fourth = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="wamid.fourth", sender="919999999999", message_type="interactive", content="About the same",
+        metadata={"reply_id": "PROGRESSION_SAME"},
+    ))
+    asyncio.run(service.process_message(session, fourth))
+    assert session.query(Conversation).one().state["pending_question"]["field"] == "functional_impact"
+
+    fifth = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="wamid.fifth", sender="919999999999", message_type="interactive", content="Yes, mostly",
+        metadata={"reply_id": "IMPACT_NORMAL"},
+    ))
+    asyncio.run(service.process_message(session, fifth))
     assert session.query(Conversation).one().state["pending_question"] is None
-    assert session.query(Message).filter_by(provider_message_id="wamid.third").one().processing_status == "processed"
+    assert session.query(Message).filter_by(provider_message_id="wamid.fifth").one().processing_status == "processed"
     assert sent[-1][0] == "text"
-    assert "I’ve recorded" in sent[-1][1][1]
+    assert "*Recorded*" in sent[-1][1][1]
+    assert "clinician appointment soon" in sent[-1][1][1]
 
     # Meta retries must not create another record or health event.
     assert service.receive(session, NormalizedIncomingMessage(
-        provider_message_id="wamid.third", sender="919999999999", message_type="interactive", content="Moderate",
+        provider_message_id="wamid.fifth", sender="919999999999", message_type="interactive", content="Yes, mostly",
     )) is None
 
 

@@ -1,3 +1,4 @@
+import json
 import logging
 from datetime import datetime, timezone
 from typing import Any
@@ -11,55 +12,18 @@ from app.db.models import (
     AuditLog, Conversation, ExternalIdentity, HealthEpisode, Message, PatientProfile,
     PatientSummary, SymptomEvent, User,
 )
-from app.schemas import FollowUpQuestion, PatientContext, SafetyOutcome, SymptomExtraction
+from app.schemas import SafetyOutcome, SymptomExtraction
 from app.services.ai import GeminiService
 from app.services.context import PatientContextBuilder
+from app.services.intake import QuestionEngine
+from app.services.review import ClinicalReviewEngine, ClinicalReviewOutcome
 from app.services.safety import ClinicalSafetyEngine
 from app.services.whatsapp import NormalizedIncomingMessage, WhatsAppClient, save_outgoing_message
 
 logger = logging.getLogger(__name__)
 
 
-HEADACHE_WARNING_QUESTION = FollowUpQuestion(
-    field="headache_warning_signs",
-    text=(
-        "Quick safety check before I record this. Which option is closest?"
-    ),
-    options=[
-        ("HEADACHE_SCREEN_NONE", "No warning signs"),
-        ("HEADACHE_SCREEN_SUDDEN", "Sudden / worst-ever"),
-        ("HEADACHE_SCREEN_NEURO", "Weakness / numbness"),
-        ("HEADACHE_SCREEN_VISION", "Vision change / loss"),
-        ("HEADACHE_SCREEN_FEVER_NECK", "Fever / stiff neck"),
-        ("HEADACHE_SCREEN_OTHER", "Something else"),
-    ],
-    presentation="list",
-    button_label="Choose one",
-)
-
-SEVERITY_QUESTION = FollowUpQuestion(
-    field="severity",
-    text=(
-        "How much is it affecting you right now?\n\n"
-        "Mild: noticeable but normal activities are okay\n"
-        "Moderate: affecting some activities\n"
-        "Severe: hard to carry on normally"
-    ),
-    options=[
-        ("SEVERITY_MILD", "Mild"),
-        ("SEVERITY_MODERATE", "Moderate"),
-        ("SEVERITY_SEVERE", "Severe"),
-    ],
-)
-
-URGENT_HEADACHE_SCREEN_IDS = {
-    "HEADACHE_SCREEN_SUDDEN",
-    "HEADACHE_SCREEN_NEURO",
-    "HEADACHE_SCREEN_VISION",
-    "HEADACHE_SCREEN_FEVER_NECK",
-}
-
-URGENT_HEADACHE_RESPONSE = (
+URGENT_PATHWAY_RESPONSE = (
     "The symptom you selected can need urgent in-person assessment. Please seek emergency medical help now "
     "or contact your local emergency service. AYUVAN cannot assess an emergency through chat."
 )
@@ -71,6 +35,8 @@ class ConversationService:
         self.context_builder = PatientContextBuilder()
         self.ai = GeminiService(self.settings)
         self.safety = ClinicalSafetyEngine()
+        self.questions = QuestionEngine()
+        self.review = ClinicalReviewEngine()
         self.whatsapp = WhatsAppClient(self.settings)
 
     def receive(self, db: Session, incoming: NormalizedIncomingMessage) -> str | None:
@@ -133,6 +99,37 @@ class ConversationService:
                 return
 
             pending = (conversation.state or {}).get("pending_question")
+            pending_flow = (conversation.state or {}).get("pending_flow")
+            if pending_flow:
+                episode = db.get(HealthEpisode, pending_flow.get("episode_id"))
+                if episode and message.metadata_json.get("reply_type") == "flow":
+                    answers = self._apply_flow_answers(db, episode, message)
+                    conversation.state = (
+                        {"pending_flow": None}
+                        if answers else {"pending_question": None, "flow_disabled_episode": episode.id}
+                    )
+                    if self._flow_has_urgent_answer(answers):
+                        safety = SafetyOutcome(
+                            level="emergency",
+                            pathway_name="whatsapp_flow_warning_screen",
+                            pathway_version=self.safety.pathway_version,
+                            response=URGENT_PATHWAY_RESPONSE,
+                            matched_terms=["flow_warning_answer"],
+                        )
+                        self._record_assessment(db, message.patient_id, episode.id, safety)
+                        await self._send_and_record(
+                            db, message.patient_id, conversation.id, self._phone_for_patient(db, message.patient_id),
+                            URGENT_PATHWAY_RESPONSE, "text"
+                        )
+                    else:
+                        await self._respond_for_episode(
+                            db, conversation, message, episode, self._extraction_from_episode(episode)
+                        )
+                    message.processing_status = "processed"
+                    db.commit()
+                    return
+                # A patient can type instead of opening the form; use the normal fallback.
+                conversation.state = {"pending_flow": None}
             if pending:
                 episode = db.get(HealthEpisode, pending.get("episode_id"))
                 if episode:
@@ -157,15 +154,15 @@ class ConversationService:
                     if self._needs_urgent_escalation(pending, selected_id):
                         safety = SafetyOutcome(
                             level="emergency",
-                            pathway_name="headache_warning_screen",
+                            pathway_name=pending.get("pathway_id", "interactive_warning_screen"),
                             pathway_version=self.safety.pathway_version,
-                            response=URGENT_HEADACHE_RESPONSE,
+                            response=URGENT_PATHWAY_RESPONSE,
                             matched_terms=[selected_id],
                         )
                         self._record_assessment(db, message.patient_id, episode.id, safety)
                         await self._send_and_record(
                             db, message.patient_id, conversation.id, self._phone_for_patient(db, message.patient_id),
-                            URGENT_HEADACHE_RESPONSE, "text"
+                            URGENT_PATHWAY_RESPONSE, "text"
                         )
                         message.processing_status = "processed"
                         db.commit()
@@ -302,6 +299,42 @@ class ConversationService:
         self._refresh_summary(db, episode.patient_id)
         return reply_id
 
+    def _apply_flow_answers(self, db: Session, episode: HealthEpisode, message: Message) -> dict[str, Any]:
+        """Validate Flow fields before storing them as patient-reported facts."""
+        raw = message.metadata_json.get("response_json")
+        try:
+            parsed = json.loads(raw) if isinstance(raw, str) else raw
+        except json.JSONDecodeError:
+            parsed = {}
+        if not isinstance(parsed, dict):
+            return {}
+        answers = parsed.get("response", parsed)
+        if not isinstance(answers, dict):
+            return {}
+        clean = {
+            key: value for key, value in answers.items()
+            if key in self.questions.flow_fields and isinstance(value, (str, int, float, bool, list))
+        }
+        if not clean:
+            return {}
+        episode.summary = {**(episode.summary or {}), **clean}
+        episode.last_reported_at = datetime.now(timezone.utc)
+        db.add(SymptomEvent(
+            episode_id=episode.id, source_message_id=message.id,
+            symptom=episode.primary_symptom or "flow_follow_up", normalized_symptom=episode.normalized_symptom,
+            details=clean, source_type="patient_reported", verification_status="reported", confidence=100,
+        ))
+        self._refresh_summary(db, episode.patient_id)
+        return clean
+
+    @staticmethod
+    def _flow_has_urgent_answer(answers: dict[str, Any]) -> bool:
+        text = json.dumps(answers).lower()
+        urgent_markers = (
+            "sudden", "worst", "weakness", "numb", "vision", "stiff neck", "hard to breathe", "faint",
+        )
+        return any(marker in text for marker in urgent_markers)
+
     async def _respond_for_episode(
         self, db: Session, conversation: Conversation, message: Message, episode: HealthEpisode,
         extraction: SymptomExtraction,
@@ -310,14 +343,42 @@ class ConversationService:
         related = [item for item in context.related_episodes if item["id"] != episode.id]
         prefix = ""
         if related:
-            prefix = "I found a previous report that may be related. I’ll keep it separate unless you tell me it is the same concern. "
-        question = self._next_question(episode)
+            prefix = "*Previous record noted*\nI found an earlier report that may be related. I’ll keep it separate unless you tell me it is the same concern.\n\n"
+        question = self.questions.next_question(episode, context)
         phone = self._phone_for_patient(db, episode.patient_id)
+        if (
+            self.settings.whatsapp_symptom_intake_flow_id and question
+            and (conversation.state or {}).get("flow_disabled_episode") != episode.id
+        ):
+            # The Flow itself is configured and published in Meta. Its stable field IDs are
+            # validated on return, while this backend owns episode/context association.
+            conversation.state = {
+                "pending_flow": {
+                    "episode_id": episode.id,
+                    "allowed_fields": sorted(self.questions.flow_fields),
+                    "context_version": context.summary_version,
+                }
+            }
+            flow_text = (
+                "*Quick symptom update*\n"
+                "Answer the short form in one go. I’ll only ask anything that is still missing."
+            )
+            provider_id = await self.whatsapp.send_flow(
+                phone, prefix + flow_text, self.settings.whatsapp_symptom_intake_flow_id,
+                self.settings.whatsapp_symptom_intake_flow_screen,
+            )
+            save_outgoing_message(
+                db, episode.patient_id, conversation.id, provider_id, prefix + flow_text, "interactive",
+                {"presentation": "flow", "episode_id": episode.id},
+            )
+            return
         if question:
             state = {
                 "pending_question": {
                     "episode_id": episode.id, "field": question.field,
                     "options": dict(question.options), "context_version": context.summary_version,
+                    "urgent_option_ids": question.urgent_option_ids,
+                    "pathway_id": question.pathway_id,
                 }
             }
             conversation.state = state
@@ -343,26 +404,19 @@ class ConversationService:
                 save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "text", {"field": question.field})
         else:
             conversation.state = {"pending_question": None}
-            response = prefix + self._completion_message(episode)
+            review = self.review.assess(episode, context)
+            self._record_review_assessment(db, episode.patient_id, episode.id, review, context.summary_version)
+            response = prefix + self._completion_message(episode, review)
             provider_id = await self.whatsapp.send_text(phone, response)
             save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, response, "text")
 
     @staticmethod
-    def _next_question(episode: HealthEpisode) -> FollowUpQuestion | None:
-        summary = episode.summary or {}
-        if episode.normalized_symptom == "headache" and not summary.get("headache_warning_signs"):
-            return HEADACHE_WARNING_QUESTION
-        if not summary.get("severity"):
-            return SEVERITY_QUESTION
-        return None
-
-    @staticmethod
     def _needs_urgent_escalation(pending: dict[str, Any], selected_id: str | None) -> bool:
-        return pending.get("field") == "headache_warning_signs" and selected_id in URGENT_HEADACHE_SCREEN_IDS
+        return bool(selected_id and selected_id in pending.get("urgent_option_ids", []))
 
     @staticmethod
-    def _completion_message(episode: HealthEpisode) -> str:
-        """Close a short intake with a factual record summary, never a diagnosis."""
+    def _completion_message(episode: HealthEpisode, review: ClinicalReviewOutcome) -> str:
+        """Close in short WhatsApp sections: factual, explainable, and non-diagnostic."""
         summary = episode.summary or {}
         details = [episode.primary_symptom or "your concern"]
         if summary.get("duration"):
@@ -373,17 +427,23 @@ class ConversationService:
             details.append(f"at {summary['location']}")
         if summary.get("severity"):
             details.append(f"currently {summary['severity'].lower()}")
-        record = "; ".join(details)
-        follow_up = ""
-        if episode.normalized_symptom == "headache" and summary.get("duration"):
-            follow_up = (
-                " Since it has continued for several days, consider arranging a non-emergency clinician visit "
-                "if it is not improving or if you are concerned."
-            )
-        return (
-            f"Thanks. I’ve recorded: {record}. I can’t identify the cause through chat."
-            f"{follow_up} Seek urgent in-person care if it becomes sudden or severe, or if new warning signs appear."
-        )
+        lines = ["*Recorded*", "• " + "; ".join(details)]
+        if review.level == "timely_assessment":
+            lines.extend([
+                "", "*Recommended next step*", "• Arrange a clinician appointment soon.",
+                "", "*Why AYUVAN is flagging this*",
+                *[f"• {reason}" for reason in review.reasons[:3]],
+                "", "This does not identify the cause or predict a disease. A clinician can assess it with your full history.",
+            ])
+        else:
+            lines.extend([
+                "", "*Next step*", "• Keep an eye on how it changes and share any new or worsening symptom.",
+                "", "No emergency warning was reported in the answers you selected. This is not a diagnosis.",
+            ])
+        lines.extend([
+            "", "*Get urgent in-person help now* if it becomes sudden or severe, or if you notice new warning signs.",
+        ])
+        return "\n".join(lines)
 
     @staticmethod
     def _extraction_summary(extraction: SymptomExtraction) -> dict[str, Any]:
@@ -413,6 +473,22 @@ class ConversationService:
             patient_id=patient_id, episode_id=episode_id, pathway_name=safety.pathway_name,
             pathway_version=safety.pathway_version, outcome=safety.level,
             inputs={"matched_terms": safety.matched_terms},
+        ))
+
+    @staticmethod
+    def _record_review_assessment(
+        db: Session, patient_id: str, episode_id: str, review: ClinicalReviewOutcome, context_version: int
+    ) -> None:
+        """Persist explainable non-diagnostic review evidence for future audit/clinical review."""
+        from app.db.models import ClinicalAssessment
+        db.add(ClinicalAssessment(
+            patient_id=patient_id,
+            episode_id=episode_id,
+            pathway_name=review.pathway_name,
+            pathway_version=review.pathway_version,
+            outcome=review.level,
+            inputs={"trigger_codes": review.trigger_codes, "reasons": review.reasons},
+            context_version=context_version,
         ))
 
     @staticmethod

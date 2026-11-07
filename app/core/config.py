@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     webhook_verify_token: SecretStr | None = None
     graph_api_version: str = "v22.0"
     whatsapp_test_recipient: str | None = None
+    # Optional Meta WhatsApp Flow. A Flow must be created and published in Meta before
+    # setting this value; standard interactive questions remain the safe fallback.
+    whatsapp_symptom_intake_flow_id: str | None = None
+    whatsapp_symptom_intake_flow_screen: str = "SYMPTOM_INTAKE"
 
     gemini_api_key: SecretStr | None = None
     gemini_model: str = "gemini-3.8-flash"

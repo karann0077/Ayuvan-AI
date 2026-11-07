@@ -7,13 +7,14 @@ AYUVAN Stage 1 is a modular FastAPI backend for the WhatsApp-based health-concer
 - Meta webhook verification and `X-Hub-Signature-256` verification.
 - Idempotent incoming WhatsApp message persistence and outgoing message-status updates.
 - Text, button/list reply, document, audio, image, video, and location normalisation.
-- Official Cloud API sender for text, buttons, and list messages.
+- Official Cloud API sender for text, buttons, lists, and an optional pre-published WhatsApp Flow.
 - Durable conversation state, including the active health episode and pending question.
 - Relational models for users, identities, consent, conversations, messages, health episodes, symptom events, conditions, allergies, medicines, documents, assessments, summaries, care plans/tasks, media, and audit logs.
 - User-reported symptom provenance, verification status, confidence, and source-message references.
 - Relevant-context builder that selects active and potentially related episodes rather than sending a lifetime record to the LLM.
 - Gemini structured extraction validated by Pydantic, with a preferred model and automatic fallback when capacity is unavailable.
-- Deterministic starter safety gate that short-circuits a small, explicitly documented emergency-keyword set before LLM processing. It is **not clinical decision support** and must receive clinical review before patient use.
+- Controlled symptom question packs: relevant safety screen, severity, change over time, and functional impact. Gemini extracts stated facts; it does not invent medical questions or escalation rules.
+- Deterministic starter safety gate and explainable longitudinal clinician-review signals. They record observable reasons such as persistence, worsening, functional impact, a related earlier episode, or relevant documented history. They never predict or name a disease.
 - Alembic migration, isolated tests, and OpenAPI documentation.
 
 ## Deliberate Stage 1 boundaries
@@ -21,6 +22,14 @@ AYUVAN Stage 1 is a modular FastAPI backend for the WhatsApp-based health-concer
 Voice transcription, document OCR/retrieval, embeddings/pgvector, authentication for the future mobile app, full consent onboarding, and clinician-approved pathways are extension points, not complete features yet. Incoming media is identified and persisted as a source reference, but it is not downloaded or interpreted.
 
 The webhook uses FastAPI background tasks for the local single-process test flow. The same task is dispatched to ARQ when `USE_ARQ=true` and is exposed in `app/worker.py`; configure Redis and run `arq app.worker.WorkerSettings` for durable production processing.
+
+## Guided intake and clinician-review boundary
+
+For standard WhatsApp messages, AYUVAN uses compact button/list questions and asks only the next missing field. The starter pathways cover headache/neurological, chest, respiratory, fever, abdominal/urinary/injury/general concerns; all currently fall back to the controlled core questions where a specialist pack has not been clinically approved.
+
+Set `WHATSAPP_SYMPTOM_INTAKE_FLOW_ID` only after you create and publish an identically structured Flow in Meta. That Flow can collect several fields in one submission. Its screen should use only these stable IDs: `onset`, `duration`, `frequency`, `severity`, `progression`, `functional_impact`, `headache_warning_signs`, `chest_current_state`, `breathing_status`, and `associated_symptoms`. AYUVAN validates and stores only those returned fields; without the setting, it automatically uses buttons/lists.
+
+The current review engine is intentionally a **draft clinical-content boundary**, not a diagnostic or disease-prediction system. It can recommend a timely clinician appointment and show the patient-reported reasons. Before real-patient use, a qualified clinician must approve each pathway, trigger, option, timing, and wording.
 
 ## Local setup
 
@@ -87,8 +96,8 @@ Use fictional data only:
 
 1. Send: `I have a headache for five days`.
 2. AYUVAN extracts the stated symptom and duration, then asks a compact warning-sign screen using a WhatsApp list.
-3. Choose `No warning signs`, then select the impact level with one tap: Mild, Moderate, or Severe.
-4. AYUVAN records a provenance-linked event for each response and closes with a factual summary and a safe next step. It does not diagnose or prescribe.
+3. Choose `No warning signs`, then select severity, whether it is improving/same/worse, and its effect on usual activities.
+4. AYUVAN records a provenance-linked event for each response and closes with a scannable record, next step, and—when a draft review signal is met—the specific non-diagnostic reasons to arrange a clinician visit. It does not diagnose or prescribe.
 
 The patient context builder makes the active episode and potentially relevant prior episodes available to extraction without claiming they have the same cause or merging them automatically. A message beginning with a new symptom report can interrupt an older free-text question, so it starts a new concern instead of being stored as the old answer.
 
