@@ -124,6 +124,38 @@ class QuestionEngine:
         "headache_warning_signs", "chest_current_state", "breathing_status", "associated_symptoms",
     }
 
+    # IDs sent by a Flow are compact and stable; this is the patient-readable value
+    # written into the longitudinal symptom record.
+    flow_value_labels = {
+        "today": "Today",
+        "one_to_three_days": "1–3 days ago",
+        "four_to_seven_days": "4–7 days ago",
+        "more_than_one_week": "More than one week ago",
+        "not_sure": "Not sure",
+        "mild": "Mild",
+        "moderate": "Moderate",
+        "severe": "Severe",
+        "improving": "Improving",
+        "about_the_same": "About the same",
+        "getting_worse": "Getting worse",
+        "mostly_manageable": "Yes, mostly",
+        "some_activities_difficult": "Some activities are difficult",
+        "hard_to_carry_on": "Hard to carry on normally",
+        "nausea_or_vomiting": "Nausea or vomiting",
+        "dizziness": "Dizziness",
+        "vision_change": "Vision change",
+        "weakness_or_numbness": "Weakness or numbness",
+        "fever_or_stiff_neck": "Fever or stiff neck",
+        "none": "None of these",
+    }
+
+    def normalise_flow_answer(self, value: object) -> object:
+        if isinstance(value, list):
+            return [self.normalise_flow_answer(item) for item in value]
+        if isinstance(value, str):
+            return self.flow_value_labels.get(value, value)
+        return value
+
     def next_question(self, episode: HealthEpisode, context: PatientContext) -> FollowUpQuestion | None:
         # ``context`` is intentionally received here even when a starter pack does not need it:
         # a reviewed pathway can use it to omit already-known, still-current fields.

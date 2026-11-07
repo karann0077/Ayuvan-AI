@@ -316,7 +316,7 @@ class ConversationService:
         if not isinstance(answers, dict):
             return {}
         clean = {
-            key: value for key, value in answers.items()
+            key: self.questions.normalise_flow_answer(value) for key, value in answers.items()
             if key in self.questions.flow_fields and isinstance(value, (str, int, float, bool, list))
         }
         if not clean:
@@ -352,6 +352,7 @@ class ConversationService:
         phone = self._phone_for_patient(db, episode.patient_id)
         if (
             self.settings.whatsapp_symptom_intake_flow_id and question
+            and not question.urgent_option_ids
             and (conversation.state or {}).get("flow_disabled_episode") != episode.id
         ):
             # The Flow itself is configured and published in Meta. Its stable field IDs are

@@ -150,3 +150,51 @@ def test_new_concern_interrupts_an_old_free_text_question(monkeypatch) -> None:
     episode = session.query(HealthEpisode).filter_by(normalized_symptom="fever").one()
     assert episode.summary["duration"] == "two days"
     assert session.query(Conversation).one().state["pending_question"]["field"] == "severity"
+
+
+def test_flow_opens_after_headache_safety_screen_and_normalises_submitted_answers(monkeypatch) -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine, expire_on_commit=False)()
+    settings = Settings(
+        allow_test_user_auto_provision=True,
+        test_user_phone="919999999999",
+        whatsapp_symptom_intake_flow_id="flow-1",
+        gemini_api_key=None,
+    )
+    service = ConversationService(settings)
+    sent: list[str] = []
+
+    async def no_send(*args, **kwargs):
+        return None
+
+    async def flow_send(*args, **kwargs):
+        sent.append("flow")
+        return None
+
+    monkeypatch.setattr(service.whatsapp, "send_text", no_send)
+    monkeypatch.setattr(service.whatsapp, "send_buttons", no_send)
+    monkeypatch.setattr(service.whatsapp, "send_list", no_send)
+    monkeypatch.setattr(service.whatsapp, "send_flow", flow_send)
+    first = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="wamid.flow.first", sender="919999999999", message_type="text", content="I have a headache",
+    ))
+    asyncio.run(service.process_message(session, first))
+    assert session.query(Conversation).one().state["pending_question"]["field"] == "headache_warning_signs"
+
+    safety = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="wamid.flow.safety", sender="919999999999", message_type="interactive",
+        content="No warning signs", metadata={"reply_id": "HEADACHE_SCREEN_NONE"},
+    ))
+    asyncio.run(service.process_message(session, safety))
+    assert sent == ["flow"]
+    assert session.query(Conversation).one().state["pending_flow"]
+
+    submission = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="wamid.flow.submit", sender="919999999999", message_type="interactive",
+        content="Sent", metadata={"reply_type": "flow", "response_json": '{"severity":"moderate","progression":"getting_worse","functional_impact":"mostly_manageable"}'},
+    ))
+    asyncio.run(service.process_message(session, submission))
+    episode = session.query(HealthEpisode).one()
+    assert episode.summary["severity"] == "Moderate"
+    assert episode.summary["progression"] == "Getting worse"
