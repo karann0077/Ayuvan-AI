@@ -18,7 +18,7 @@ from app.services.context import PatientContextBuilder
 from app.services.intake import QuestionEngine
 from app.services.review import ClinicalReviewEngine, ClinicalReviewOutcome
 from app.services.safety import ClinicalSafetyEngine
-from app.services.whatsapp import NormalizedIncomingMessage, WhatsAppClient, save_outgoing_message
+from app.services.whatsapp import NormalizedIncomingMessage, WhatsAppClient, WhatsAppSendError, save_outgoing_message
 
 logger = logging.getLogger(__name__)
 
@@ -189,11 +189,15 @@ class ConversationService:
             await self._respond_for_episode(db, conversation, message, episode, extraction)
             message.processing_status = "processed"
             db.commit()
-        except Exception:
+        except Exception as exc:
             db.rollback()
             failed = db.get(Message, message_id)
             if failed:
                 failed.processing_status = "failed"
+                failed.metadata_json = {
+                    **(failed.metadata_json or {}),
+                    "processing_error": exc.details if isinstance(exc, WhatsAppSendError) else {"type": type(exc).__name__},
+                }
                 db.commit()
             logger.exception("Message processing failed for internal message id %s", message_id)
 

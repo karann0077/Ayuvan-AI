@@ -90,6 +90,22 @@ OpenAPI is at `http://127.0.0.1:8000/docs`; health check is at `http://127.0.0.1
 
 Never log raw webhooks or expose `.env`, database dumps, media files, or patient records in a tunnel dashboard.
 
+### When a message gets no reply
+
+A healthy `/health` endpoint or a verified callback does not prove outbound messaging works.
+Check the public tunnel, signed webhook reception, incoming `Message.processing_status`, and
+the WhatsApp access token separately. A Meta error `190` / subcode `463` means the access token
+has expired; replace `WHATSAPP_ACCESS_TOKEN` and restart the API (and ARQ worker, if enabled).
+Keep `WEBHOOK_VERIFY_TOKEN` unchanged. Failed outbound sends retain sanitized provider codes
+in the incoming message's `metadata_json.processing_error` for investigation.
+
+For the current macOS testing session, a Cloudflare quick tunnel is managed outside the terminal
+by launchd under `com.ayuvan.testing-tunnel`. Inspect it with
+`launchctl list com.ayuvan.testing-tunnel` and stop it after testing with
+`launchctl remove com.ayuvan.testing-tunnel`. Its URL is still temporary and can change after a
+restart; this is not permanent hosting or a login-start service. The laptop and API must remain
+running, and a changed URL must be registered as Meta's callback again.
+
 ## Test flow
 
 Use fictional data only:

@@ -11,6 +11,18 @@ from app.schemas import NormalizedIncomingMessage
 logger = logging.getLogger(__name__)
 
 
+class WhatsAppSendError(RuntimeError):
+    """Provider failure with diagnostic codes, without tokens or message content."""
+
+    def __init__(self, status: int, code: int | None, subcode: int | None) -> None:
+        self.details = {
+            "provider": "whatsapp", "http_status": status,
+            "code": code, "subcode": subcode,
+            "reason": "access_token_expired" if code == 190 and subcode == 463 else "send_rejected",
+        }
+        super().__init__(f"WhatsApp send rejected: HTTP {status}, code {code}, subcode {subcode}")
+
+
 def parse_meta_timestamp(value: str | None) -> datetime | None:
     if not value:
         return None
@@ -111,6 +123,12 @@ class WhatsAppClient:
         body = {"messaging_product": "whatsapp", "to": to, **payload}
         async with httpx.AsyncClient(timeout=15) as client:
             response = await client.post(self.endpoint, headers=headers, json=body)
+            if response.is_error:
+                try:
+                    error = response.json().get("error", {})
+                except ValueError:
+                    error = {}
+                raise WhatsAppSendError(response.status_code, error.get("code"), error.get("error_subcode"))
             response.raise_for_status()
             response_body = response.json()
         messages = response_body.get("messages", [])

@@ -67,7 +67,7 @@ class GeminiService:
         async with httpx.AsyncClient(timeout=25) as client:
             response = await client.post(
                 url,
-                params={"key": self.settings.gemini_api_key.get_secret_value()},
+                headers={"x-goog-api-key": self.settings.gemini_api_key.get_secret_value()},
                 json=payload,
             )
             response.raise_for_status()
