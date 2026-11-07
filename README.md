@@ -12,7 +12,7 @@ AYUVAN Stage 1 is a modular FastAPI backend for the WhatsApp-based health-concer
 - Relational models for users, identities, consent, conversations, messages, health episodes, symptom events, conditions, allergies, medicines, documents, assessments, summaries, care plans/tasks, media, and audit logs.
 - User-reported symptom provenance, verification status, confidence, and source-message references.
 - Relevant-context builder that selects active and potentially related episodes rather than sending a lifetime record to the LLM.
-- Gemini structured extraction validated by Pydantic, with a conservative local fallback for development outages.
+- Gemini structured extraction validated by Pydantic, with a preferred model and automatic fallback when capacity is unavailable.
 - Deterministic starter safety gate that short-circuits a small, explicitly documented emergency-keyword set before LLM processing. It is **not clinical decision support** and must receive clinical review before patient use.
 - Alembic migration, isolated tests, and OpenAPI documentation.
 
@@ -86,12 +86,11 @@ Never log raw webhooks or expose `.env`, database dumps, media files, or patient
 Use fictional data only:
 
 1. Send: `I have a headache for five days`.
-2. AYUVAN stores the incoming message, creates a `HealthEpisode`, and asks when it began.
-3. Reply: `Five days ago`.
-4. AYUVAN stores a new provenance-linked `SymptomEvent` and asks frequency using reply buttons.
-5. Choose an option. AYUVAN maps the stable reply ID—not the visible label—to the pending question and saves it.
+2. AYUVAN extracts the stated symptom and duration, then asks a compact warning-sign screen using a WhatsApp list.
+3. Choose `No warning signs`, then select the impact level with one tap: Mild, Moderate, or Severe.
+4. AYUVAN records a provenance-linked event for each response and closes with a factual summary and a safe next step. It does not diagnose or prescribe.
 
-The patient context builder then makes the active episode and potentially relevant prior episodes available to the extraction flow without claiming they have the same cause or merging them automatically.
+The patient context builder makes the active episode and potentially relevant prior episodes available to extraction without claiming they have the same cause or merging them automatically. A message beginning with a new symptom report can interrupt an older free-text question, so it starts a new concern instead of being stored as the old answer.
 
 ## Tests
 

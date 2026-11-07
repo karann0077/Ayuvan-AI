@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     whatsapp_test_recipient: str | None = None
 
     gemini_api_key: SecretStr | None = None
-    gemini_model: str = "gemini-3.1-flash-lite"
+    gemini_model: str = "gemini-3.8-flash"
+    gemini_fallback_model: str = "gemini-3.1-flash-lite"
     allow_test_user_auto_provision: bool = False
     test_user_phone: str | None = None
 

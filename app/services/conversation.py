@@ -20,18 +20,49 @@ from app.services.whatsapp import NormalizedIncomingMessage, WhatsAppClient, sav
 logger = logging.getLogger(__name__)
 
 
-FIELD_QUESTIONS: dict[str, FollowUpQuestion] = {
-    "onset": FollowUpQuestion(field="onset", text="When did this begin?"),
-    "frequency": FollowUpQuestion(
-        field="frequency", text="How frequently are you experiencing this symptom?",
-        options=[("FREQUENCY_CONTINUOUS", "Continuously"), ("FREQUENCY_OCCASIONAL", "Occasionally"), ("FREQUENCY_TIMES", "Only at certain times")],
+HEADACHE_WARNING_QUESTION = FollowUpQuestion(
+    field="headache_warning_signs",
+    text=(
+        "Quick safety check before I record this. Which option is closest?"
     ),
-    "severity": FollowUpQuestion(
-        field="severity", text="How severe does it feel right now?",
-        options=[("SEVERITY_MILD", "Mild"), ("SEVERITY_MODERATE", "Moderate"), ("SEVERITY_SEVERE", "Severe")],
+    options=[
+        ("HEADACHE_SCREEN_NONE", "No warning signs"),
+        ("HEADACHE_SCREEN_SUDDEN", "Sudden / worst-ever"),
+        ("HEADACHE_SCREEN_NEURO", "Weakness / numbness"),
+        ("HEADACHE_SCREEN_VISION", "Vision change / loss"),
+        ("HEADACHE_SCREEN_FEVER_NECK", "Fever / stiff neck"),
+        ("HEADACHE_SCREEN_OTHER", "Something else"),
+    ],
+    presentation="list",
+    button_label="Choose one",
+)
+
+SEVERITY_QUESTION = FollowUpQuestion(
+    field="severity",
+    text=(
+        "How much is it affecting you right now?\n\n"
+        "Mild: noticeable but normal activities are okay\n"
+        "Moderate: affecting some activities\n"
+        "Severe: hard to carry on normally"
     ),
-    "associated_symptoms": FollowUpQuestion(field="associated_symptoms", text="Are you experiencing any other symptoms? Please describe them."),
+    options=[
+        ("SEVERITY_MILD", "Mild"),
+        ("SEVERITY_MODERATE", "Moderate"),
+        ("SEVERITY_SEVERE", "Severe"),
+    ],
+)
+
+URGENT_HEADACHE_SCREEN_IDS = {
+    "HEADACHE_SCREEN_SUDDEN",
+    "HEADACHE_SCREEN_NEURO",
+    "HEADACHE_SCREEN_VISION",
+    "HEADACHE_SCREEN_FEVER_NECK",
 }
+
+URGENT_HEADACHE_RESPONSE = (
+    "The symptom you selected can need urgent in-person assessment. Please seek emergency medical help now "
+    "or contact your local emergency service. AYUVAN cannot assess an emergency through chat."
+)
 
 
 class ConversationService:
@@ -105,9 +136,40 @@ class ConversationService:
             if pending:
                 episode = db.get(HealthEpisode, pending.get("episode_id"))
                 if episode:
-                    self._apply_pending_answer(db, episode, message, pending)
+                    replacement_extraction = await self._new_concern_extraction_if_present(
+                        db, message, episode
+                    )
+                    if replacement_extraction:
+                        conversation.state = {"pending_question": None}
+                        replacement_episode = self._get_or_create_episode(
+                            db, message.patient_id, replacement_extraction, conversation
+                        )
+                        self._record_symptom_event(db, replacement_episode, message, replacement_extraction)
+                        await self._respond_for_episode(
+                            db, conversation, message, replacement_episode, replacement_extraction
+                        )
+                        message.processing_status = "processed"
+                        db.commit()
+                        return
+                    selected_id = self._apply_pending_answer(db, episode, message, pending)
                     conversation.state = {"pending_question": None}
                     db.flush()
+                    if self._needs_urgent_escalation(pending, selected_id):
+                        safety = SafetyOutcome(
+                            level="emergency",
+                            pathway_name="headache_warning_screen",
+                            pathway_version=self.safety.pathway_version,
+                            response=URGENT_HEADACHE_RESPONSE,
+                            matched_terms=[selected_id],
+                        )
+                        self._record_assessment(db, message.patient_id, episode.id, safety)
+                        await self._send_and_record(
+                            db, message.patient_id, conversation.id, self._phone_for_patient(db, message.patient_id),
+                            URGENT_HEADACHE_RESPONSE, "text"
+                        )
+                        message.processing_status = "processed"
+                        db.commit()
+                        return
                     extraction = self._extraction_from_episode(episode)
                     await self._respond_for_episode(db, conversation, message, episode, extraction)
                     message.processing_status = "processed"
@@ -189,6 +251,23 @@ class ConversationService:
         conversation.active_episode_id = episode.id
         return episode
 
+    async def _new_concern_extraction_if_present(
+        self, db: Session, message: Message, episode: HealthEpisode
+    ) -> SymptomExtraction | None:
+        """Allow a patient to interrupt a question to report a new health concern."""
+        if message.message_type != "text" or not message.content:
+            return None
+        text = message.content.strip()
+        lower = text.lower()
+        if not lower.startswith(("i have ", "i am having ", "i'm having ", "new symptom", "another symptom")):
+            return None
+        extraction = await self.ai.extract_symptoms(
+            text, self.context_builder.build(db, message.patient_id)
+        )
+        if not extraction.main_symptom:
+            return None
+        return extraction
+
     def _record_symptom_event(
         self, db: Session, episode: HealthEpisode, message: Message, extraction: SymptomExtraction
     ) -> None:
@@ -204,7 +283,9 @@ class ConversationService:
         episode.last_reported_at = datetime.now(timezone.utc)
         self._refresh_summary(db, episode.patient_id)
 
-    def _apply_pending_answer(self, db: Session, episode: HealthEpisode, message: Message, pending: dict[str, Any]) -> None:
+    def _apply_pending_answer(
+        self, db: Session, episode: HealthEpisode, message: Message, pending: dict[str, Any]
+    ) -> str | None:
         field = pending["field"]
         reply_id = message.metadata_json.get("reply_id") if message.message_type == "interactive" else None
         answer = pending.get("options", {}).get(reply_id) if reply_id else message.content
@@ -219,6 +300,7 @@ class ConversationService:
             source_type="patient_reported", verification_status="reported", confidence=100,
         ))
         self._refresh_summary(db, episode.patient_id)
+        return reply_id
 
     async def _respond_for_episode(
         self, db: Session, conversation: Conversation, message: Message, episode: HealthEpisode,
@@ -239,25 +321,69 @@ class ConversationService:
                 }
             }
             conversation.state = state
-            if question.options:
+            if question.presentation == "list":
+                provider_id = await self.whatsapp.send_list(
+                    phone,
+                    prefix + question.text,
+                    question.button_label or "Choose one",
+                    [(option_id, label, label) for option_id, label in question.options],
+                )
+                save_outgoing_message(
+                    db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "interactive",
+                    {"field": question.field, "presentation": "list"},
+                )
+            elif question.options:
                 provider_id = await self.whatsapp.send_buttons(phone, prefix + question.text, question.options)
-                save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "interactive", {"field": question.field})
+                save_outgoing_message(
+                    db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "interactive",
+                    {"field": question.field, "presentation": "buttons"},
+                )
             else:
                 provider_id = await self.whatsapp.send_text(phone, prefix + question.text)
                 save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "text", {"field": question.field})
         else:
             conversation.state = {"pending_question": None}
-            response = prefix + "Thank you. I’ve recorded this concern. If it changes, worsens, or you have concerns, please let me know."
+            response = prefix + self._completion_message(episode)
             provider_id = await self.whatsapp.send_text(phone, response)
             save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, response, "text")
 
     @staticmethod
     def _next_question(episode: HealthEpisode) -> FollowUpQuestion | None:
         summary = episode.summary or {}
-        for field in ("onset", "frequency", "severity", "associated_symptoms"):
-            if not summary.get(field):
-                return FIELD_QUESTIONS[field]
+        if episode.normalized_symptom == "headache" and not summary.get("headache_warning_signs"):
+            return HEADACHE_WARNING_QUESTION
+        if not summary.get("severity"):
+            return SEVERITY_QUESTION
         return None
+
+    @staticmethod
+    def _needs_urgent_escalation(pending: dict[str, Any], selected_id: str | None) -> bool:
+        return pending.get("field") == "headache_warning_signs" and selected_id in URGENT_HEADACHE_SCREEN_IDS
+
+    @staticmethod
+    def _completion_message(episode: HealthEpisode) -> str:
+        """Close a short intake with a factual record summary, never a diagnosis."""
+        summary = episode.summary or {}
+        details = [episode.primary_symptom or "your concern"]
+        if summary.get("duration"):
+            details.append(f"reported for {summary['duration']}")
+        elif summary.get("onset"):
+            details.append(f"starting {summary['onset']}")
+        if summary.get("location"):
+            details.append(f"at {summary['location']}")
+        if summary.get("severity"):
+            details.append(f"currently {summary['severity'].lower()}")
+        record = "; ".join(details)
+        follow_up = ""
+        if episode.normalized_symptom == "headache" and summary.get("duration"):
+            follow_up = (
+                " Since it has continued for several days, consider arranging a non-emergency clinician visit "
+                "if it is not improving or if you are concerned."
+            )
+        return (
+            f"Thanks. I’ve recorded: {record}. I can’t identify the cause through chat."
+            f"{follow_up} Seek urgent in-person care if it becomes sudden or severe, or if new warning signs appear."
+        )
 
     @staticmethod
     def _extraction_summary(extraction: SymptomExtraction) -> dict[str, Any]:

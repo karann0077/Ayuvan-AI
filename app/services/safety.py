@@ -7,6 +7,7 @@ EMERGENCY_TERMS = {
     "chest pain", "difficulty breathing", "cannot breathe", "trouble breathing",
     "unconscious", "passed out", "fainted", "seizure", "stroke", "face drooping",
     "weakness on one side", "heavy bleeding", "suicidal", "self harm",
+    "sudden severe headache", "worst headache", "vision loss", "fever and stiff neck",
 }
 
 

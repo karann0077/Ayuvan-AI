@@ -17,10 +17,13 @@ class NormalizedIncomingMessage(BaseModel):
 class SymptomExtraction(BaseModel):
     main_symptom: str | None = None
     normalized_symptom: str | None = None
+    location: str | None = None
+    quality: str | None = None
     onset: str | None = None
     duration: str | None = None
     frequency: str | None = None
     severity: str | None = None
+    functional_impact: str | None = None
     progression: str | None = None
     time_pattern: str | None = None
     associated_symptoms: list[str] = Field(default_factory=list)
@@ -63,6 +66,8 @@ class FollowUpQuestion(BaseModel):
     field: str
     text: str
     options: list[tuple[str, str]] = Field(default_factory=list)
+    presentation: Literal["buttons", "list", "free_text"] = "buttons"
+    button_label: str | None = None
 
 
 class HealthRecordResponse(BaseModel):
