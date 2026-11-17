@@ -93,10 +93,16 @@ class GeminiService:
         duration_match = re.search(r"\b(?:for|since)\s+([\w\s]+?(?:day|days|week|weeks|month|months))\b", lower)
         if duration_match:
             duration = duration_match.group(1).strip()
+        progression = None
+        if any(phrase in lower for phrase in ("getting worse", "worsening", "not improving")):
+            progression = "Getting worse"
+        elif any(phrase in lower for phrase in ("getting better", "much better", "improving")):
+            progression = "Improving"
         return SymptomExtraction(
             main_symptom=symptom,
             normalized_symptom=symptom,
             duration=duration,
+            progression=progression,
             missing_information=["onset", "frequency", "severity", "associated_symptoms"],
             confidence=30 if symptom else 0,
         )

@@ -1,0 +1,1595 @@
+cough:
+  label_en: cough
+  domains:
+  - respiratory
+  synonyms:
+  - cough
+  - khansi
+  - खांसी
+  - खाँसी
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sore_throat:
+  label_en: sore throat
+  domains:
+  - respiratory
+  synonyms:
+  - sore throat
+  - gale mein dard
+  - गले में दर्द
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+runny_nose:
+  label_en: runny nose
+  domains:
+  - respiratory
+  synonyms:
+  - runny nose
+  - naak behna
+  - नाक बहना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+nasal_congestion:
+  label_en: blocked nose
+  domains:
+  - respiratory
+  synonyms:
+  - blocked nose
+  - naak band
+  - नाक बंद
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sneezing:
+  label_en: sneezing
+  domains:
+  - respiratory
+  synonyms:
+  - sneezing
+  - chheenk
+  - छींक
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+wheezing:
+  label_en: wheezing
+  domains:
+  - respiratory
+  synonyms:
+  - wheezing
+  - seeti jaisi saans
+  - सीटी जैसी सांस
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+breathing_difficulty:
+  label_en: difficulty breathing
+  domains:
+  - respiratory
+  synonyms:
+  - difficulty breathing
+  - saans lene mein dikkat
+  - सांस लेने में दिक्कत
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+shortness_of_breath:
+  label_en: shortness of breath
+  domains:
+  - respiratory
+  synonyms:
+  - shortness of breath
+  - saans phoolna
+  - सांस फूलना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sputum:
+  label_en: phlegm
+  domains:
+  - respiratory
+  synonyms:
+  - phlegm
+  - balgam
+  - बलगम
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sputum_change:
+  label_en: change in phlegm
+  domains:
+  - respiratory
+  synonyms:
+  - change in phlegm
+  - sputum change
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+chest_congestion:
+  label_en: chest congestion
+  domains:
+  - respiratory
+  synonyms:
+  - chest congestion
+  - seena jama hua
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+hoarse_voice:
+  label_en: hoarse voice
+  domains:
+  - respiratory
+  synonyms:
+  - hoarse voice
+  - awaaz baithna
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+coughing_blood:
+  label_en: blood when coughing
+  domains:
+  - respiratory
+  synonyms:
+  - blood when coughing
+  - khansi mein khoon
+  - खांसी में खून
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+noisy_breathing:
+  label_en: noisy breathing
+  domains:
+  - respiratory
+  synonyms:
+  - noisy breathing
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+night_cough:
+  label_en: cough at night
+  domains:
+  - respiratory
+  synonyms:
+  - cough at night
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+pleuritic_chest_pain:
+  label_en: pain breathing deeply
+  domains:
+  - respiratory
+  synonyms:
+  - pain breathing deeply
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+fever:
+  label_en: fever
+  domains:
+  - infectious
+  synonyms:
+  - fever
+  - bukhar
+  - बुखार
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+chills:
+  label_en: chills
+  domains:
+  - infectious
+  synonyms:
+  - chills
+  - kapkapi
+  - कंपकंपी
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+body_aches:
+  label_en: body aches
+  domains:
+  - infectious
+  synonyms:
+  - body aches
+  - badan dard
+  - बदन दर्द
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+joint_pain:
+  label_en: joint pain
+  domains:
+  - infectious
+  synonyms:
+  - joint pain
+  - jodon mein dard
+  - जोड़ों में दर्द
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+headache:
+  label_en: headache
+  domains:
+  - infectious
+  synonyms:
+  - headache
+  - sar dard
+  - सिर दर्द
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+rash:
+  label_en: rash
+  domains:
+  - infectious
+  synonyms:
+  - rash
+  - daane
+  - दाने
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+night_sweats:
+  label_en: night sweats
+  domains:
+  - infectious
+  synonyms:
+  - night sweats
+  - raat ko pasina
+  - रात में पसीना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+fatigue:
+  label_en: fatigue
+  domains:
+  - infectious
+  synonyms:
+  - fatigue
+  - thakan
+  - थकान
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+muscle_pain:
+  label_en: muscle pain
+  domains:
+  - infectious
+  synonyms:
+  - muscle pain
+  - maanspeshiyon mein dard
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+eye_pain:
+  label_en: pain behind eyes
+  domains:
+  - infectious
+  synonyms:
+  - pain behind eyes
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+swollen_lymph_nodes:
+  label_en: swollen lymph nodes
+  domains:
+  - infectious
+  synonyms:
+  - swollen lymph nodes
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+jaundice:
+  label_en: yellow eyes
+  domains:
+  - infectious
+  synonyms:
+  - yellow eyes
+  - peeli aankhen
+  - पीली आंखें
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+dark_urine:
+  label_en: dark urine
+  domains:
+  - infectious
+  synonyms:
+  - dark urine
+  - gehra peshab
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+itching:
+  label_en: itching
+  domains:
+  - infectious
+  synonyms:
+  - itching
+  - khujli
+  - खुजली
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+painful_urination:
+  label_en: burning while urinating
+  domains:
+  - infectious
+  synonyms:
+  - burning while urinating
+  - peshab mein jalan
+  - पेशाब में जलन
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+urinary_urgency:
+  label_en: urgent need to urinate
+  domains:
+  - infectious
+  synonyms:
+  - urgent need to urinate
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+flank_pain:
+  label_en: pain in side of back
+  domains:
+  - infectious
+  synonyms:
+  - pain in side of back
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+swollen_joints:
+  label_en: joint swelling
+  domains:
+  - infectious
+  synonyms:
+  - joint swelling
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+unexplained_weight_loss:
+  label_en: unexplained weight loss
+  domains:
+  - infectious
+  synonyms:
+  - unexplained weight loss
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+neck_stiffness:
+  label_en: stiff neck
+  domains:
+  - infectious
+  synonyms:
+  - stiff neck
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+photophobia:
+  label_en: light sensitivity
+  domains:
+  - infectious
+  synonyms:
+  - light sensitivity
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+bleeding_gums:
+  label_en: bleeding gums
+  domains:
+  - infectious
+  synonyms:
+  - bleeding gums
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+persistent_fever:
+  label_en: ongoing fever
+  domains:
+  - infectious
+  synonyms:
+  - ongoing fever
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+abdominal_pain:
+  label_en: abdominal pain
+  domains:
+  - gastroenterology
+  synonyms:
+  - abdominal pain
+  - pet dard
+  - पेट दर्द
+  - stomach pain
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+heartburn:
+  label_en: heartburn
+  domains:
+  - gastroenterology
+  synonyms:
+  - heartburn
+  - seene mein jalan
+  - सीने में जलन
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+acid_regurgitation:
+  label_en: sour taste coming up
+  domains:
+  - gastroenterology
+  synonyms:
+  - sour taste coming up
+  - acid reflux
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+nausea:
+  label_en: nausea
+  domains:
+  - gastroenterology
+  synonyms:
+  - nausea
+  - jee machlana
+  - जी मिचलाना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+vomiting:
+  label_en: vomiting
+  domains:
+  - gastroenterology
+  synonyms:
+  - vomiting
+  - ulti
+  - उल्टी
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+diarrhea:
+  label_en: diarrhea
+  domains:
+  - gastroenterology
+  synonyms:
+  - diarrhea
+  - loose motion
+  - दस्त
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+constipation:
+  label_en: constipation
+  domains:
+  - gastroenterology
+  synonyms:
+  - constipation
+  - kabz
+  - कब्ज
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+bloating:
+  label_en: bloating
+  domains:
+  - gastroenterology
+  synonyms:
+  - bloating
+  - pet phoolna
+  - पेट फूलना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+gas:
+  label_en: gas
+  domains:
+  - gastroenterology
+  synonyms:
+  - gas
+  - pet mein gas
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+rectal_bleeding:
+  label_en: blood from bottom
+  domains:
+  - gastroenterology
+  synonyms:
+  - blood from bottom
+  - stool mein khoon
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+black_stool:
+  label_en: black tarry stool
+  domains:
+  - gastroenterology
+  synonyms:
+  - black tarry stool
+  - kala mal
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+blood_in_vomit:
+  label_en: vomiting blood
+  domains:
+  - gastroenterology
+  synonyms:
+  - vomiting blood
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+difficulty_swallowing:
+  label_en: difficulty swallowing
+  domains:
+  - gastroenterology
+  synonyms:
+  - difficulty swallowing
+  - nigalne mein dikkat
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+early_satiety:
+  label_en: getting full quickly
+  domains:
+  - gastroenterology
+  synonyms:
+  - getting full quickly
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+loss_of_appetite:
+  label_en: loss of appetite
+  domains:
+  - gastroenterology
+  synonyms:
+  - loss of appetite
+  - bhookh kam
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+upper_right_abdominal_pain:
+  label_en: upper right abdominal pain
+  domains:
+  - gastroenterology
+  synonyms:
+  - upper right abdominal pain
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+anal_pain:
+  label_en: anal pain
+  domains:
+  - gastroenterology
+  synonyms:
+  - anal pain
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+anal_itch:
+  label_en: anal itching
+  domains:
+  - gastroenterology
+  synonyms:
+  - anal itching
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+mucus_stool:
+  label_en: mucus in stool
+  domains:
+  - gastroenterology
+  synonyms:
+  - mucus in stool
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sticky_pale_stool:
+  label_en: pale stool
+  domains:
+  - gastroenterology
+  synonyms:
+  - pale stool
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+chest_discomfort:
+  label_en: chest pain
+  domains:
+  - cardiology
+  synonyms:
+  - chest pain
+  - seene mein dard
+  - सीने में दर्द
+  - chest discomfort
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+chest_pressure:
+  label_en: chest pressure
+  domains:
+  - cardiology
+  synonyms:
+  - chest pressure
+  - seene mein dabav
+  - सीने में दबाव
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+palpitations:
+  label_en: heart racing
+  domains:
+  - cardiology
+  synonyms:
+  - heart racing
+  - dhadkan tez
+  - धड़कन तेज
+  - palpitations
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+fainting:
+  label_en: fainting
+  domains:
+  - cardiology
+  synonyms:
+  - fainting
+  - behosh hona
+  - बेहोश होना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+near_fainting:
+  label_en: about to faint
+  domains:
+  - cardiology
+  synonyms:
+  - about to faint
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+leg_swelling:
+  label_en: swollen legs
+  domains:
+  - cardiology
+  synonyms:
+  - swollen legs
+  - pairon mein sujan
+  - पैरों में सूजन
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+ankle_swelling:
+  label_en: swollen ankles
+  domains:
+  - cardiology
+  synonyms:
+  - swollen ankles
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+dizziness:
+  label_en: dizziness
+  domains:
+  - cardiology
+  synonyms:
+  - dizziness
+  - chakkar
+  - चक्कर
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+breathlessness_on_exertion:
+  label_en: breathless on walking
+  domains:
+  - cardiology
+  synonyms:
+  - breathless on walking
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+reduced_exercise_tolerance:
+  label_en: less able to exercise
+  domains:
+  - cardiology
+  synonyms:
+  - less able to exercise
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+irregular_pulse:
+  label_en: irregular heartbeat
+  domains:
+  - cardiology
+  synonyms:
+  - irregular heartbeat
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+calf_pain_walking:
+  label_en: leg pain when walking
+  domains:
+  - cardiology
+  synonyms:
+  - leg pain when walking
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+cold_extremity:
+  label_en: cold foot or hand
+  domains:
+  - cardiology
+  synonyms:
+  - cold foot or hand
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+high_bp_reading:
+  label_en: high blood pressure reading
+  domains:
+  - cardiology
+  synonyms:
+  - high blood pressure reading
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+low_bp_reading:
+  label_en: low blood pressure reading
+  domains:
+  - cardiology
+  synonyms:
+  - low blood pressure reading
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+orthopnea:
+  label_en: breathless when lying flat
+  domains:
+  - cardiology
+  synonyms:
+  - breathless when lying flat
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+excessive_thirst:
+  label_en: excessive thirst
+  domains:
+  - endocrinology
+  synonyms:
+  - excessive thirst
+  - bahut pyas
+  - बहुत प्यास
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+frequent_urination:
+  label_en: frequent urination
+  domains:
+  - endocrinology
+  synonyms:
+  - frequent urination
+  - baar baar peshab
+  - बार बार पेशाब
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+unexplained_weight_change:
+  label_en: unexplained weight change
+  domains:
+  - endocrinology
+  synonyms:
+  - unexplained weight change
+  - weight change
+  - वजन में बदलाव
+  - wajan ghat raha
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+weight_gain:
+  label_en: weight gain
+  domains:
+  - endocrinology
+  synonyms:
+  - weight gain
+  - wajan badhna
+  - वजन बढ़ना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+heat_intolerance:
+  label_en: feeling too hot
+  domains:
+  - endocrinology
+  synonyms:
+  - feeling too hot
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+cold_intolerance:
+  label_en: feeling too cold
+  domains:
+  - endocrinology
+  synonyms:
+  - feeling too cold
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+hair_loss:
+  label_en: hair loss
+  domains:
+  - endocrinology
+  synonyms:
+  - hair loss
+  - baal jhadna
+  - बाल झड़ना
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+dry_skin:
+  label_en: dry skin
+  domains:
+  - endocrinology
+  synonyms:
+  - dry skin
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+menstrual_irregularity:
+  label_en: irregular periods
+  domains:
+  - endocrinology
+  synonyms:
+  - irregular periods
+  - aniyamit periods
+  - अनियमित पीरियड्स
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+heavy_periods:
+  label_en: heavy periods
+  domains:
+  - endocrinology
+  synonyms:
+  - heavy periods
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+excess_facial_hair:
+  label_en: excess facial hair
+  domains:
+  - endocrinology
+  synonyms:
+  - excess facial hair
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+neck_swelling:
+  label_en: swelling in neck
+  domains:
+  - endocrinology
+  synonyms:
+  - swelling in neck
+  - gale mein sujan
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+hunger_increase:
+  label_en: increased hunger
+  domains:
+  - endocrinology
+  synonyms:
+  - increased hunger
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+blurred_vision:
+  label_en: blurred vision
+  domains:
+  - endocrinology
+  synonyms:
+  - blurred vision
+  - dhundhla dikhna
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+nonhealing_wound:
+  label_en: wound not healing
+  domains:
+  - endocrinology
+  synonyms:
+  - wound not healing
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+tremor:
+  label_en: shaking hands
+  domains:
+  - endocrinology
+  synonyms:
+  - shaking hands
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+heat_sweating:
+  label_en: sweating excessively
+  domains:
+  - endocrinology
+  synonyms:
+  - sweating excessively
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+slow_heart_rate:
+  label_en: slow heartbeat
+  domains:
+  - endocrinology
+  synonyms:
+  - slow heartbeat
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+fast_heart_rate:
+  label_en: fast heartbeat
+  domains:
+  - endocrinology
+  synonyms:
+  - fast heartbeat
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+acne:
+  label_en: acne
+  domains:
+  - endocrinology
+  synonyms:
+  - acne
+  - muhase
+  - मुंहासे
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+dark_skin_patches:
+  label_en: dark patches of skin
+  domains:
+  - endocrinology
+  synonyms:
+  - dark patches of skin
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+infertility_concern:
+  label_en: difficulty conceiving
+  domains:
+  - endocrinology
+  synonyms:
+  - difficulty conceiving
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+abnormal_glucose_reading:
+  label_en: high or low glucose reading
+  domains:
+  - endocrinology
+  synonyms:
+  - high or low glucose reading
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+abnormal_thyroid_test:
+  label_en: abnormal thyroid test
+  domains:
+  - endocrinology
+  synonyms:
+  - abnormal thyroid test
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+abnormal_lipid_test:
+  label_en: abnormal cholesterol test
+  domains:
+  - endocrinology
+  synonyms:
+  - abnormal cholesterol test
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+abnormal_hba1c:
+  label_en: abnormal HbA1c
+  domains:
+  - endocrinology
+  synonyms:
+  - abnormal HbA1c
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+body_weight_concern:
+  label_en: weight concern
+  domains:
+  - endocrinology
+  synonyms:
+  - weight concern
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+dehydration_symptoms:
+  label_en: signs of dehydration
+  domains:
+  - cross_cutting
+  synonyms:
+  - signs of dehydration
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+confusion:
+  label_en: new confusion
+  domains:
+  - cross_cutting
+  synonyms:
+  - new confusion
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+severe_weakness:
+  label_en: severe weakness
+  domains:
+  - cross_cutting
+  synonyms:
+  - severe weakness
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+sudden_severe_headache:
+  label_en: thunderclap headache
+  domains:
+  - cross_cutting
+  synonyms:
+  - thunderclap headache
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+vision_loss:
+  label_en: sudden vision loss
+  domains:
+  - cross_cutting
+  synonyms:
+  - sudden vision loss
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+speech_difficulty:
+  label_en: difficulty speaking
+  domains:
+  - cross_cutting
+  synonyms:
+  - difficulty speaking
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+severe_allergic_reaction:
+  label_en: severe allergic reaction
+  domains:
+  - cross_cutting
+  synonyms:
+  - severe allergic reaction
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+unconscious:
+  label_en: unconscious
+  domains:
+  - cross_cutting
+  synonyms:
+  - unconscious
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+ongoing_seizure:
+  label_en: ongoing seizure
+  domains:
+  - cross_cutting
+  synonyms:
+  - ongoing seizure
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+severe_bleeding:
+  label_en: severe bleeding
+  domains:
+  - cross_cutting
+  synonyms:
+  - severe bleeding
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported
+measured_blood_pressure:
+  label_en: blood pressure measurement
+  domains:
+  - cross_cutting
+  synonyms:
+  - blood pressure measurement
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+measured_blood_glucose:
+  label_en: blood sugar measurement
+  domains:
+  - cross_cutting
+  synonyms:
+  - blood sugar measurement
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: measurement_or_document
+weight_loss:
+  label_en: weight loss
+  domains:
+  - cross_cutting
+  synonyms:
+  - losing weight
+  not_diagnosis: true
+  translation_status: unreviewed_draft
+  clinical_terminology_review: pending
+  coding:
+    snomed_ct: null
+    icd11: null
+  type: patient_reported

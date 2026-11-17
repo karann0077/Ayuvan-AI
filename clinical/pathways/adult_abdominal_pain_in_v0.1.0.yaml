@@ -1,0 +1,240 @@
+id: adult_abdominal_pain_in
+version: 0.1.0
+status: draft
+domain: gastroenterology
+purpose: Adult abdominal pain assessment support
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: true
+  exclusions:
+  - age_below_18
+  - pregnancy
+  - outside_india
+  - inability_to_assess_remotely
+routing:
+  symptom_codes:
+  - abdominal_pain
+  - vomiting
+  - diarrhea
+required_facts:
+- abdominal_pain
+- pain_severe
+- pain_worsening
+- black_or_bloody_stool
+- persistent_vomiting
+- unable_to_drink
+- pain_duration_days
+- functional_impairment
+- sudden_severe_abdominal_pain
+rules:
+- id: ABDOMEN_BLOOD
+  when:
+    all:
+    - fact: abdominal_pain
+      op: present
+    - fact: black_or_bloody_stool
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; exact timeframe pending review
+  reason: Pain with gastrointestinal bleeding symptom
+  response_key: prompt
+  evidence:
+  - NHS_ABDOMINAL
+- id: ABDOMEN_SEVERE
+  when:
+    all:
+    - fact: abdominal_pain
+      op: present
+    - fact: pain_severe
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; consider emergency assessment based on clinical review
+  reason: Severe abdominal pain
+  response_key: prompt
+  evidence:
+  - NHS_ABDOMINAL
+- id: ABDOMEN_WORSEN
+  when:
+    all:
+    - fact: abdominal_pain
+      op: present
+    - fact: pain_worsening
+      op: present
+    - fact: functional_impairment
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: timeframe pending clinician review
+  reason: Worsening function-limiting pain
+  response_key: routine
+  evidence:
+  - NHS_ABDOMINAL
+- id: ABDOMEN_MILD_BRIEF
+  when:
+    all:
+    - fact: abdominal_pain
+      op: present
+    - fact: pain_duration_days
+      op: lte
+      value: 1
+    - fact: pain_severe
+      op: absent
+    - fact: pain_worsening
+      op: absent
+    - fact: black_or_bloody_stool
+      op: absent
+    - fact: persistent_vomiting
+      op: absent
+  priority: P0
+  action: monitor_with_safety_net
+  timeframe: reassess if changes
+  reason: Brief mild pain without assessed red flags
+  response_key: monitor
+  evidence:
+  - NHS_ABDOMINAL
+questions:
+- id: ABD_SUDDEN_SEVERE
+  priority: 100
+  fact: sudden_severe_abdominal_pain
+  when:
+    fact: sudden_severe_abdominal_pain
+    op: unknown
+  text:
+    en: Did the pain begin suddenly and become very severe?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: ABD_PAIN_SEVERE
+  priority: 99
+  fact: pain_severe
+  when:
+    fact: pain_severe
+    op: unknown
+  text:
+    en: Is the abdominal pain severe or sudden and intense?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: ABD_BLOOD
+  priority: 95
+  fact: black_or_bloody_stool
+  when:
+    fact: black_or_bloody_stool
+    op: unknown
+  text:
+    en: Have you passed black or bloody stools?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: ABD_VOMITING
+  priority: 90
+  fact: persistent_vomiting
+  when:
+    fact: persistent_vomiting
+    op: unknown
+  text:
+    en: Are you vomiting repeatedly or unable to keep fluids down?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: ABD_DURATION
+  priority: 85
+  fact: pain_duration_days
+  when:
+    fact: pain_duration_days
+    op: unknown
+  text:
+    en: How long has this abdominal pain lasted (days)?
+  choices: []
+  answer_schema:
+    kind: nonnegative_integer
+  can_change:
+  - clinical_disposition
+- id: ABD_WORSEN
+  priority: 70
+  fact: pain_worsening
+  when:
+    fact: pain_worsening
+    op: unknown
+  text:
+    en: Is the abdominal pain getting worse?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: ABD_FUNCTION
+  priority: 65
+  fact: functional_impairment
+  when:
+    fact: functional_impairment
+    op: unknown
+  text:
+    en: Is the pain interfering with your normal activities?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+responses:
+  prompt:
+    en: The reported abdominal symptoms need prompt in-person assessment. If the symptoms are severe or rapidly
+      worsening, seek emergency help.
+  routine:
+    en: Worsening abdominal pain affecting daily activities warrants professional assessment.
+  monitor:
+    en: Brief mild abdominal discomfort can have many explanations. Monitor for worsening pain, vomiting, bleeding
+      or other changes, and seek reassessment if they occur.
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - NHS_ABDOMINAL
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

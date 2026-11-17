@@ -1,0 +1,1544 @@
+notice: 'Draft data dictionary: all concept definitions require clinical terminology review.'
+facts:
+  abdominal_pain:
+    clinical_label_draft: abdominal pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  black_or_bloody_stool:
+    clinical_label_draft: black or bloody stool
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  blood_in_sputum:
+    clinical_label_draft: blood in sputum
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  body_aches:
+    clinical_label_draft: body aches
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  breathing_difficulty:
+    clinical_label_draft: breathing difficulty
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  chest_discomfort:
+    clinical_label_draft: chest discomfort
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  chest_pressure:
+    clinical_label_draft: chest pressure
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  cold_sweat:
+    clinical_label_draft: cold sweat
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  confusion_severe:
+    clinical_label_draft: confusion severe
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  continuity:
+    clinical_label_draft: continuity
+    value_type: enum
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    allowed_values:
+    - continuous
+    - new
+    - resolved_then_recurred
+    - unknown
+  cough:
+    clinical_label_draft: cough
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dehydration_signs:
+    clinical_label_draft: dehydration signs
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  duration_days:
+    clinical_label_draft: duration days
+    value_type: nonnegative_integer_days
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    allowed_range:
+    - 0
+    - 36500
+  excessive_thirst:
+    clinical_label_draft: excessive thirst
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  exertional_chest_discomfort:
+    clinical_label_draft: exertional chest discomfort
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  fainting:
+    clinical_label_draft: fainting
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  fever:
+    clinical_label_draft: fever
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  fever_duration_days:
+    clinical_label_draft: fever duration days
+    value_type: nonnegative_integer_days
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    allowed_range:
+    - 0
+    - 36500
+  frequent_urination:
+    clinical_label_draft: frequent urination
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  functional_impairment:
+    clinical_label_draft: functional impairment
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  known_diabetes:
+    clinical_label_draft: known diabetes
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  known_heart_condition:
+    clinical_label_draft: known heart condition
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  pain_duration_days:
+    clinical_label_draft: pain duration days
+    value_type: nonnegative_integer_days
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    allowed_range:
+    - 0
+    - 36500
+  pain_radiating:
+    clinical_label_draft: pain radiating
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  pain_severe:
+    clinical_label_draft: pain severe
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  pain_worsening:
+    clinical_label_draft: pain worsening
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  palpitations:
+    clinical_label_draft: palpitations
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  persistent_vomiting:
+    clinical_label_draft: persistent vomiting
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  prior_episode_unresolved:
+    clinical_label_draft: prior episode unresolved
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  rash_bleeding:
+    clinical_label_draft: rash bleeding
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  seizure_ongoing:
+    clinical_label_draft: seizure ongoing
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_allergic_swelling:
+    clinical_label_draft: severe allergic swelling
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_bleeding:
+    clinical_label_draft: severe bleeding
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_breathlessness:
+    clinical_label_draft: severe breathlessness
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sudden_severe_abdominal_pain:
+    clinical_label_draft: sudden severe abdominal pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  symptom_duration_days:
+    clinical_label_draft: symptom duration days
+    value_type: nonnegative_integer_days
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    allowed_range:
+    - 0
+    - 36500
+  symptoms_worsening:
+    clinical_label_draft: symptoms worsening
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unable_to_drink:
+    clinical_label_draft: unable to drink
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unconscious:
+    clinical_label_draft: unconscious
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unexplained_weight_change:
+    clinical_label_draft: unexplained weight change
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unilateral_weakness:
+    clinical_label_draft: unilateral weakness
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  worsening:
+    clinical_label_draft: worsening
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sore_throat:
+    clinical_label_draft: sore throat
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  runny_nose:
+    clinical_label_draft: runny nose
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  nasal_congestion:
+    clinical_label_draft: nasal congestion
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sneezing:
+    clinical_label_draft: sneezing
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  wheezing:
+    clinical_label_draft: wheezing
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  shortness_of_breath:
+    clinical_label_draft: shortness of breath
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sputum:
+    clinical_label_draft: sputum
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sputum_change:
+    clinical_label_draft: sputum change
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  chest_congestion:
+    clinical_label_draft: chest congestion
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  hoarse_voice:
+    clinical_label_draft: hoarse voice
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  coughing_blood:
+    clinical_label_draft: coughing blood
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  noisy_breathing:
+    clinical_label_draft: noisy breathing
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  night_cough:
+    clinical_label_draft: night cough
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  pleuritic_chest_pain:
+    clinical_label_draft: pleuritic chest pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  chills:
+    clinical_label_draft: chills
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  joint_pain:
+    clinical_label_draft: joint pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  headache:
+    clinical_label_draft: headache
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  rash:
+    clinical_label_draft: rash
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  night_sweats:
+    clinical_label_draft: night sweats
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  fatigue:
+    clinical_label_draft: fatigue
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  muscle_pain:
+    clinical_label_draft: muscle pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  eye_pain:
+    clinical_label_draft: eye pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  swollen_lymph_nodes:
+    clinical_label_draft: swollen lymph nodes
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  jaundice:
+    clinical_label_draft: jaundice
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dark_urine:
+    clinical_label_draft: dark urine
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  itching:
+    clinical_label_draft: itching
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  painful_urination:
+    clinical_label_draft: painful urination
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  urinary_urgency:
+    clinical_label_draft: urinary urgency
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  flank_pain:
+    clinical_label_draft: flank pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  swollen_joints:
+    clinical_label_draft: swollen joints
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unexplained_weight_loss:
+    clinical_label_draft: unexplained weight loss
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  neck_stiffness:
+    clinical_label_draft: neck stiffness
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  photophobia:
+    clinical_label_draft: photophobia
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  bleeding_gums:
+    clinical_label_draft: bleeding gums
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  persistent_fever:
+    clinical_label_draft: persistent fever
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  heartburn:
+    clinical_label_draft: heartburn
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  acid_regurgitation:
+    clinical_label_draft: acid regurgitation
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  nausea:
+    clinical_label_draft: nausea
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  vomiting:
+    clinical_label_draft: vomiting
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  diarrhea:
+    clinical_label_draft: diarrhea
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  constipation:
+    clinical_label_draft: constipation
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  bloating:
+    clinical_label_draft: bloating
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  gas:
+    clinical_label_draft: gas
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  rectal_bleeding:
+    clinical_label_draft: rectal bleeding
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  black_stool:
+    clinical_label_draft: black stool
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  blood_in_vomit:
+    clinical_label_draft: blood in vomit
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  difficulty_swallowing:
+    clinical_label_draft: difficulty swallowing
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  early_satiety:
+    clinical_label_draft: early satiety
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  loss_of_appetite:
+    clinical_label_draft: loss of appetite
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  upper_right_abdominal_pain:
+    clinical_label_draft: upper right abdominal pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  anal_pain:
+    clinical_label_draft: anal pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  anal_itch:
+    clinical_label_draft: anal itch
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  mucus_stool:
+    clinical_label_draft: mucus stool
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sticky_pale_stool:
+    clinical_label_draft: sticky pale stool
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  near_fainting:
+    clinical_label_draft: near fainting
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  leg_swelling:
+    clinical_label_draft: leg swelling
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  ankle_swelling:
+    clinical_label_draft: ankle swelling
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dizziness:
+    clinical_label_draft: dizziness
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  breathlessness_on_exertion:
+    clinical_label_draft: breathlessness on exertion
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  reduced_exercise_tolerance:
+    clinical_label_draft: reduced exercise tolerance
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  irregular_pulse:
+    clinical_label_draft: irregular pulse
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  calf_pain_walking:
+    clinical_label_draft: calf pain walking
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  cold_extremity:
+    clinical_label_draft: cold extremity
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  high_bp_reading:
+    clinical_label_draft: high bp reading
+    value_type: structured_measurement_or_clinician_verified_flag
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    units_or_components:
+    - mmHg
+    use_for_automated_thresholds: false
+    measurement_policy: pending_clinician_review_and_input_schema
+  low_bp_reading:
+    clinical_label_draft: low bp reading
+    value_type: structured_measurement_or_clinician_verified_flag
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    units_or_components:
+    - mmHg
+    use_for_automated_thresholds: false
+    measurement_policy: pending_clinician_review_and_input_schema
+  orthopnea:
+    clinical_label_draft: orthopnea
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  weight_gain:
+    clinical_label_draft: weight gain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  heat_intolerance:
+    clinical_label_draft: heat intolerance
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  cold_intolerance:
+    clinical_label_draft: cold intolerance
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  hair_loss:
+    clinical_label_draft: hair loss
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dry_skin:
+    clinical_label_draft: dry skin
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  menstrual_irregularity:
+    clinical_label_draft: menstrual irregularity
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  heavy_periods:
+    clinical_label_draft: heavy periods
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  excess_facial_hair:
+    clinical_label_draft: excess facial hair
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  neck_swelling:
+    clinical_label_draft: neck swelling
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  hunger_increase:
+    clinical_label_draft: hunger increase
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  blurred_vision:
+    clinical_label_draft: blurred vision
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  nonhealing_wound:
+    clinical_label_draft: nonhealing wound
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  tremor:
+    clinical_label_draft: tremor
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  heat_sweating:
+    clinical_label_draft: heat sweating
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  slow_heart_rate:
+    clinical_label_draft: slow heart rate
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  fast_heart_rate:
+    clinical_label_draft: fast heart rate
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  acne:
+    clinical_label_draft: acne
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dark_skin_patches:
+    clinical_label_draft: dark skin patches
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  infertility_concern:
+    clinical_label_draft: infertility concern
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  abnormal_glucose_reading:
+    clinical_label_draft: abnormal glucose reading
+    value_type: documented_lab_finding_requires_verification
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    reference_range_required: true
+    use_for_automated_thresholds: false
+  abnormal_thyroid_test:
+    clinical_label_draft: abnormal thyroid test
+    value_type: documented_lab_finding_requires_verification
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    reference_range_required: true
+    use_for_automated_thresholds: false
+  abnormal_lipid_test:
+    clinical_label_draft: abnormal lipid test
+    value_type: documented_lab_finding_requires_verification
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    reference_range_required: true
+    use_for_automated_thresholds: false
+  abnormal_hba1c:
+    clinical_label_draft: abnormal hba1c
+    value_type: documented_lab_finding_requires_verification
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    reference_range_required: true
+    use_for_automated_thresholds: false
+  body_weight_concern:
+    clinical_label_draft: body weight concern
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  dehydration_symptoms:
+    clinical_label_draft: dehydration symptoms
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  confusion:
+    clinical_label_draft: confusion
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_weakness:
+    clinical_label_draft: severe weakness
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  sudden_severe_headache:
+    clinical_label_draft: sudden severe headache
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  vision_loss:
+    clinical_label_draft: vision loss
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  speech_difficulty:
+    clinical_label_draft: speech difficulty
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_allergic_reaction:
+    clinical_label_draft: severe allergic reaction
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  ongoing_seizure:
+    clinical_label_draft: ongoing seizure
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  measured_blood_pressure:
+    clinical_label_draft: measured blood pressure
+    value_type: structured_measurement_or_clinician_verified_flag
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    units_or_components:
+    - mmHg
+    use_for_automated_thresholds: false
+    measurement_policy: pending_clinician_review_and_input_schema
+  measured_blood_glucose:
+    clinical_label_draft: measured blood glucose
+    value_type: structured_measurement_or_clinician_verified_flag
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+    units_or_components:
+    - mg/dL
+    - mmol/L
+    use_for_automated_thresholds: false
+    measurement_policy: pending_clinician_review_and_input_schema
+  weight_loss:
+    clinical_label_draft: weight loss
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  breathless_at_rest:
+    clinical_label_draft: breathless at rest
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  blood_in_stool:
+    clinical_label_draft: blood in stool
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  mucosal_bleeding:
+    clinical_label_draft: mucosal bleeding
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unable_to_swallow_saliva:
+    clinical_label_draft: unable to swallow saliva
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  severe_abdominal_pain:
+    clinical_label_draft: severe abdominal pain
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  unilateral_leg_swelling:
+    clinical_label_draft: unilateral leg swelling
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false
+  known_cardiovascular_condition:
+    clinical_label_draft: known cardiovascular condition
+    value_type: presence_status
+    state_values:
+    - present
+    - absent
+    - unknown
+    - contradictory
+    requires_source_timestamp: true
+    clinical_definition_approved: false

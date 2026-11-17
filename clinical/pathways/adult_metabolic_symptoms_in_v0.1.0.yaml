@@ -1,0 +1,190 @@
+id: adult_metabolic_symptoms_in
+version: 0.1.0
+status: draft
+domain: endocrinology
+purpose: Adult symptoms possibly related to metabolic or endocrine illness
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: true
+  exclusions:
+  - age_below_18
+  - pregnancy
+  - outside_india
+  - inability_to_assess_remotely
+routing:
+  symptom_codes:
+  - excessive_thirst
+  - frequent_urination
+  - unexplained_weight_change
+  - fatigue
+required_facts:
+- excessive_thirst
+- frequent_urination
+- unexplained_weight_change
+- known_diabetes
+- persistent_vomiting
+- confusion_severe
+- symptoms_worsening
+- symptom_duration_days
+rules:
+- id: METAB_DIABETES_SICK
+  when:
+    all:
+    - fact: known_diabetes
+      op: present
+    - fact: persistent_vomiting
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; emergency eligibility needs further review
+  reason: Diabetes history with persistent vomiting
+  response_key: prompt
+  evidence:
+  - CDC_DKA
+- id: METAB_CLASSIC_CLUSTER
+  when:
+    all:
+    - fact: excessive_thirst
+      op: present
+    - fact: frequent_urination
+      op: present
+    - fact: unexplained_weight_change
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: timeframe pending clinician review
+  reason: Thirst, urination and unexplained weight change cluster
+  response_key: routine
+  evidence:
+  - CDC_DIABETES
+- id: METAB_THIRST_URINATION
+  when:
+    all:
+    - fact: excessive_thirst
+      op: present
+    - fact: frequent_urination
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: timeframe pending clinician review
+  reason: Thirst and urinary frequency together
+  response_key: routine
+  evidence:
+  - CDC_DIABETES
+questions:
+- id: METAB_VOMITING
+  priority: 100
+  fact: persistent_vomiting
+  when:
+    fact: persistent_vomiting
+    op: unknown
+  text:
+    en: Are you repeatedly vomiting or unable to keep fluids down?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: METAB_THIRST
+  priority: 90
+  fact: excessive_thirst
+  when:
+    fact: excessive_thirst
+    op: unknown
+  text:
+    en: Have you been unusually thirsty?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: METAB_URINATION
+  priority: 85
+  fact: frequent_urination
+  when:
+    fact: frequent_urination
+    op: unknown
+  text:
+    en: Have you been urinating much more frequently than usual?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: METAB_WEIGHT
+  priority: 70
+  fact: unexplained_weight_change
+  when:
+    fact: unexplained_weight_change
+    op: unknown
+  text:
+    en: Have you had an unexplained weight change recently?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: METAB_DIABETES
+  priority: 60
+  fact: known_diabetes
+  when:
+    fact: known_diabetes
+    op: unknown
+  text:
+    en: Has a clinician ever diagnosed you with diabetes?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+responses:
+  prompt:
+    en: With known diabetes, repeated vomiting can signal a serious problem; seek prompt medical assessment. Emergency
+      warning signs require immediate help.
+  routine:
+    en: The reported combination can occur with diabetes and other conditions. Arrange clinical assessment; symptoms
+      alone cannot confirm a diagnosis.
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - CDC_DIABETES
+  - CDC_DKA
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

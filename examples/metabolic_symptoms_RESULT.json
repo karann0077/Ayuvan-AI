@@ -1,0 +1,118 @@
+{
+  "assessment_id": "71b400c5-bff1-46a3-832d-37da70144e05",
+  "simulated": true,
+  "intended_use": "Engineering simulation, NOT a validated clinical assessment",
+  "status": "DECIDED",
+  "priority": "P2",
+  "action": "professional_assessment",
+  "timeframe": "timeframe pending clinician review",
+  "reason_codes": [
+    "METAB_THIRST_URINATION"
+  ],
+  "question": {
+    "id": "METAB_VOMITING",
+    "priority": 100,
+    "fact": "persistent_vomiting",
+    "when": {
+      "fact": "persistent_vomiting",
+      "op": "unknown"
+    },
+    "text": {
+      "en": "Are you repeatedly vomiting or unable to keep fluids down?"
+    },
+    "choices": [],
+    "answer_schema": {
+      "kind": "confirmation_required_text"
+    },
+    "can_change": [
+      "clinical_disposition"
+    ]
+  },
+  "response": "The reported combination can occur with diabetes and other conditions. Arrange clinical assessment; symptoms alone cannot confirm a diagnosis.",
+  "results": [
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "INSUFFICIENT_INFORMATION",
+      "priority": null,
+      "action": null,
+      "timeframe": null,
+      "reason_codes": [
+        "NO_APPROVED_RULE_MATCHED"
+      ],
+      "evidence_ids": [],
+      "question": null,
+      "missing_or_conflicting": [
+        "severe_breathlessness",
+        "chest_pressure",
+        "breathing_difficulty",
+        "chest_discomfort",
+        "cold_sweat",
+        "unilateral_weakness",
+        "unconscious",
+        "severe_allergic_swelling",
+        "severe_bleeding",
+        "seizure_ongoing",
+        "confusion_severe",
+        "sudden_severe_abdominal_pain",
+        "known_diabetes",
+        "persistent_vomiting",
+        "unable_to_drink"
+      ],
+      "response": null
+    },
+    {
+      "pathway_id": "adult_metabolic_symptoms_in",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "DECIDED",
+      "priority": "P2",
+      "action": "professional_assessment",
+      "timeframe": "timeframe pending clinician review",
+      "reason_codes": [
+        "METAB_THIRST_URINATION"
+      ],
+      "evidence_ids": [
+        "CDC_DIABETES"
+      ],
+      "question": {
+        "id": "METAB_VOMITING",
+        "priority": 100,
+        "fact": "persistent_vomiting",
+        "when": {
+          "fact": "persistent_vomiting",
+          "op": "unknown"
+        },
+        "text": {
+          "en": "Are you repeatedly vomiting or unable to keep fluids down?"
+        },
+        "choices": [],
+        "answer_schema": {
+          "kind": "confirmation_required_text"
+        },
+        "can_change": [
+          "clinical_disposition"
+        ]
+      },
+      "missing_or_conflicting": [
+        "unexplained_weight_change",
+        "known_diabetes",
+        "persistent_vomiting",
+        "confusion_severe",
+        "symptoms_worsening",
+        "symptom_duration_days"
+      ],
+      "response": "The reported combination can occur with diabetes and other conditions. Arrange clinical assessment; symptoms alone cannot confirm a diagnosis."
+    }
+  ],
+  "pathway_versions": {
+    "global_emergency": "0.1.0",
+    "adult_metabolic_symptoms_in": "0.1.0"
+  },
+  "pathway_sha256": {
+    "global_emergency": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009",
+    "adult_metabolic_symptoms_in": "87abddb54d8a76bf37ed4f8747625f4f78a053665dd599bfb7b70ffbdb44652f"
+  },
+  "unresolved_pathways": []
+}

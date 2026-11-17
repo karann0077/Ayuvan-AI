@@ -1,0 +1,212 @@
+id: adult_chest_symptoms_in
+version: 0.1.0
+status: draft
+domain: cardiology
+purpose: Adult chest discomfort and palpitation support
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: false
+  exclusions:
+  - age_below_18
+  - pregnancy
+  - outside_india
+  - inability_to_assess_remotely
+routing:
+  symptom_codes:
+  - chest_discomfort
+  - chest_pressure
+  - palpitations
+required_facts:
+- chest_discomfort
+- chest_pressure
+- breathing_difficulty
+- cold_sweat
+- pain_radiating
+- fainting
+- exertional_chest_discomfort
+- palpitations
+- known_heart_condition
+rules:
+- id: CHEST_ASSOCIATED
+  when:
+    all:
+    - fact: chest_discomfort
+      op: present
+    - any:
+      - fact: breathing_difficulty
+        op: present
+      - fact: cold_sweat
+        op: present
+      - fact: fainting
+        op: present
+      - fact: pain_radiating
+        op: present
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Chest symptoms with concerning associated features
+  response_key: emergency
+  evidence:
+  - NICE_CG95
+- id: CHEST_EXERTIONAL
+  when:
+    all:
+    - fact: exertional_chest_discomfort
+      op: present
+    - fact: chest_discomfort
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: urgent; clinician review needed
+  reason: Exertion-associated chest discomfort
+  response_key: prompt
+  evidence:
+  - NICE_CG95
+- id: CHEST_UNEXPLAINED
+  when:
+    fact: chest_discomfort
+    op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: urgent clinical assessment; timeframe pending review
+  reason: Chest discomfort not otherwise characterized
+  response_key: prompt
+  evidence:
+  - NICE_CG95
+- id: PALPITATIONS_ALONE
+  when:
+    all:
+    - fact: palpitations
+      op: present
+    - fact: chest_discomfort
+      op: absent
+    - fact: fainting
+      op: absent
+    - fact: breathing_difficulty
+      op: absent
+  priority: P1
+  action: monitor_or_clarify
+  timeframe: questions and timeframe pending review
+  reason: Palpitations without listed chest warning signs
+  response_key: clarify
+  evidence:
+  - NICE_CG95
+questions:
+- id: CHEST_BREATH
+  priority: 100
+  fact: breathing_difficulty
+  when:
+    fact: breathing_difficulty
+    op: unknown
+  text:
+    en: Are you short of breath with the chest symptoms?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: CHEST_SWEAT
+  priority: 95
+  fact: cold_sweat
+  when:
+    fact: cold_sweat
+    op: unknown
+  text:
+    en: Are you sweating heavily or feeling clammy with the discomfort?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: CHEST_FAINT
+  priority: 90
+  fact: fainting
+  when:
+    fact: fainting
+    op: unknown
+  text:
+    en: Have you fainted or almost fainted?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: CHEST_RADIATING
+  priority: 85
+  fact: pain_radiating
+  when:
+    fact: pain_radiating
+    op: unknown
+  text:
+    en: Does the discomfort spread to an arm, jaw or back?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: CHEST_EXERTION
+  priority: 80
+  fact: exertional_chest_discomfort
+  when:
+    fact: exertional_chest_discomfort
+    op: unknown
+  text:
+    en: Does the chest discomfort occur with exertion?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+responses:
+  emergency:
+    en: 'Possible cardiac emergency features have been reported. Seek emergency medical assistance immediately;
+      India emergency number: 112.'
+  prompt:
+    en: Chest discomfort may need urgent assessment, even if the cause is uncertain. A clinician should assess it
+      promptly.
+  clarify:
+    en: Palpitations have various possible causes. More clinical context is needed before deciding urgency; new
+      chest discomfort, fainting or breathlessness requires reassessment.
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - NICE_CG95
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

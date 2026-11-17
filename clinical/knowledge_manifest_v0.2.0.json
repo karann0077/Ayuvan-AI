@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "status": "UNREVIEWED_DRAFT",
+  "jurisdiction": "IN",
+  "files": {
+    "clinical/concepts/symptoms.yaml": {
+      "sha256": "e3e69613f17433c6cecba826a279334c53c84211935a4d6c750ef7fb2836f6c7",
+      "bytes": 33901
+    },
+    "clinical/concepts/facts.yaml": {
+      "sha256": "de03d17bcb792fef2920b726f69a6dd97d4a83c1386ca0ef57ee24fdc7bbeafc",
+      "bytes": 38622
+    },
+    "clinical/concepts/condition_presentation_map.yaml": {
+      "sha256": "a0043af8a7e50ec20f461487c601ba1da490479a3bbce332f76223416315472e",
+      "bytes": 21498
+    },
+    "clinical/concepts/disease_catalog.yaml": {
+      "sha256": "465caaba81a214a94ef28fd8be89c12242f3ba22db6c665f0841b93d09246476",
+      "bytes": 1445
+    },
+    "clinical/evidence/sources.yaml": {
+      "sha256": "0fd35820b1ea491d2e3beb593abebdc5a243a8eb2325031f2359c866dd072811",
+      "bytes": 9513
+    }
+  }
+}

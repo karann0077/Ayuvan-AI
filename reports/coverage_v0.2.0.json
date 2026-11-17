@@ -1,0 +1,4311 @@
+{
+  "release": "0.2.0",
+  "date": "2026-11-16",
+  "purpose": "Engineering coverage and clinical review planning",
+  "disclaimer": "DO NOT interpret mapping or tests as validated diagnosis or triage coverage.",
+  "summary": {
+    "domain_count": 5,
+    "condition_entries": 54,
+    "symptom_concepts": 115,
+    "draft_pathway_ids": 49,
+    "pathway_versions_on_disk": 55,
+    "condition_entries_with_all_presentations_routed_or_safety_only": 54,
+    "clinically_validated_condition_entries": 0,
+    "symptom_concepts_routed": 99,
+    "symptom_concepts_safety_only": 5,
+    "symptom_concepts_supporting_only": 3,
+    "symptom_concepts_vocabulary_only": 8,
+    "engineering_scenarios": 143,
+    "independently_clinician_adjudicated_scenarios": 0,
+    "domains": {
+      "respiratory": 10,
+      "infectious": 12,
+      "gastroenterology": 11,
+      "cardiology": 11,
+      "endocrinology": 10
+    }
+  },
+  "conditions": [
+    {
+      "condition_id": "RESPIRATORY_01",
+      "domain": "respiratory",
+      "name": "Common cold",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "runny_nose",
+        "nasal_congestion",
+        "sneezing",
+        "sore_throat",
+        "cough"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_nasal_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 13,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_02",
+      "domain": "respiratory",
+      "name": "Acute respiratory tract infection",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "cough",
+        "sore_throat",
+        "fever",
+        "runny_nose",
+        "breathing_difficulty"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_fever_in",
+        "adult_nasal_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 18,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_03",
+      "domain": "respiratory",
+      "name": "Acute bronchitis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "cough",
+        "sputum",
+        "chest_congestion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_sputum_change_in"
+      ],
+      "engineering_case_count": 8,
+      "candidate_source_ids": [
+        "NICE_NG120"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_04",
+      "domain": "respiratory",
+      "name": "Asthma",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "wheezing",
+        "breathing_difficulty",
+        "cough",
+        "night_cough",
+        "chest_congestion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_sputum_change_in",
+        "adult_wheeze_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_05",
+      "domain": "respiratory",
+      "name": "COPD",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "breathing_difficulty",
+        "sputum",
+        "cough",
+        "breathlessness_on_exertion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_exertional_breathlessness_in",
+        "adult_sputum_change_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_06",
+      "domain": "respiratory",
+      "name": "Pneumonia",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "fever",
+        "cough",
+        "breathing_difficulty",
+        "pleuritic_chest_pain"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_fever_in",
+        "adult_pleuritic_pain_in"
+      ],
+      "engineering_case_count": 16,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_07",
+      "domain": "respiratory",
+      "name": "Pulmonary tuberculosis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "cough",
+        "fever",
+        "night_sweats",
+        "unexplained_weight_loss",
+        "coughing_blood"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_coughing_blood_in",
+        "adult_fever_in",
+        "adult_night_sweats_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 18,
+      "candidate_source_ids": [
+        "NTEP_TB"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_08",
+      "domain": "respiratory",
+      "name": "Allergic rhinitis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "runny_nose",
+        "sneezing",
+        "nasal_congestion",
+        "itching"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_itching_in",
+        "adult_nasal_symptoms_in"
+      ],
+      "engineering_case_count": 4,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_09",
+      "domain": "respiratory",
+      "name": "Influenza",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "fever",
+        "cough",
+        "sore_throat",
+        "body_aches",
+        "fatigue"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_body_aches_in",
+        "adult_cough_in",
+        "adult_fatigue_in",
+        "adult_fever_in",
+        "adult_metabolic_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 22,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "RESPIRATORY_10",
+      "domain": "respiratory",
+      "name": "Chronic bronchitis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "cough",
+        "sputum",
+        "breathing_difficulty"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_sputum_change_in"
+      ],
+      "engineering_case_count": 8,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_01",
+      "domain": "infectious",
+      "name": "Dengue fever",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 8,
+      "routed_symptoms": [
+        "fever",
+        "headache",
+        "eye_pain",
+        "body_aches",
+        "joint_pain",
+        "rash",
+        "vomiting",
+        "bleeding_gums"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_body_aches_in",
+        "adult_eye_pain_in",
+        "adult_fever_in",
+        "adult_fever_joint_pain_in",
+        "adult_fever_rash_in",
+        "adult_headache_in",
+        "adult_mucosal_bleeding_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 24,
+      "candidate_source_ids": [
+        "WHO_DENGUE"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_02",
+      "domain": "infectious",
+      "name": "Malaria",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 6,
+      "routed_symptoms": [
+        "fever",
+        "chills",
+        "headache",
+        "body_aches",
+        "nausea",
+        "vomiting"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_body_aches_in",
+        "adult_fever_in",
+        "adult_headache_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 13,
+      "candidate_source_ids": [
+        "CDC_MALARIA"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_03",
+      "domain": "infectious",
+      "name": "Enteric fever",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 6,
+      "routed_symptoms": [
+        "fever",
+        "headache",
+        "fatigue",
+        "abdominal_pain",
+        "diarrhea",
+        "constipation"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_constipation_in",
+        "adult_diarrhea_in",
+        "adult_fatigue_in",
+        "adult_fever_in",
+        "adult_headache_in",
+        "adult_metabolic_symptoms_in"
+      ],
+      "engineering_case_count": 22,
+      "candidate_source_ids": [
+        "WHO_TYPHOID"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_04",
+      "domain": "infectious",
+      "name": "Chikungunya",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "fever",
+        "joint_pain",
+        "rash",
+        "swollen_joints",
+        "headache"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_fever_in",
+        "adult_fever_joint_pain_in",
+        "adult_fever_rash_in",
+        "adult_headache_in"
+      ],
+      "engineering_case_count": 13,
+      "candidate_source_ids": [
+        "WHO_CHIKUNGUNYA"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_05",
+      "domain": "infectious",
+      "name": "Influenza",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "fever",
+        "cough",
+        "sore_throat",
+        "body_aches",
+        "fatigue"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_body_aches_in",
+        "adult_cough_in",
+        "adult_fatigue_in",
+        "adult_fever_in",
+        "adult_metabolic_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 22,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_06",
+      "domain": "infectious",
+      "name": "COVID-19",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "fever",
+        "cough",
+        "sore_throat",
+        "fatigue",
+        "breathing_difficulty"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_cough_in",
+        "adult_fatigue_in",
+        "adult_fever_in",
+        "adult_metabolic_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 20,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_07",
+      "domain": "infectious",
+      "name": "Tuberculosis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "cough",
+        "fever",
+        "night_sweats",
+        "unexplained_weight_loss",
+        "coughing_blood"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_coughing_blood_in",
+        "adult_fever_in",
+        "adult_night_sweats_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 18,
+      "candidate_source_ids": [
+        "NTEP_TB"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_08",
+      "domain": "infectious",
+      "name": "Acute viral respiratory infection",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "sore_throat",
+        "cough",
+        "runny_nose",
+        "fever"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_fever_in",
+        "adult_nasal_symptoms_in",
+        "adult_sore_throat_in"
+      ],
+      "engineering_case_count": 18,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_09",
+      "domain": "infectious",
+      "name": "Acute infectious gastroenteritis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "diarrhea",
+        "vomiting",
+        "nausea",
+        "abdominal_pain",
+        "fever"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_diarrhea_in",
+        "adult_fever_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 16,
+      "candidate_source_ids": [
+        "NHS_DIARRHEA"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_10",
+      "domain": "infectious",
+      "name": "Viral hepatitis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "jaundice",
+        "dark_urine",
+        "fatigue",
+        "nausea",
+        "abdominal_pain"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_fatigue_in",
+        "adult_jaundice_in",
+        "adult_metabolic_symptoms_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 12,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_11",
+      "domain": "infectious",
+      "name": "Urinary tract infection",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "painful_urination",
+        "urinary_urgency",
+        "frequent_urination",
+        "flank_pain",
+        "fever"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_fever_in",
+        "adult_metabolic_symptoms_in",
+        "adult_urinary_symptoms_in"
+      ],
+      "engineering_case_count": 10,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "INFECTIOUS_12",
+      "domain": "infectious",
+      "name": "Intestinal parasitic infection",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "abdominal_pain",
+        "diarrhea",
+        "bloating",
+        "loss_of_appetite",
+        "anal_itch"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_anal_symptoms_in",
+        "adult_appetite_loss_in",
+        "adult_bloating_in",
+        "adult_diarrhea_in"
+      ],
+      "engineering_case_count": 12,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_01",
+      "domain": "gastroenterology",
+      "name": "GERD",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "heartburn",
+        "acid_regurgitation",
+        "cough"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_cough_in",
+        "adult_reflux_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_02",
+      "domain": "gastroenterology",
+      "name": "Gastritis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "abdominal_pain",
+        "nausea",
+        "vomiting",
+        "bloating"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_bloating_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 10,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_03",
+      "domain": "gastroenterology",
+      "name": "Acute gastroenteritis",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "vomiting",
+        "diarrhea",
+        "abdominal_pain",
+        "fever"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_diarrhea_in",
+        "adult_fever_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 16,
+      "candidate_source_ids": [
+        "NHS_DIARRHEA"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_04",
+      "domain": "gastroenterology",
+      "name": "Peptic ulcer disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "abdominal_pain",
+        "heartburn",
+        "nausea",
+        "black_stool"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_rectal_bleeding_in",
+        "adult_reflux_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 8,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_05",
+      "domain": "gastroenterology",
+      "name": "Irritable bowel syndrome",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "abdominal_pain",
+        "bloating",
+        "diarrhea",
+        "constipation"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_bloating_in",
+        "adult_constipation_in",
+        "adult_diarrhea_in"
+      ],
+      "engineering_case_count": 12,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_06",
+      "domain": "gastroenterology",
+      "name": "Chronic constipation",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "constipation",
+        "bloating",
+        "abdominal_pain"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_bloating_in",
+        "adult_constipation_in"
+      ],
+      "engineering_case_count": 9,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_07",
+      "domain": "gastroenterology",
+      "name": "Infectious diarrhea",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "diarrhea",
+        "abdominal_pain",
+        "vomiting",
+        "fever"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_diarrhea_in",
+        "adult_fever_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 16,
+      "candidate_source_ids": [
+        "NHS_DIARRHEA"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_08",
+      "domain": "gastroenterology",
+      "name": "Hemorrhoids",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "rectal_bleeding",
+        "anal_itch",
+        "anal_pain"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_anal_symptoms_in",
+        "adult_rectal_bleeding_in"
+      ],
+      "engineering_case_count": 5,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_09",
+      "domain": "gastroenterology",
+      "name": "Gallstone disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "upper_right_abdominal_pain",
+        "abdominal_pain",
+        "nausea",
+        "vomiting"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_upper_abdominal_pain_in",
+        "adult_vomiting_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_10",
+      "domain": "gastroenterology",
+      "name": "Metabolic dysfunction-associated steatotic liver disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 2,
+      "routed_symptoms": [
+        "fatigue",
+        "abdominal_pain"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in"
+      ],
+      "engineering_case_count": 9,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "GASTROENTEROLOGY_11",
+      "domain": "gastroenterology",
+      "name": "Intestinal helminth infection",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "abdominal_pain",
+        "diarrhea",
+        "bloating",
+        "anal_itch"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_anal_symptoms_in",
+        "adult_bloating_in",
+        "adult_diarrhea_in"
+      ],
+      "engineering_case_count": 10,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_01",
+      "domain": "cardiology",
+      "name": "Hypertension",
+      "presentation_mode": "primarily_measurement_or_screening",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "high_bp_reading",
+        "headache",
+        "dizziness",
+        "blurred_vision"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_bp_reading_in",
+        "adult_dizziness_in",
+        "adult_headache_in",
+        "adult_visual_change_in"
+      ],
+      "engineering_case_count": 12,
+      "candidate_source_ids": [
+        "WHO_HYPERTENSION"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_02",
+      "domain": "cardiology",
+      "name": "Coronary artery disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "chest_discomfort",
+        "chest_pressure",
+        "breathlessness_on_exertion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_chest_symptoms_in",
+        "adult_exertional_breathlessness_in"
+      ],
+      "engineering_case_count": 6,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_03",
+      "domain": "cardiology",
+      "name": "Ischemic heart disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "chest_discomfort",
+        "chest_pressure",
+        "shortness_of_breath"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_breathlessness_in",
+        "adult_chest_symptoms_in"
+      ],
+      "engineering_case_count": 6,
+      "candidate_source_ids": [
+        "NICE_CG95"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_04",
+      "domain": "cardiology",
+      "name": "Angina",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "chest_discomfort",
+        "chest_pressure",
+        "breathlessness_on_exertion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_chest_symptoms_in",
+        "adult_exertional_breathlessness_in"
+      ],
+      "engineering_case_count": 6,
+      "candidate_source_ids": [
+        "NICE_CG95"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_05",
+      "domain": "cardiology",
+      "name": "Heart failure",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "leg_swelling",
+        "breathlessness_on_exertion",
+        "orthopnea",
+        "reduced_exercise_tolerance"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_exertional_breathlessness_in",
+        "adult_leg_swelling_in"
+      ],
+      "engineering_case_count": 6,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_06",
+      "domain": "cardiology",
+      "name": "Cardiac arrhythmia",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "palpitations",
+        "dizziness",
+        "fainting",
+        "irregular_pulse"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_chest_symptoms_in",
+        "adult_dizziness_in",
+        "adult_fainting_in",
+        "adult_pulse_changes_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_07",
+      "domain": "cardiology",
+      "name": "Atrial fibrillation",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "palpitations",
+        "irregular_pulse",
+        "breathlessness_on_exertion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_chest_symptoms_in",
+        "adult_exertional_breathlessness_in",
+        "adult_pulse_changes_in"
+      ],
+      "engineering_case_count": 8,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_08",
+      "domain": "cardiology",
+      "name": "Valvular heart disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "breathlessness_on_exertion",
+        "fatigue",
+        "fainting"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_exertional_breathlessness_in",
+        "adult_fainting_in",
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in"
+      ],
+      "engineering_case_count": 10,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_09",
+      "domain": "cardiology",
+      "name": "Peripheral artery disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 2,
+      "routed_symptoms": [
+        "calf_pain_walking",
+        "cold_extremity"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_calf_pain_in"
+      ],
+      "engineering_case_count": 2,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_10",
+      "domain": "cardiology",
+      "name": "Rheumatic heart disease",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "breathlessness_on_exertion",
+        "fatigue",
+        "palpitations"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_chest_symptoms_in",
+        "adult_exertional_breathlessness_in",
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in"
+      ],
+      "engineering_case_count": 9,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "CARDIOLOGY_11",
+      "domain": "cardiology",
+      "name": "Dyslipidemia (risk factor)",
+      "presentation_mode": "primarily_measurement_or_screening",
+      "associated_symptom_count": 1,
+      "routed_symptoms": [
+        "abnormal_lipid_test"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_lipid_measurement_in"
+      ],
+      "engineering_case_count": 2,
+      "candidate_source_ids": [
+        "WHO_HYPERTENSION"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_01",
+      "domain": "endocrinology",
+      "name": "Type 2 diabetes mellitus",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "excessive_thirst",
+        "frequent_urination",
+        "fatigue",
+        "unexplained_weight_change",
+        "blurred_vision"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in",
+        "adult_visual_change_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 14,
+      "candidate_source_ids": [
+        "ADA_2026"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_02",
+      "domain": "endocrinology",
+      "name": "Hypothyroidism",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 6,
+      "routed_symptoms": [
+        "fatigue",
+        "cold_intolerance",
+        "weight_gain",
+        "constipation",
+        "hair_loss",
+        "dry_skin"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_constipation_in",
+        "adult_fatigue_in",
+        "adult_hair_skin_changes_in",
+        "adult_metabolic_symptoms_in",
+        "adult_thyroid_symptoms_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 10,
+      "candidate_source_ids": [
+        "NIDDK_HYPO"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_03",
+      "domain": "endocrinology",
+      "name": "Hyperthyroidism",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "heat_intolerance",
+        "unexplained_weight_change",
+        "fast_heart_rate",
+        "tremor",
+        "weight_loss"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_metabolic_symptoms_in",
+        "adult_pulse_changes_in",
+        "adult_thyroid_symptoms_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 3,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_04",
+      "domain": "endocrinology",
+      "name": "Obesity",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "body_weight_concern",
+        "weight_gain",
+        "breathlessness_on_exertion"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_exertional_breathlessness_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 3,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_05",
+      "domain": "endocrinology",
+      "name": "Metabolic syndrome",
+      "presentation_mode": "primarily_measurement_or_screening",
+      "associated_symptom_count": 4,
+      "routed_symptoms": [
+        "high_bp_reading",
+        "abnormal_lipid_test",
+        "abnormal_glucose_reading",
+        "body_weight_concern"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abnormal_glucose_in",
+        "adult_bp_reading_in",
+        "adult_lipid_measurement_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 8,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_06",
+      "domain": "endocrinology",
+      "name": "Polycystic ovary syndrome",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "menstrual_irregularity",
+        "acne",
+        "excess_facial_hair",
+        "hair_loss",
+        "infertility_concern"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_hair_skin_changes_in",
+        "adult_menstrual_irregularity_in"
+      ],
+      "engineering_case_count": 5,
+      "candidate_source_ids": [
+        "WHO_PCOS"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_07",
+      "domain": "endocrinology",
+      "name": "Goitre and thyroid nodules",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 3,
+      "routed_symptoms": [
+        "neck_swelling",
+        "difficulty_swallowing",
+        "abnormal_thyroid_test"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_neck_swelling_in",
+        "adult_swallowing_difficulty_in",
+        "adult_thyroid_symptoms_in"
+      ],
+      "engineering_case_count": 6,
+      "candidate_source_ids": [
+        "ICMR_STW"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_08",
+      "domain": "endocrinology",
+      "name": "Gestational diabetes",
+      "presentation_mode": "primarily_measurement_or_screening",
+      "associated_symptom_count": 2,
+      "routed_symptoms": [
+        "abnormal_glucose_reading",
+        "abnormal_hba1c"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abnormal_glucose_in"
+      ],
+      "engineering_case_count": 3,
+      "candidate_source_ids": [
+        "ADA_2026"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_09",
+      "domain": "endocrinology",
+      "name": "Type 1 diabetes mellitus",
+      "presentation_mode": "mixed_or_symptomatic",
+      "associated_symptom_count": 5,
+      "routed_symptoms": [
+        "excessive_thirst",
+        "frequent_urination",
+        "unexplained_weight_loss",
+        "fatigue",
+        "vomiting"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abdominal_pain_in",
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in",
+        "adult_vomiting_in",
+        "adult_weight_change_in"
+      ],
+      "engineering_case_count": 11,
+      "candidate_source_ids": [
+        "ADA_2026"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    },
+    {
+      "condition_id": "ENDOCRINOLOGY_10",
+      "domain": "endocrinology",
+      "name": "Prediabetes (risk state)",
+      "presentation_mode": "primarily_measurement_or_screening",
+      "associated_symptom_count": 2,
+      "routed_symptoms": [
+        "abnormal_hba1c",
+        "abnormal_glucose_reading"
+      ],
+      "safety_only_symptoms": [],
+      "unrouted_symptoms": [],
+      "pathways": [
+        "adult_abnormal_glucose_in"
+      ],
+      "engineering_case_count": 3,
+      "candidate_source_ids": [
+        "ADA_2026"
+      ],
+      "mapping_status": "ALL_PRESENTATIONS_ROUTED_IN_DRAFT",
+      "approved_pathway_count": 0,
+      "clinical_readiness": "NOT_CLINICALLY_VALIDATED",
+      "limitations": [
+        "associations are not diagnostic",
+        "draft decision tables",
+        "child/pregnancy populations not supported",
+        "clinical sign-off missing"
+      ]
+    }
+  ],
+  "symptoms": [
+    {
+      "code": "cough",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_cough_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 8,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sore_throat",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sore_throat_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "runny_nose",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_nasal_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "nasal_congestion",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_nasal_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sneezing",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_nasal_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "wheezing",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_wheeze_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "breathing_difficulty",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_breathlessness_in"
+      ],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "shortness_of_breath",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_breathlessness_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sputum",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sputum_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sputum_change",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sputum_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "chest_congestion",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sputum_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "hoarse_voice",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sore_throat_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "coughing_blood",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_coughing_blood_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "noisy_breathing",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_wheeze_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "night_cough",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_sputum_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "pleuritic_chest_pain",
+      "domains": [
+        "respiratory"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_pleuritic_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "fever",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fever_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 5,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "chills",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fever_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "body_aches",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_body_aches_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "joint_pain",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fever_joint_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "headache",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_headache_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "rash",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fever_rash_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "night_sweats",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_night_sweats_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "fatigue",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fatigue_in",
+        "adult_metabolic_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 4,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "muscle_pain",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_body_aches_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "eye_pain",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_eye_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "swollen_lymph_nodes",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "jaundice",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_jaundice_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "dark_urine",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_jaundice_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "itching",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_itching_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "painful_urination",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_urinary_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "urinary_urgency",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_urinary_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "flank_pain",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_urinary_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "swollen_joints",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fever_joint_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "unexplained_weight_loss",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_weight_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "neck_stiffness",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SUPPORTING_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "photophobia",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SUPPORTING_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "bleeding_gums",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_mucosal_bleeding_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "persistent_fever",
+      "domains": [
+        "infectious"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_night_sweats_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "abdominal_pain",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abdominal_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 5,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "heartburn",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_reflux_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "acid_regurgitation",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_reflux_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "nausea",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_vomiting_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "vomiting",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abdominal_pain_in",
+        "adult_vomiting_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "diarrhea",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abdominal_pain_in",
+        "adult_diarrhea_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "constipation",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_constipation_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "bloating",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bloating_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "gas",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bloating_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "rectal_bleeding",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_rectal_bleeding_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "black_stool",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_rectal_bleeding_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "blood_in_vomit",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SAFETY_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "difficulty_swallowing",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_swallowing_difficulty_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "early_satiety",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bloating_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "loss_of_appetite",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_appetite_loss_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "upper_right_abdominal_pain",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_upper_abdominal_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "anal_pain",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_anal_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "anal_itch",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_anal_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "mucus_stool",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_diarrhea_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sticky_pale_stool",
+      "domains": [
+        "gastroenterology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_jaundice_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "chest_discomfort",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_chest_symptoms_in"
+      ],
+      "safety_fact": true,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "chest_pressure",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_chest_symptoms_in"
+      ],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "palpitations",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_chest_symptoms_in"
+      ],
+      "safety_fact": true,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "fainting",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fainting_in"
+      ],
+      "safety_fact": true,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "near_fainting",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fainting_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "leg_swelling",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_leg_swelling_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "ankle_swelling",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_leg_swelling_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "dizziness",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_dizziness_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "breathlessness_on_exertion",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_exertional_breathlessness_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "reduced_exercise_tolerance",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_exertional_breathlessness_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "irregular_pulse",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_pulse_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "calf_pain_walking",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_calf_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "cold_extremity",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_calf_pain_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "high_bp_reading",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bp_reading_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "low_bp_reading",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bp_reading_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "orthopnea",
+      "domains": [
+        "cardiology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_exertional_breathlessness_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "excessive_thirst",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_metabolic_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "frequent_urination",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_metabolic_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "unexplained_weight_change",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_metabolic_symptoms_in",
+        "adult_weight_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "weight_gain",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_weight_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "heat_intolerance",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_thyroid_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "cold_intolerance",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_thyroid_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "hair_loss",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_hair_skin_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "dry_skin",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_hair_skin_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "menstrual_irregularity",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_menstrual_irregularity_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "heavy_periods",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_menstrual_irregularity_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "excess_facial_hair",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_hair_skin_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "neck_swelling",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_neck_swelling_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "hunger_increase",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "blurred_vision",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_visual_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "nonhealing_wound",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "tremor",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_thyroid_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "heat_sweating",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "slow_heart_rate",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_pulse_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "fast_heart_rate",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_pulse_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "acne",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_hair_skin_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "dark_skin_patches",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_hair_skin_changes_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "infertility_concern",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_menstrual_irregularity_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "abnormal_glucose_reading",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abnormal_glucose_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 3,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "abnormal_thyroid_test",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_thyroid_symptoms_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "abnormal_lipid_test",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_lipid_measurement_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "abnormal_hba1c",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abnormal_glucose_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "body_weight_concern",
+      "domains": [
+        "endocrinology"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_weight_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "dehydration_symptoms",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "confusion",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "severe_weakness",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_fatigue_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "sudden_severe_headache",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SAFETY_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "vision_loss",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SUPPORTING_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 2,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "speech_difficulty",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SAFETY_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "severe_allergic_reaction",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "unconscious",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SAFETY_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "ongoing_seizure",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "VOCABULARY_ONLY",
+      "route_pathways": [],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "severe_bleeding",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "SAFETY_FACT_ONLY",
+      "route_pathways": [],
+      "safety_fact": true,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "measured_blood_pressure",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_bp_reading_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "measured_blood_glucose",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_abnormal_glucose_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    },
+    {
+      "code": "weight_loss",
+      "domains": [
+        "cross_cutting"
+      ],
+      "term_status": "DRAFT_UNREVIEWED",
+      "routing_status": "ROUTED_DRAFT",
+      "route_pathways": [
+        "adult_weight_change_in"
+      ],
+      "safety_fact": false,
+      "engineering_cases_count": 0,
+      "clinical_readiness": "NOT_VALIDATED"
+    }
+  ],
+  "pathways": [
+    {
+      "id": "adult_abdominal_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 4,
+      "question_count": 7,
+      "route_codes": [
+        "abdominal_pain",
+        "vomiting",
+        "diarrhea"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    },
+    {
+      "id": "adult_abnormal_glucose_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "abnormal_glucose_reading",
+        "abnormal_hba1c",
+        "measured_blood_glucose"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_anal_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "anal_pain",
+        "anal_itch"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_appetite_loss_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "loss_of_appetite"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_bloating_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "bloating",
+        "gas",
+        "early_satiety"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_body_aches_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "body_aches",
+        "muscle_pain"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_bp_reading_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "high_bp_reading",
+        "low_bp_reading",
+        "measured_blood_pressure"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_breathlessness_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "shortness_of_breath",
+        "breathing_difficulty"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_calf_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "calf_pain_walking",
+        "cold_extremity"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_chest_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 4,
+      "question_count": 5,
+      "route_codes": [
+        "chest_discomfort",
+        "chest_pressure",
+        "palpitations"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    },
+    {
+      "id": "adult_constipation_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "constipation"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_cough_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 4,
+      "question_count": 6,
+      "route_codes": [
+        "cough"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    },
+    {
+      "id": "adult_coughing_blood_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "coughing_blood"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_diarrhea_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "diarrhea",
+        "mucus_stool"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_dizziness_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "dizziness"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_exertional_breathlessness_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "breathlessness_on_exertion",
+        "orthopnea",
+        "reduced_exercise_tolerance"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_eye_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "eye_pain"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_fainting_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 4,
+      "route_codes": [
+        "fainting",
+        "near_fainting"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_fatigue_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "fatigue",
+        "severe_weakness"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_fever_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 4,
+      "question_count": 6,
+      "route_codes": [
+        "fever",
+        "chills"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    },
+    {
+      "id": "adult_fever_joint_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 3,
+      "route_codes": [
+        "joint_pain",
+        "swollen_joints"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_fever_rash_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 5,
+      "route_codes": [
+        "rash"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_hair_skin_changes_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "hair_loss",
+        "dry_skin",
+        "excess_facial_hair",
+        "acne",
+        "dark_skin_patches"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_headache_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 5,
+      "route_codes": [
+        "headache"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_itching_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "itching"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_jaundice_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 4,
+      "route_codes": [
+        "jaundice",
+        "dark_urine",
+        "sticky_pale_stool"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_leg_swelling_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "leg_swelling",
+        "ankle_swelling"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_lipid_measurement_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "abnormal_lipid_test"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_menstrual_irregularity_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "menstrual_irregularity",
+        "heavy_periods",
+        "infertility_concern"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_metabolic_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 5,
+      "route_codes": [
+        "excessive_thirst",
+        "frequent_urination",
+        "unexplained_weight_change",
+        "fatigue"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    },
+    {
+      "id": "adult_mucosal_bleeding_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "bleeding_gums"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_nasal_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "runny_nose",
+        "nasal_congestion",
+        "sneezing"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_neck_swelling_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "neck_swelling"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_night_sweats_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "night_sweats",
+        "persistent_fever"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_pleuritic_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "pleuritic_chest_pain"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_pulse_changes_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "irregular_pulse",
+        "fast_heart_rate",
+        "slow_heart_rate"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_rectal_bleeding_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 4,
+      "route_codes": [
+        "rectal_bleeding",
+        "black_stool"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_reflux_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "heartburn",
+        "acid_regurgitation"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_sore_throat_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "sore_throat",
+        "hoarse_voice"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_sputum_change_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "sputum",
+        "sputum_change",
+        "chest_congestion",
+        "night_cough"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_swallowing_difficulty_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 4,
+      "route_codes": [
+        "difficulty_swallowing"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_thyroid_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "cold_intolerance",
+        "heat_intolerance",
+        "tremor",
+        "abnormal_thyroid_test"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_upper_abdominal_pain_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "upper_right_abdominal_pain"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_urinary_symptoms_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 3,
+      "question_count": 3,
+      "route_codes": [
+        "painful_urination",
+        "urinary_urgency",
+        "flank_pain"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_visual_change_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "blurred_vision"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_vomiting_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "vomiting",
+        "nausea"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_weight_change_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 1,
+      "question_count": 4,
+      "route_codes": [
+        "weight_gain",
+        "weight_loss",
+        "body_weight_concern",
+        "unexplained_weight_change",
+        "unexplained_weight_loss"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "adult_wheeze_in",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 2,
+      "question_count": 4,
+      "route_codes": [
+        "wheezing",
+        "noisy_breathing"
+      ],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not independently validated",
+        "not approved for patient care",
+        "excludes pregnancy and children",
+        "not a definitive disease model"
+      ]
+    },
+    {
+      "id": "global_emergency",
+      "version": "0.2.0",
+      "clinical_status": "draft",
+      "rule_count": 17,
+      "question_count": 0,
+      "route_codes": [],
+      "clinical_owner": "UNASSIGNED",
+      "limitations": [
+        "not clinically validated",
+        "not for direct patient use"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+NTEP_TB:
+  title: NTEP diagnostic algorithm for TB disease
+  url: https://www.ntep.in/node/1743/CP-diagnostic-algorithm-tb-disease-ntep
+  use: Cough >2 weeks criterion; confirm national updates before release
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NICE_NG120:
+  title: NICE NG120 Acute cough
+  url: https://www.nice.org.uk/guidance/ng120/chapter/recommendations
+  use: Background acute cough and referral cautions; UK source requires localization
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NICE_CG95:
+  title: NICE CG95 Recent onset chest pain
+  url: https://www.nice.org.uk/guidance/cg95/chapter/recommendations
+  use: ACS warning signs and referral concepts; India localization required
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_DENGUE:
+  title: WHO Dengue and severe dengue
+  url: https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue
+  use: General warning-sign context only; not a fully implemented dengue protocol
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_FEVER_GENERAL:
+  title: WHO SMART guidelines
+  url: https://smart.who.int/
+  use: Workflow structure; does not validate numeric fever cutoffs in these drafts
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NHS_ABDOMINAL:
+  title: NHS Stomach ache
+  url: https://www.nhs.uk/symptoms/stomach-ache/
+  use: General abdominal warning signs; UK source requires localization
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+CDC_DIABETES:
+  title: CDC Symptoms of Diabetes
+  url: https://www.cdc.gov/diabetes/signs-symptoms/index.html
+  use: Classic symptom associations only, not diagnostic probability
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+CDC_DKA:
+  title: CDC Diabetic Ketoacidosis
+  url: https://www.cdc.gov/diabetes/about/diabetic-ketoacidosis.html
+  use: Awareness of high-risk symptoms with known diabetes
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NHS_999:
+  title: NHS When to call 999
+  url: https://www.nhs.uk/nhs-services/urgent-and-emergency-care-services/when-to-call-999/
+  use: Selected general emergencies; not an exhaustive global safety screen
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+INDIA_112:
+  title: India Emergency Response Support System
+  url: https://112.gov.in/
+  use: Emergency contact in India
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+CDSCO_2026:
+  title: CDSCO Medical Device Software Guidance 2026
+  url: https://www.cdsco.gov.in/opencms/export/sites/CDSCO_WEB/Pdf-documents/Guidance-document-on-Medical-Device-Software-under-MDR-2017.pdf
+  use: Regulatory scope and intended-use evaluation
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+ICMR_STW:
+  title: ICMR Standard Treatment Workflows
+  url: https://www.icmr.gov.in/standard-treatment-workflows-stws
+  use: Indian clinical context and index of specialty-specific workflows; individual condition document review pending.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NCVBDC_DENGUE_2023:
+  title: India NCVBDC National Guidelines for Clinical Management of Dengue Fever, 2023
+  url: https://ncvbdc.mohfw.gov.in/Doc/National%20Guidelines%20for%20Clinical%20Management%20of%20Dengue%20Fever%202023.pdf
+  use: India dengue warning-sign reference; exact guideline extraction and clinician review pending.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+CDC_MALARIA:
+  title: CDC Symptoms of Malaria
+  url: https://www.cdc.gov/malaria/symptoms/index.html
+  use: Broad malaria symptom associations; no diagnosis.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_TYPHOID:
+  title: WHO Typhoid fact sheet
+  url: https://www.who.int/news-room/fact-sheets/detail/typhoid/
+  use: Enteric fever presentation associations.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_CHIKUNGUNYA:
+  title: WHO Chikungunya fact sheet
+  url: https://www.who.int/news-room/fact-sheets/detail/Chikungunya
+  use: Fever and joint pain presentations.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NHS_DIARRHEA:
+  title: NHS Diarrhoea and vomiting
+  url: https://www.nhs.uk/symptoms/diarrhoea-and-vomiting/
+  use: General dehydration, duration and GI red-flag considerations; Indian adaptation pending.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_HYPERTENSION:
+  title: WHO Hypertension
+  url: https://www.who.int/news-room/fact-sheets/detail/hypertension
+  use: Hypertension often asymptomatic, measurement-based assessment.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+ADA_2026:
+  title: ADA Standards of Care in Diabetes 2026
+  url: https://diabetesjournals.org/care/issue/49/Supplement_1
+  use: Diabetes symptom associations and DKA/HHS warning considerations; patient-facing workflow review pending.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_PCOS:
+  title: WHO Polycystic ovary syndrome fact sheet, 2026
+  url: https://www.who.int/news-room/fact-sheets/detail/polycystic-ovary-syndrome
+  use: PCOS clinical symptom knowledge, not self-diagnosis.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NIDDK_HYPO:
+  title: NIDDK Hypothyroidism
+  url: https://www.niddk.nih.gov/health-information/endocrine-diseases/hypothyroidism
+  use: Thyroid symptom associations and need for laboratory confirmation.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_SMART:
+  title: WHO SMART guidelines / Digital Adaptation Kits
+  url: https://smart.who.int/
+  use: Content/workflow architecture, not clinical validation of rules.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+ICD_API:
+  title: WHO ICD API
+  url: https://icd.who.int/icdapi/
+  use: Future terminology mapping after license/access checks.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+SNOMED_INDIA:
+  title: SNOMED International India Member
+  url: https://www.snomed.org/members/india
+  use: Future coded terminology integration under appropriate licensing.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+NSW_PALPITATIONS:
+  title: NSW Health Palpitations or symptomatic arrhythmia referral criteria
+  url: https://www.health.nsw.gov.au/outpatients/referrals/Pages/palpitations-arrhythmia-adult.aspx
+  use: Cross-reference for symptom+syncope concern; India adaptation pending.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation
+WHO_TB_DAK:
+  title: WHO Digital Adaptation Kit for Tuberculosis
+  url: https://www.who.int/publications/i/item/9789240086616
+  use: Digital pathway design and TB guideline adaptation.
+  last_reviewed_for_index: '2026-11-16'
+  clinical_rule_verification: pending_exact_clause_and_population_review
+  source_role: candidate_reference_not_direct_validation

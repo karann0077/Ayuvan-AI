@@ -1,0 +1,55 @@
+condition_id,domain,condition,presentation_mode,associated_symptoms_candidate,candidate_sources,clinical_review
+RESPIRATORY_01,respiratory,Common cold,mixed_or_symptomatic,runny_nose; nasal_congestion; sneezing; sore_throat; cough,ICMR_STW,pending
+RESPIRATORY_02,respiratory,Acute respiratory tract infection,mixed_or_symptomatic,cough; sore_throat; fever; runny_nose; breathing_difficulty,ICMR_STW,pending
+RESPIRATORY_03,respiratory,Acute bronchitis,mixed_or_symptomatic,cough; sputum; chest_congestion,NICE_NG120,pending
+RESPIRATORY_04,respiratory,Asthma,mixed_or_symptomatic,wheezing; breathing_difficulty; cough; night_cough; chest_congestion,ICMR_STW,pending
+RESPIRATORY_05,respiratory,COPD,mixed_or_symptomatic,breathing_difficulty; sputum; cough; breathlessness_on_exertion,ICMR_STW,pending
+RESPIRATORY_06,respiratory,Pneumonia,mixed_or_symptomatic,fever; cough; breathing_difficulty; pleuritic_chest_pain,ICMR_STW,pending
+RESPIRATORY_07,respiratory,Pulmonary tuberculosis,mixed_or_symptomatic,cough; fever; night_sweats; unexplained_weight_loss; coughing_blood,NTEP_TB,pending
+RESPIRATORY_08,respiratory,Allergic rhinitis,mixed_or_symptomatic,runny_nose; sneezing; nasal_congestion; itching,ICMR_STW,pending
+RESPIRATORY_09,respiratory,Influenza,mixed_or_symptomatic,fever; cough; sore_throat; body_aches; fatigue,ICMR_STW,pending
+RESPIRATORY_10,respiratory,Chronic bronchitis,mixed_or_symptomatic,cough; sputum; breathing_difficulty,ICMR_STW,pending
+INFECTIOUS_01,infectious,Dengue fever,mixed_or_symptomatic,fever; headache; eye_pain; body_aches; joint_pain; rash; vomiting; bleeding_gums,WHO_DENGUE,pending
+INFECTIOUS_02,infectious,Malaria,mixed_or_symptomatic,fever; chills; headache; body_aches; nausea; vomiting,CDC_MALARIA,pending
+INFECTIOUS_03,infectious,Enteric fever,mixed_or_symptomatic,fever; headache; fatigue; abdominal_pain; diarrhea; constipation,WHO_TYPHOID,pending
+INFECTIOUS_04,infectious,Chikungunya,mixed_or_symptomatic,fever; joint_pain; rash; swollen_joints; headache,WHO_CHIKUNGUNYA,pending
+INFECTIOUS_05,infectious,Influenza,mixed_or_symptomatic,fever; cough; sore_throat; body_aches; fatigue,ICMR_STW,pending
+INFECTIOUS_06,infectious,COVID-19,mixed_or_symptomatic,fever; cough; sore_throat; fatigue; breathing_difficulty,ICMR_STW,pending
+INFECTIOUS_07,infectious,Tuberculosis,mixed_or_symptomatic,cough; fever; night_sweats; unexplained_weight_loss; coughing_blood,NTEP_TB,pending
+INFECTIOUS_08,infectious,Acute viral respiratory infection,mixed_or_symptomatic,sore_throat; cough; runny_nose; fever,ICMR_STW,pending
+INFECTIOUS_09,infectious,Acute infectious gastroenteritis,mixed_or_symptomatic,diarrhea; vomiting; nausea; abdominal_pain; fever,NHS_DIARRHEA,pending
+INFECTIOUS_10,infectious,Viral hepatitis,mixed_or_symptomatic,jaundice; dark_urine; fatigue; nausea; abdominal_pain,ICMR_STW,pending
+INFECTIOUS_11,infectious,Urinary tract infection,mixed_or_symptomatic,painful_urination; urinary_urgency; frequent_urination; flank_pain; fever,ICMR_STW,pending
+INFECTIOUS_12,infectious,Intestinal parasitic infection,mixed_or_symptomatic,abdominal_pain; diarrhea; bloating; loss_of_appetite; anal_itch,ICMR_STW,pending
+GASTROENTEROLOGY_01,gastroenterology,GERD,mixed_or_symptomatic,heartburn; acid_regurgitation; cough,ICMR_STW,pending
+GASTROENTEROLOGY_02,gastroenterology,Gastritis,mixed_or_symptomatic,abdominal_pain; nausea; vomiting; bloating,ICMR_STW,pending
+GASTROENTEROLOGY_03,gastroenterology,Acute gastroenteritis,mixed_or_symptomatic,vomiting; diarrhea; abdominal_pain; fever,NHS_DIARRHEA,pending
+GASTROENTEROLOGY_04,gastroenterology,Peptic ulcer disease,mixed_or_symptomatic,abdominal_pain; heartburn; nausea; black_stool,ICMR_STW,pending
+GASTROENTEROLOGY_05,gastroenterology,Irritable bowel syndrome,mixed_or_symptomatic,abdominal_pain; bloating; diarrhea; constipation,ICMR_STW,pending
+GASTROENTEROLOGY_06,gastroenterology,Chronic constipation,mixed_or_symptomatic,constipation; bloating; abdominal_pain,ICMR_STW,pending
+GASTROENTEROLOGY_07,gastroenterology,Infectious diarrhea,mixed_or_symptomatic,diarrhea; abdominal_pain; vomiting; fever,NHS_DIARRHEA,pending
+GASTROENTEROLOGY_08,gastroenterology,Hemorrhoids,mixed_or_symptomatic,rectal_bleeding; anal_itch; anal_pain,ICMR_STW,pending
+GASTROENTEROLOGY_09,gastroenterology,Gallstone disease,mixed_or_symptomatic,upper_right_abdominal_pain; abdominal_pain; nausea; vomiting,ICMR_STW,pending
+GASTROENTEROLOGY_10,gastroenterology,Metabolic dysfunction-associated steatotic liver disease,mixed_or_symptomatic,fatigue; abdominal_pain,ICMR_STW,pending
+GASTROENTEROLOGY_11,gastroenterology,Intestinal helminth infection,mixed_or_symptomatic,abdominal_pain; diarrhea; bloating; anal_itch,ICMR_STW,pending
+CARDIOLOGY_01,cardiology,Hypertension,primarily_measurement_or_screening,high_bp_reading; headache; dizziness; blurred_vision,WHO_HYPERTENSION,pending
+CARDIOLOGY_02,cardiology,Coronary artery disease,mixed_or_symptomatic,chest_discomfort; chest_pressure; breathlessness_on_exertion,ICMR_STW,pending
+CARDIOLOGY_03,cardiology,Ischemic heart disease,mixed_or_symptomatic,chest_discomfort; chest_pressure; shortness_of_breath,NICE_CG95,pending
+CARDIOLOGY_04,cardiology,Angina,mixed_or_symptomatic,chest_discomfort; chest_pressure; breathlessness_on_exertion,NICE_CG95,pending
+CARDIOLOGY_05,cardiology,Heart failure,mixed_or_symptomatic,leg_swelling; breathlessness_on_exertion; orthopnea; reduced_exercise_tolerance,ICMR_STW,pending
+CARDIOLOGY_06,cardiology,Cardiac arrhythmia,mixed_or_symptomatic,palpitations; dizziness; fainting; irregular_pulse,ICMR_STW,pending
+CARDIOLOGY_07,cardiology,Atrial fibrillation,mixed_or_symptomatic,palpitations; irregular_pulse; breathlessness_on_exertion,ICMR_STW,pending
+CARDIOLOGY_08,cardiology,Valvular heart disease,mixed_or_symptomatic,breathlessness_on_exertion; fatigue; fainting,ICMR_STW,pending
+CARDIOLOGY_09,cardiology,Peripheral artery disease,mixed_or_symptomatic,calf_pain_walking; cold_extremity,ICMR_STW,pending
+CARDIOLOGY_10,cardiology,Rheumatic heart disease,mixed_or_symptomatic,breathlessness_on_exertion; fatigue; palpitations,ICMR_STW,pending
+CARDIOLOGY_11,cardiology,Dyslipidemia (risk factor),primarily_measurement_or_screening,abnormal_lipid_test,WHO_HYPERTENSION,pending
+ENDOCRINOLOGY_01,endocrinology,Type 2 diabetes mellitus,mixed_or_symptomatic,excessive_thirst; frequent_urination; fatigue; unexplained_weight_change; blurred_vision,ADA_2026,pending
+ENDOCRINOLOGY_02,endocrinology,Hypothyroidism,mixed_or_symptomatic,fatigue; cold_intolerance; weight_gain; constipation; hair_loss; dry_skin,NIDDK_HYPO,pending
+ENDOCRINOLOGY_03,endocrinology,Hyperthyroidism,mixed_or_symptomatic,heat_intolerance; unexplained_weight_change; fast_heart_rate; tremor; weight_loss,ICMR_STW,pending
+ENDOCRINOLOGY_04,endocrinology,Obesity,mixed_or_symptomatic,body_weight_concern; weight_gain; breathlessness_on_exertion,ICMR_STW,pending
+ENDOCRINOLOGY_05,endocrinology,Metabolic syndrome,primarily_measurement_or_screening,high_bp_reading; abnormal_lipid_test; abnormal_glucose_reading; body_weight_concern,ICMR_STW,pending
+ENDOCRINOLOGY_06,endocrinology,Polycystic ovary syndrome,mixed_or_symptomatic,menstrual_irregularity; acne; excess_facial_hair; hair_loss; infertility_concern,WHO_PCOS,pending
+ENDOCRINOLOGY_07,endocrinology,Goitre and thyroid nodules,mixed_or_symptomatic,neck_swelling; difficulty_swallowing; abnormal_thyroid_test,ICMR_STW,pending
+ENDOCRINOLOGY_08,endocrinology,Gestational diabetes,primarily_measurement_or_screening,abnormal_glucose_reading; abnormal_hba1c,ADA_2026,pending
+ENDOCRINOLOGY_09,endocrinology,Type 1 diabetes mellitus,mixed_or_symptomatic,excessive_thirst; frequent_urination; unexplained_weight_loss; fatigue; vomiting,ADA_2026,pending
+ENDOCRINOLOGY_10,endocrinology,Prediabetes (risk state),primarily_measurement_or_screening,abnormal_hba1c; abnormal_glucose_reading,ADA_2026,pending

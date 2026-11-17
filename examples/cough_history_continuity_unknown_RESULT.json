@@ -1,0 +1,166 @@
+{
+  "assessment_id": "029abd73-c69d-4eb2-a0b0-4cc79716c96d",
+  "simulated": true,
+  "intended_use": "Engineering simulation, NOT a validated clinical assessment",
+  "status": "QUESTION_REQUIRED",
+  "priority": null,
+  "action": null,
+  "timeframe": null,
+  "reason_codes": [
+    "QUESTION_REQUIRED"
+  ],
+  "question": {
+    "id": "COUGH_CONTINUITY",
+    "priority": 90,
+    "fact": "continuity",
+    "when": {
+      "all": [
+        {
+          "fact": "continuity",
+          "op": "unknown"
+        },
+        {
+          "fact": "prior_episode_unresolved",
+          "op": "present"
+        }
+      ]
+    },
+    "text": {
+      "en": "Is this the same cough as before without fully stopping, or did it stop and then return?"
+    },
+    "choices": [
+      {
+        "code": "continuous",
+        "label_en": "Continued",
+        "fact_state": "present",
+        "fact_value": "continuous"
+      },
+      {
+        "code": "resolved_then_recurred",
+        "label_en": "Stopped, then returned",
+        "fact_state": "present",
+        "fact_value": "resolved_then_recurred"
+      },
+      {
+        "code": "unknown",
+        "label_en": "Not sure",
+        "fact_state": "unknown",
+        "fact_value": null
+      }
+    ],
+    "answer_schema": {
+      "kind": "choice"
+    },
+    "can_change": [
+      "clinical_disposition"
+    ]
+  },
+  "response": "More verified information is required; no low-risk conclusion can be made.",
+  "results": [
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "INSUFFICIENT_INFORMATION",
+      "priority": null,
+      "action": null,
+      "timeframe": null,
+      "reason_codes": [
+        "NO_APPROVED_RULE_MATCHED"
+      ],
+      "evidence_ids": [],
+      "question": null,
+      "missing_or_conflicting": [
+        "severe_breathlessness",
+        "chest_pressure",
+        "chest_discomfort",
+        "cold_sweat",
+        "unilateral_weakness",
+        "unconscious",
+        "severe_allergic_swelling",
+        "severe_bleeding",
+        "seizure_ongoing",
+        "confusion_severe",
+        "sudden_severe_abdominal_pain",
+        "known_diabetes",
+        "persistent_vomiting",
+        "unable_to_drink"
+      ],
+      "response": null
+    },
+    {
+      "pathway_id": "adult_cough_in",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "QUESTION_REQUIRED",
+      "priority": null,
+      "action": null,
+      "timeframe": null,
+      "reason_codes": [
+        "QUESTION:COUGH_CONTINUITY"
+      ],
+      "evidence_ids": [],
+      "question": {
+        "id": "COUGH_CONTINUITY",
+        "priority": 90,
+        "fact": "continuity",
+        "when": {
+          "all": [
+            {
+              "fact": "continuity",
+              "op": "unknown"
+            },
+            {
+              "fact": "prior_episode_unresolved",
+              "op": "present"
+            }
+          ]
+        },
+        "text": {
+          "en": "Is this the same cough as before without fully stopping, or did it stop and then return?"
+        },
+        "choices": [
+          {
+            "code": "continuous",
+            "label_en": "Continued",
+            "fact_state": "present",
+            "fact_value": "continuous"
+          },
+          {
+            "code": "resolved_then_recurred",
+            "label_en": "Stopped, then returned",
+            "fact_state": "present",
+            "fact_value": "resolved_then_recurred"
+          },
+          {
+            "code": "unknown",
+            "label_en": "Not sure",
+            "fact_state": "unknown",
+            "fact_value": null
+          }
+        ],
+        "answer_schema": {
+          "kind": "choice"
+        },
+        "can_change": [
+          "clinical_disposition"
+        ]
+      },
+      "missing_or_conflicting": [
+        "continuity"
+      ],
+      "response": null
+    }
+  ],
+  "pathway_versions": {
+    "global_emergency": "0.1.0",
+    "adult_cough_in": "0.1.0"
+  },
+  "pathway_sha256": {
+    "global_emergency": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009",
+    "adult_cough_in": "1efdd58eb92d25d6a3518d0ce394ba96aa1aa21d5d599b7effeff7e1f847cedc"
+  },
+  "unresolved_pathways": [
+    "adult_cough_in"
+  ]
+}

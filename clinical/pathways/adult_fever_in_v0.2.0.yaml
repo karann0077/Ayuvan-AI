@@ -1,0 +1,230 @@
+id: adult_fever_in
+version: 0.2.0
+status: draft
+domain: infectious
+purpose: Adult fever pattern and associated symptoms
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: true
+  exclusions:
+  - age_below_18
+  - pregnancy
+  - outside_india
+  - inability_to_assess_remotely
+routing:
+  symptom_codes:
+  - fever
+  - chills
+required_facts:
+- fever
+- fever_duration_days
+- worsening
+- dehydration_signs
+- rash_bleeding
+- confusion_severe
+- unable_to_drink
+- body_aches
+rules:
+- id: FEVER_BLEEDING_RASH
+  when:
+    all:
+    - fact: fever
+      op: present
+    - fact: rash_bleeding
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; exact timeframe pending review
+  reason: Fever with concerning bleeding or rash
+  response_key: prompt
+  evidence:
+  - WHO_DENGUE
+- id: FEVER_POOR_INTAKE
+  when:
+    all:
+    - fact: fever
+      op: present
+    - fact: unable_to_drink
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; exact timeframe pending review
+  reason: Fever and inability to drink
+  response_key: prompt
+  evidence:
+  - WHO_DENGUE
+- id: FEVER_PERSIST_AND_WORSEN
+  when:
+    all:
+    - fact: fever
+      op: present
+    - fact: fever_duration_days
+      op: gte
+      value: 4
+    - fact: worsening
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: timeframe pending clinician review
+  reason: Persistent worsening fever (draft threshold)
+  response_key: routine
+  evidence:
+  - WHO_FEVER_GENERAL
+- id: FEVER_BRIEF_STABLE
+  when:
+    all:
+    - fact: fever
+      op: present
+    - fact: fever_duration_days
+      op: lte
+      value: 1
+    - fact: worsening
+      op: absent
+    - fact: dehydration_signs
+      op: absent
+    - fact: rash_bleeding
+      op: absent
+    - fact: unable_to_drink
+      op: absent
+  priority: P0
+  action: monitor_with_safety_net
+  timeframe: reassess if changes
+  reason: Brief fever without reported warning features
+  response_key: monitor
+  evidence:
+  - WHO_FEVER_GENERAL
+questions:
+- id: FEVER_CONFUSION
+  priority: 100
+  fact: confusion_severe
+  when:
+    fact: confusion_severe
+    op: unknown
+  text:
+    en: Is the person very confused or unusually difficult to wake?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: FEVER_DRINK
+  priority: 95
+  fact: unable_to_drink
+  when:
+    fact: unable_to_drink
+    op: unknown
+  text:
+    en: Are you unable to drink or keep fluids down?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: FEVER_RASH
+  priority: 90
+  fact: rash_bleeding
+  when:
+    fact: rash_bleeding
+    op: unknown
+  text:
+    en: Have you noticed unusual bleeding or a concerning rash?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: FEVER_DEHYDRATION
+  priority: 85
+  fact: dehydration_signs
+  when:
+    fact: dehydration_signs
+    op: unknown
+  text:
+    en: Are there signs of dehydration such as very little urine or marked dizziness?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+- id: FEVER_LENGTH
+  priority: 80
+  fact: fever_duration_days
+  when:
+    fact: fever_duration_days
+    op: unknown
+  text:
+    en: How long have you had fever (number of days)?
+  choices: []
+  answer_schema:
+    kind: nonnegative_integer
+  can_change:
+  - clinical_disposition
+- id: FEVER_WORSEN
+  priority: 65
+  fact: worsening
+  when:
+    fact: worsening
+    op: unknown
+  text:
+    en: Is the illness getting worse rather than improving?
+  choices: []
+  answer_schema:
+    kind: confirmation_required_text
+  can_change:
+  - clinical_disposition
+responses:
+  prompt:
+    en: Fever with these accompanying features needs prompt professional assessment. If severe deterioration occurs,
+      seek emergency help.
+  routine:
+    en: The fever has persisted and worsened. Arrange clinical assessment according to the applicable reviewed guidance.
+  monitor:
+    en: A short fever without the warning features asked about may be monitored, with reassessment if symptoms worsen
+      or persist.
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - WHO_DENGUE
+  - WHO_FEVER_GENERAL
+  - WHO_SMART
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  - version: 0.2.0
+    change: Versioned fork to expanded taxonomy, mappings and coverage audit; no evidence of clinical approval.
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

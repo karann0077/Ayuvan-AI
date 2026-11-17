@@ -1,0 +1,264 @@
+{
+  "$defs": {
+    "Episode": {
+      "additionalProperties": false,
+      "properties": {
+        "episode_id": {
+          "title": "Episode Id",
+          "type": "string"
+        },
+        "symptom_code": {
+          "title": "Symptom Code",
+          "type": "string"
+        },
+        "onset_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Onset At"
+        },
+        "resolution_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution At"
+        },
+        "status": {
+          "default": "uncertain",
+          "enum": [
+            "active",
+            "resolved",
+            "uncertain"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "continuity": {
+          "default": "unknown",
+          "enum": [
+            "continuous",
+            "resolved_then_recurred",
+            "new",
+            "unknown"
+          ],
+          "title": "Continuity",
+          "type": "string"
+        },
+        "onset_confirmed": {
+          "default": false,
+          "title": "Onset Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "episode_id",
+        "symptom_code"
+      ],
+      "title": "Episode",
+      "type": "object"
+    },
+    "Fact": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Code",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/FactState"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "recorded_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recorded At"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        },
+        "source_type": {
+          "enum": [
+            "patient",
+            "clinician",
+            "document",
+            "extracted",
+            "device"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "source_id": {
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "verification": {
+          "default": "unverified",
+          "enum": [
+            "unverified",
+            "patient_confirmed",
+            "clinician_confirmed"
+          ],
+          "title": "Verification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "state",
+        "observed_at",
+        "source_type",
+        "source_id"
+      ],
+      "title": "Fact",
+      "type": "object"
+    },
+    "FactState": {
+      "enum": [
+        "present",
+        "absent",
+        "unknown",
+        "contradictory"
+      ],
+      "title": "FactState",
+      "type": "string"
+    },
+    "Population": {
+      "additionalProperties": false,
+      "properties": {
+        "age_years": {
+          "anyOf": [
+            {
+              "maximum": 125,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Age Years"
+        },
+        "pregnant": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pregnant"
+        },
+        "location_country": {
+          "default": "IN",
+          "title": "Location Country",
+          "type": "string"
+        }
+      },
+      "title": "Population",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "user_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "User Id",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "as_of": {
+      "format": "date-time",
+      "title": "As Of",
+      "type": "string"
+    },
+    "population": {
+      "$ref": "#/$defs/Population"
+    },
+    "symptom_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Symptom Codes",
+      "type": "array"
+    },
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/Fact"
+      },
+      "title": "Facts",
+      "type": "array"
+    },
+    "episodes": {
+      "items": {
+        "$ref": "#/$defs/Episode"
+      },
+      "title": "Episodes",
+      "type": "array"
+    },
+    "desired_versions": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Desired Versions",
+      "type": "object"
+    }
+  },
+  "required": [
+    "user_id",
+    "request_id",
+    "population"
+  ],
+  "title": "AssessmentInput",
+  "type": "object"
+}

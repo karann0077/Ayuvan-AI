@@ -1,0 +1,645 @@
+{
+  "release": "0.2.0",
+  "patient_deployment_permitted": false,
+  "trustworthy_release_pipeline_integrated": false,
+  "independent_clinician_adjudication_completed": false,
+  "regulatory_review_completed": false,
+  "pathways": [
+    {
+      "pathway_id": "adult_abdominal_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_abnormal_glucose_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_anal_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_appetite_loss_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_bloating_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_body_aches_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_bp_reading_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_breathlessness_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_calf_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_chest_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_constipation_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_cough_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_coughing_blood_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_diarrhea_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_dizziness_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_exertional_breathlessness_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_eye_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_fainting_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_fatigue_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_fever_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_fever_joint_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_fever_rash_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_hair_skin_changes_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_headache_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_itching_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_jaundice_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_leg_swelling_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_lipid_measurement_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_menstrual_irregularity_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_metabolic_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_mucosal_bleeding_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_nasal_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_neck_swelling_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_night_sweats_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_pleuritic_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_pulse_changes_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_rectal_bleeding_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_reflux_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_sore_throat_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_sputum_change_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_swallowing_difficulty_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_thyroid_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_upper_abdominal_pain_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_urinary_symptoms_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_visual_change_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_vomiting_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_weight_change_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "adult_wheeze_in",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION",
+        "PREGNANCY_EXCLUDED_REQUIRES_SEPARATE_PATHWAY"
+      ]
+    },
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.2.0",
+      "release_eligible": false,
+      "blocks": [
+        "CLINICALLY_UNAPPROVED",
+        "MISSING_CLINICIAN_APPROVAL",
+        "MISSING_APPROVAL_TIMESTAMP",
+        "MISSING_REVIEW_DATE",
+        "MISSING_TRUSTED_RELEASE_ATTESTATION"
+      ]
+    }
+  ]
+}

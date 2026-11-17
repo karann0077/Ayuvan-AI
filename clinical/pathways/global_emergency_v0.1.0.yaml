@@ -1,0 +1,230 @@
+id: global_emergency
+version: 0.1.0
+status: draft
+domain: shared
+purpose: Cross-domain emergency override
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 0
+  exclude_pregnancy: false
+  require_known_pregnancy_status: false
+  exclusions: []
+routing:
+  symptom_codes: []
+required_facts:
+- severe_breathlessness
+- chest_pressure
+- breathing_difficulty
+- chest_discomfort
+- cold_sweat
+- unilateral_weakness
+- unconscious
+- severe_allergic_swelling
+- severe_bleeding
+- seizure_ongoing
+- confusion_severe
+- sudden_severe_abdominal_pain
+- known_diabetes
+- persistent_vomiting
+- unable_to_drink
+rules:
+- id: EMERG_SEVERE_BREATHING
+  when:
+    fact: severe_breathlessness
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Severe difficulty breathing
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_CHEST_BREATH
+  when:
+    all:
+    - fact: chest_pressure
+      op: present
+      max_age_hours: 24
+    - fact: breathing_difficulty
+      op: present
+      max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Chest pressure with breathing difficulty
+  response_key: emergency
+  evidence:
+  - NICE_CG95
+- id: EMERG_CHEST_SWEAT
+  when:
+    all:
+    - fact: chest_discomfort
+      op: present
+      max_age_hours: 24
+    - fact: cold_sweat
+      op: present
+      max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Chest symptoms with marked sweating
+  response_key: emergency
+  evidence:
+  - NICE_CG95
+- id: EMERG_STROKE
+  when:
+    fact: unilateral_weakness
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Stroke-like symptom
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_UNCONSCIOUS
+  when:
+    fact: unconscious
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Unconsciousness
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_ANAPHYLAXIS
+  when:
+    all:
+    - fact: severe_allergic_swelling
+      op: present
+      max_age_hours: 24
+    - fact: breathing_difficulty
+      op: present
+      max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Possible severe allergic reaction
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_HEMORRHAGE
+  when:
+    fact: severe_bleeding
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Severe bleeding
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_SEIZURE
+  when:
+    fact: seizure_ongoing
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Ongoing seizure
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_ABDOMINAL
+  when:
+    fact: sudden_severe_abdominal_pain
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Sudden severe abdominal pain
+  response_key: emergency
+  evidence:
+  - NHS_ABDOMINAL
+- id: EMERG_CONFUSION
+  when:
+    fact: confusion_severe
+    op: present
+    max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Severe new confusion
+  response_key: emergency
+  evidence:
+  - NHS_999
+- id: EMERG_DIABETES_UNABLE_TO_DRINK
+  when:
+    all:
+    - fact: known_diabetes
+      op: present
+    - fact: persistent_vomiting
+      op: present
+      max_age_hours: 24
+    - fact: unable_to_drink
+      op: present
+      max_age_hours: 24
+  priority: P4
+  action: emergency_help
+  timeframe: immediate
+  reason: Diabetes with vomiting and inability to keep fluids down
+  response_key: emergency
+  evidence:
+  - CDC_DKA
+questions: []
+responses:
+  emergency:
+    en: 'Prototype emergency alert: seek emergency medical assistance immediately; in India call 112. Do not delay
+      for this conversation.'
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - NICE_CG95
+  - INDIA_112
+  - NHS_999
+  - NHS_ABDOMINAL
+  - CDC_DKA
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

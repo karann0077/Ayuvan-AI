@@ -1,0 +1,227 @@
+{
+  "$defs": {
+    "ClinicalRule": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "when": {
+          "additionalProperties": true,
+          "title": "When",
+          "type": "object"
+        },
+        "priority": {
+          "title": "Priority",
+          "type": "string"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "timeframe": {
+          "title": "Timeframe",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "response_key": {
+          "title": "Response Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "when",
+        "priority",
+        "action",
+        "timeframe",
+        "reason",
+        "response_key"
+      ],
+      "title": "ClinicalRule",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "priority": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "fact": {
+          "title": "Fact",
+          "type": "string"
+        },
+        "when": {
+          "additionalProperties": true,
+          "title": "When",
+          "type": "object"
+        },
+        "text": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Text",
+          "type": "object"
+        },
+        "choices": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Choices",
+          "type": "array"
+        },
+        "answer_schema": {
+          "additionalProperties": true,
+          "title": "Answer Schema",
+          "type": "object"
+        },
+        "can_change": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Can Change",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "priority",
+        "fact",
+        "when",
+        "text",
+        "answer_schema"
+      ],
+      "title": "Question",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "domain": {
+      "title": "Domain",
+      "type": "string"
+    },
+    "purpose": {
+      "title": "Purpose",
+      "type": "string"
+    },
+    "jurisdiction": {
+      "title": "Jurisdiction",
+      "type": "string"
+    },
+    "languages": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Languages",
+      "type": "array"
+    },
+    "scope": {
+      "additionalProperties": true,
+      "title": "Scope",
+      "type": "object"
+    },
+    "routing": {
+      "additionalProperties": true,
+      "title": "Routing",
+      "type": "object"
+    },
+    "required_facts": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Facts",
+      "type": "array"
+    },
+    "rules": {
+      "items": {
+        "$ref": "#/$defs/ClinicalRule"
+      },
+      "title": "Rules",
+      "type": "array"
+    },
+    "questions": {
+      "items": {
+        "$ref": "#/$defs/Question"
+      },
+      "title": "Questions",
+      "type": "array"
+    },
+    "responses": {
+      "additionalProperties": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "title": "Responses",
+      "type": "object"
+    },
+    "unknown_case": {
+      "additionalProperties": true,
+      "title": "Unknown Case",
+      "type": "object"
+    },
+    "follow_through": {
+      "additionalProperties": true,
+      "title": "Follow Through",
+      "type": "object"
+    },
+    "governance": {
+      "additionalProperties": true,
+      "title": "Governance",
+      "type": "object"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "status",
+    "domain",
+    "purpose",
+    "jurisdiction",
+    "languages",
+    "scope",
+    "routing",
+    "required_facts",
+    "rules",
+    "questions",
+    "responses",
+    "unknown_case",
+    "follow_through",
+    "governance"
+  ],
+  "title": "Pathway",
+  "type": "object"
+}

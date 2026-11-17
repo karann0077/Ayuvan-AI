@@ -34,6 +34,8 @@ class Settings(BaseSettings):
     gemini_fallback_model: str = "gemini-3.1-flash-lite"
     allow_test_user_auto_provision: bool = False
     test_user_phone: str | None = None
+    pathway_simulation_key: SecretStr | None = None
+    enable_pathway_simulator: bool = False
 
     @field_validator("database_url")
     @classmethod

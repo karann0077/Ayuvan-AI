@@ -3,6 +3,7 @@ import logging
 from fastapi import FastAPI
 
 from app.api.routes import router
+from app.api.pathways import router as pathway_router
 from app.core.config import get_settings
 
 
@@ -15,6 +16,7 @@ def create_app() -> FastAPI:
         description="Stage 1 WhatsApp conversation and longitudinal health-record backend.",
     )
     app.include_router(router, prefix=settings.api_prefix)
+    app.include_router(pathway_router, prefix=settings.api_prefix)
     return app
 
 

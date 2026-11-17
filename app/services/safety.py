@@ -1,3 +1,5 @@
+import re
+
 from app.schemas import SafetyOutcome
 
 
@@ -16,7 +18,17 @@ class ClinicalSafetyEngine:
 
     def assess(self, user_text: str) -> SafetyOutcome:
         normalized = user_text.lower()
-        matched = sorted(term for term in EMERGENCY_TERMS if term in normalized)
+        matched = []
+        for term in EMERGENCY_TERMS:
+            for found in re.finditer(rf"(?<!\w){re.escape(term)}(?!\w)", normalized):
+                preceding = normalized[max(0, found.start() - 25):found.start()]
+                # A denied symptom is not evidence that it is present. This narrow
+                # guard avoids obvious false alarms; it is not a clinical NLP model.
+                if re.search(r"(?:\bno|\bwithout|\bdenies|\bnot|\bnever|don't have|do not have)\s+(?:\w+\s+){0,2}$", preceding):
+                    continue
+                matched.append(term)
+                break
+        matched.sort()
         if matched:
             return SafetyOutcome(
                 level="emergency",

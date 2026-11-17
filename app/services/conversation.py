@@ -98,8 +98,91 @@ class ConversationService:
                 db.commit()
                 return
 
+            if self._is_explicit_resolution(user_text):
+                active = db.get(HealthEpisode, conversation.active_episode_id) if conversation.active_episode_id else None
+                if active and active.status == "active" and (active.normalized_symptom or "") in user_text.lower():
+                    active.status = "resolved"
+                    active.summary = {**(active.summary or {}), "resolution": "patient_reported"}
+                    active.last_reported_at = message.message_timestamp or datetime.now(timezone.utc)
+                    db.add(SymptomEvent(
+                        episode_id=active.id, source_message_id=message.id,
+                        symptom=active.primary_symptom or "symptom", normalized_symptom=active.normalized_symptom,
+                        details={"resolution": "patient_reported"}, source_type="patient_reported",
+                        verification_status="reported", confidence=100,
+                    ))
+                    conversation.state = {}
+                    conversation.active_episode_id = None
+                    self._refresh_summary(db, active.patient_id)
+                    await self._send_and_record(
+                        db, message.patient_id, conversation.id, self._phone_for_patient(db, message.patient_id),
+                        "I've recorded that this concern has stopped. If it returns, tell me when it started again.", "text",
+                    )
+                    message.processing_status = "processed"
+                    db.commit()
+                    return
+
+            pending_continuity = (conversation.state or {}).get("pending_continuity")
+            if pending_continuity:
+                old = db.get(HealthEpisode, pending_continuity["episode_id"])
+                answer = message.metadata_json.get("reply_id")
+                if not answer and message.message_type == "text":
+                    lower = user_text.lower()
+                    if any(term in lower for term in ("continued", "same cough", "never stopped")):
+                        answer = "CONTINUED"
+                    elif any(term in lower for term in ("went away", "came back", "returned", "again")):
+                        answer = "RETURNED"
+                if old and answer in {"CONTINUED", "RETURNED", "NOT_SURE"}:
+                    extraction = SymptomExtraction.model_validate(pending_continuity["extraction"])
+                    if answer == "CONTINUED":
+                        episode = old
+                        episode.status = "active"
+                        # The earlier safety answers, severity and trajectory may no
+                        # longer describe the patient's present condition.
+                        stale_fields = {
+                            "severity", "progression", "functional_impact", "associated_symptoms",
+                            "headache_warning_signs", "chest_current_state", "breathing_status",
+                        }
+                        episode.summary = {
+                            **{key: value for key, value in (episode.summary or {}).items()
+                               if key not in stale_fields},
+                            "continuity": "confirmed_continuous",
+                        }
+                    else:
+                        old.status = "resolved" if answer == "RETURNED" else "continuity_unknown"
+                        episode = HealthEpisode(
+                            patient_id=message.patient_id, primary_symptom=extraction.main_symptom,
+                            normalized_symptom=extraction.normalized_symptom,
+                            summary={**self._extraction_summary(extraction), "continuity": (
+                                "returned_after_resolution" if answer == "RETURNED" else "unknown")},
+                        )
+                        db.add(episode)
+                        db.flush()
+                    conversation.active_episode_id = episode.id
+                    conversation.state = {"pending_continuity": None}
+                    self._record_symptom_event(db, episode, message, extraction)
+                    await self._respond_for_episode(db, conversation, message, episode, extraction)
+                    message.processing_status = "processed"
+                    db.commit()
+                    return
+                await self._send_and_record(
+                    db, message.patient_id, conversation.id, self._phone_for_patient(db, message.patient_id),
+                    "Please choose whether the earlier concern continued or went away and returned. If unsure, choose Not sure.", "text",
+                )
+                message.processing_status = "processed"
+                db.commit()
+                return
+
             pending = (conversation.state or {}).get("pending_question")
             pending_flow = (conversation.state or {}).get("pending_flow")
+            if pending and message.message_type == "text":
+                old_pending_episode = db.get(HealthEpisode, pending.get("episode_id"))
+                symptom = (old_pending_episode.normalized_symptom or "").lower() if old_pending_episode else ""
+                if symptom and symptom in user_text.lower() and self._needs_continuity_check(
+                    old_pending_episode, SymptomExtraction(), message
+                ):
+                    # A fresh symptom report after a gap is not an answer to an old question.
+                    conversation.state = {"pending_question": None}
+                    pending = None
             if pending_flow:
                 episode = db.get(HealthEpisode, pending_flow.get("episode_id"))
                 if episode and message.metadata_json.get("reply_type") == "flow":
@@ -184,6 +267,24 @@ class ConversationService:
                 message.processing_status = "processed"
                 db.commit()
                 return
+            prior = db.scalar(select(HealthEpisode).where(
+                HealthEpisode.patient_id == message.patient_id,
+                HealthEpisode.normalized_symptom == (extraction.normalized_symptom or extraction.main_symptom),
+            ).order_by(HealthEpisode.last_reported_at.desc()))
+            if prior and self._needs_continuity_check(prior, extraction, message):
+                conversation.state = {"pending_continuity": {
+                    "episode_id": prior.id, "extraction": extraction.model_dump(mode="json"),
+                }}
+                label = extraction.main_symptom or "symptom"
+                question = f"You mentioned {label} before. Did it continue since then, or go away and return?"
+                provider_id = await self.whatsapp.send_buttons(
+                    self._phone_for_patient(db, message.patient_id), question,
+                    [("CONTINUED", "Continued"), ("RETURNED", "Went away, returned"), ("NOT_SURE", "Not sure")],
+                )
+                save_outgoing_message(db, message.patient_id, conversation.id, provider_id, question, "interactive")
+                message.processing_status = "processed"
+                db.commit()
+                return
             episode = self._get_or_create_episode(db, message.patient_id, extraction, conversation)
             self._record_symptom_event(db, episode, message, extraction)
             await self._respond_for_episode(db, conversation, message, episode, extraction)
@@ -251,6 +352,28 @@ class ConversationService:
             db.flush()
         conversation.active_episode_id = episode.id
         return episode
+
+    @staticmethod
+    def _needs_continuity_check(prior: HealthEpisode, extraction: SymptomExtraction, message: Message) -> bool:
+        if extraction.is_correction or extraction.duration:
+            return False
+        timestamp = message.message_timestamp or datetime.now(timezone.utc)
+        last = prior.last_reported_at
+        if timestamp.tzinfo and last and not last.tzinfo:
+            last = last.replace(tzinfo=timezone.utc)
+        return bool(last and (timestamp - last).total_seconds() >= 48 * 3600)
+
+    @staticmethod
+    def _is_explicit_resolution(text: str) -> bool:
+        lower = text.lower()
+        if any(phrase in lower for phrase in ("hasn't stopped", "has not stopped", "not gone away")):
+            return False
+        if any(phrase in lower for phrase in ("returned", "came back", "again")):
+            return False
+        return any(phrase in lower for phrase in (
+            "has stopped", "have stopped", "stopped coughing", "cough stopped",
+            "went away", "completely resolved", "completely gone",
+        ))
 
     async def _new_concern_extraction_if_present(
         self, db: Session, message: Message, episode: HealthEpisode
@@ -440,10 +563,15 @@ class ConversationService:
                 *[f"• {reason}" for reason in review.reasons[:3]],
                 "", "This does not identify the cause or predict a disease. A clinician can assess it with your full history.",
             ])
+        elif review.status == "need_more_information":
+            lines.extend([
+                "", "*Next step*", "• Some important details are still unclear. Share when this began or any change you notice.",
+                "", "This chat cannot rule out a serious cause. This is not a diagnosis.",
+            ])
         else:
             lines.extend([
                 "", "*Next step*", "• Keep an eye on how it changes and share any new or worsening symptom.",
-                "", "No emergency warning was reported in the answers you selected. This is not a diagnosis.",
+                "", "This chat cannot rule out every serious cause. This is not a diagnosis.",
             ])
         lines.extend([
             "", "*Get urgent in-person help now* if it becomes sudden or severe, or if you notice new warning signs.",
@@ -492,7 +620,9 @@ class ConversationService:
             pathway_name=review.pathway_name,
             pathway_version=review.pathway_version,
             outcome=review.level,
-            inputs={"trigger_codes": review.trigger_codes, "reasons": review.reasons},
+            inputs={"priority": review.priority, "status": review.status,
+                    "trigger_codes": review.trigger_codes, "reasons": review.reasons,
+                    "dimensions": review.dimensions, "evidence": review.evidence},
             context_version=context_version,
         ))
 

@@ -1,0 +1,215 @@
+id: adult_pulse_changes_in
+version: 0.2.0
+status: draft
+domain: cardiology
+purpose: Adult symptom-first assessment prototype for irregular pulse; NOT disease diagnosis
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: false
+  exclusions:
+  - children
+  - pregnancy
+  - clinical high-risk groups requiring separate pathways
+routing:
+  symptom_codes:
+  - irregular_pulse
+  - fast_heart_rate
+  - slow_heart_rate
+required_facts:
+- irregular_pulse
+- fast_heart_rate
+- slow_heart_rate
+- worsening
+- functional_impairment
+- fainting
+- chest_discomfort
+rules:
+- id: ADULT_PULSE_CHANGES_IN_CONCERN_FAINTING
+  when:
+    all:
+    - &id001
+      any:
+      - fact: irregular_pulse
+        op: present
+        max_age_hours: 72
+      - fact: fast_heart_rate
+        op: present
+        max_age_hours: 72
+      - fact: slow_heart_rate
+        op: present
+        max_age_hours: 72
+    - fact: fainting
+      op: present
+      max_age_hours: 24
+  priority: P3
+  action: prompt_professional_assessment
+  timeframe: pending_clinician_approval
+  reason: Pathway-defined concern, pending clinical sign-off
+  evidence:
+  - ICMR_STW
+  response_key: prompt
+- id: ADULT_PULSE_CHANGES_IN_WORSEN_IMPACT
+  when:
+    all:
+    - *id001
+    - fact: worsening
+      op: present
+    - fact: functional_impairment
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: pending_clinician_approval
+  reason: Pathway-defined concern, pending clinical sign-off
+  evidence:
+  - ICMR_STW
+  response_key: consult
+questions:
+- id: ASK_WORSENING
+  priority: 63
+  fact: worsening
+  when:
+    fact: worsening
+    op: unknown
+  text:
+    en: Has this concern become noticeably worse?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: ASK_FUNCTIONAL_IMPAIRMENT
+  priority: 63
+  fact: functional_impairment
+  when:
+    fact: functional_impairment
+    op: unknown
+  text:
+    en: Is it significantly affecting your daily activities or sleep?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: ASK_FAINTING
+  priority: 97
+  fact: fainting
+  when:
+    fact: fainting
+    op: unknown
+  text:
+    en: Have you fainted or lost consciousness?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: ASK_CHEST_DISCOMFORT
+  priority: 97
+  fact: chest_discomfort
+  when:
+    fact: chest_discomfort
+    op: unknown
+  text:
+    en: Are you experiencing chest discomfort currently?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+responses:
+  consult:
+    en: Draft pathway indicates that a professional assessment may be appropriate based on the reported pattern. Exact
+      timeframe awaits clinician approval; this is not a diagnosis.
+  prompt:
+    en: Draft pathway recognizes a concerning symptom combination. Prompt clinical assessment and exact timeframe require
+      qualified clinical review; do not rely on this simulator.
+unknown_case:
+  action: ask_relevant_question_or_explain_limit
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - ICMR_STW
+  - WHO_SMART
+  change_log:
+  - version: 0.2.0
+    change: Initial engineering draft; rule criteria need clinician review
+  tests_required: true
+  performance_indicators:
+  - missed_escalation
+  - overtriage
+  - multilingual_extraction
+  - question_burden
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not independently validated
+  - not approved for patient care
+  - excludes pregnancy and children
+  - not a definitive disease model

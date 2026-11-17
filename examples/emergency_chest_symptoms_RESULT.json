@@ -1,0 +1,54 @@
+{
+  "assessment_id": "7e79f525-4402-4aa8-a669-fe0ec53accfc",
+  "simulated": true,
+  "intended_use": "Engineering simulation, NOT a validated clinical assessment",
+  "status": "DECIDED",
+  "priority": "P4",
+  "action": "emergency_help",
+  "timeframe": "immediate",
+  "reason_codes": [
+    "EMERG_CHEST_BREATH"
+  ],
+  "question": null,
+  "response": "Prototype emergency alert: seek emergency medical assistance immediately; in India call 112. Do not delay for this conversation.",
+  "results": [
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "DECIDED",
+      "priority": "P4",
+      "action": "emergency_help",
+      "timeframe": "immediate",
+      "reason_codes": [
+        "EMERG_CHEST_BREATH"
+      ],
+      "evidence_ids": [
+        "NICE_CG95"
+      ],
+      "question": null,
+      "missing_or_conflicting": [
+        "severe_breathlessness",
+        "cold_sweat",
+        "unilateral_weakness",
+        "unconscious",
+        "severe_allergic_swelling",
+        "severe_bleeding",
+        "seizure_ongoing",
+        "confusion_severe",
+        "sudden_severe_abdominal_pain",
+        "known_diabetes",
+        "persistent_vomiting",
+        "unable_to_drink"
+      ],
+      "response": "Prototype emergency alert: seek emergency medical assistance immediately; in India call 112. Do not delay for this conversation."
+    }
+  ],
+  "pathway_versions": {
+    "global_emergency": "0.1.0"
+  },
+  "pathway_sha256": {
+    "global_emergency": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009"
+  },
+  "unresolved_pathways": []
+}

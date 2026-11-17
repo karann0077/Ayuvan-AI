@@ -1,0 +1,500 @@
+{
+  "release_state": "engineering_draft_not_for_patient_use",
+  "packages": [
+    {
+      "id": "adult_abdominal_pain_in",
+      "version": "0.1.0",
+      "sha256": "2539c80544eea171287b0827ce079f28853c35bfb12d6a84e4b09485cc354a4c",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 4,
+      "questions": 7
+    },
+    {
+      "id": "adult_abdominal_pain_in",
+      "version": "0.2.0",
+      "sha256": "7aa2de6c09dc80f733fcd4f0f726de198681959b0c426a8f4f4b5f9e2c9eb370",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 4,
+      "questions": 7
+    },
+    {
+      "id": "adult_abnormal_glucose_in",
+      "version": "0.2.0",
+      "sha256": "43560a29631486374cdc1ddb9180829a9514be21cc2ac4b1e434d65fc3287d9f",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_anal_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "d198af8ddfce8b054eac69ea9715370c18c32c0792df32aedb4142417e68f5a9",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_appetite_loss_in",
+      "version": "0.2.0",
+      "sha256": "2825ac6e2d5e7b02a1b141bcb331614b92cd6ad156e684ec99d058579946b2c4",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_bloating_in",
+      "version": "0.2.0",
+      "sha256": "1529c47f51334651c90b1ab44f29780adbd3e4bd686e385da049d31ded024c3f",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_body_aches_in",
+      "version": "0.2.0",
+      "sha256": "27a6277ca05fb873e2aa946e509b77fc0942dd6310a9cb76f9b6b897990ddfe1",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_bp_reading_in",
+      "version": "0.2.0",
+      "sha256": "ff23f05a67e06d68f09fb50e4cc74a5d24670f10b6c53c3674e44daf5c46e951",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_breathlessness_in",
+      "version": "0.2.0",
+      "sha256": "ca6fbbbc2397ad1637f884c66f2932ff068be231f2457871704d30e07e111ea8",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_calf_pain_in",
+      "version": "0.2.0",
+      "sha256": "a266092e9dd97da35d0254fafbd2a15e83f9987c4f621448fab3b9b91ce48735",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_chest_symptoms_in",
+      "version": "0.1.0",
+      "sha256": "6be1e8925b2ab2db336f3c59016e574aaa831a91c855decafb10270e1fb121e0",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 4,
+      "questions": 5
+    },
+    {
+      "id": "adult_chest_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "f255983cf4403ad6f4edb1b9f52c6c6dae5a77bd557275ba490bdba2fad6e15f",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 4,
+      "questions": 5
+    },
+    {
+      "id": "adult_constipation_in",
+      "version": "0.2.0",
+      "sha256": "106eca093e9598f89f922284f8ad34df2ddda3972b1a8ad906943655f497440b",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_cough_in",
+      "version": "0.1.0",
+      "sha256": "1efdd58eb92d25d6a3518d0ce394ba96aa1aa21d5d599b7effeff7e1f847cedc",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 4,
+      "questions": 6
+    },
+    {
+      "id": "adult_cough_in",
+      "version": "0.2.0",
+      "sha256": "0842d4e003c5839d9492ed7f300ffd2e8415ac05ca3ff738a1ade6e5f3cf0f20",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 4,
+      "questions": 6
+    },
+    {
+      "id": "adult_coughing_blood_in",
+      "version": "0.2.0",
+      "sha256": "5f6c1eb7ffaf26acc843a5b80d84f81304d1287a7c31cf619b3c124736eaabbf",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_diarrhea_in",
+      "version": "0.2.0",
+      "sha256": "2323d5518af9eaf7c84ebc6a827035bce881147d45b8879dcf351e6de2871548",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_dizziness_in",
+      "version": "0.2.0",
+      "sha256": "1f379dacc764ae24efd106c34f6a59a7dd780759727cc2d8ae9070c9a176246a",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_exertional_breathlessness_in",
+      "version": "0.2.0",
+      "sha256": "0d6fdd077552ba9ba0345dc99405b2208ced080341494dac16ce78bd4954eab9",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_eye_pain_in",
+      "version": "0.2.0",
+      "sha256": "2c5679db0280c059c300a632fa5a0287133b8f89b71070eaea381844c4cefb7c",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_fainting_in",
+      "version": "0.2.0",
+      "sha256": "c8935215b86cd1cd387bfff3301171f07e18b03abefb631a0540abed4c107e9c",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 3,
+      "questions": 4
+    },
+    {
+      "id": "adult_fatigue_in",
+      "version": "0.2.0",
+      "sha256": "4239540f6baa507c674e2c5a76364b4db46dde97d9991a578e97d33f9db73f47",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_fever_in",
+      "version": "0.1.0",
+      "sha256": "ad2621916d815b6c8e0e170cbcce16b202a3c8dc0e07d3488aa6de340456d6c4",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 4,
+      "questions": 6
+    },
+    {
+      "id": "adult_fever_in",
+      "version": "0.2.0",
+      "sha256": "eac2190cb8712fd18de0592fe4f5beca95ab702c322dfc8f565303625ac152d2",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 4,
+      "questions": 6
+    },
+    {
+      "id": "adult_fever_joint_pain_in",
+      "version": "0.2.0",
+      "sha256": "b2976e5a1e622cebe4f370452406a1e12d5b12934d90c79253bd2368432d939f",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 1,
+      "questions": 3
+    },
+    {
+      "id": "adult_fever_rash_in",
+      "version": "0.2.0",
+      "sha256": "9cb0e1e6dff5802d31db2c8bcb224085f7a6f43b7a5a4233e6695ab7fe349711",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 2,
+      "questions": 5
+    },
+    {
+      "id": "adult_hair_skin_changes_in",
+      "version": "0.2.0",
+      "sha256": "3892bfbb8cb5d8a75d05744c31f4f815b103c222db126bc9a3bf82df1a94e66d",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_headache_in",
+      "version": "0.2.0",
+      "sha256": "4c2fd08fbac388ab0287e5d47dfaa573b874b977909b1b6ecfbc9a7c8efec430",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 2,
+      "questions": 5
+    },
+    {
+      "id": "adult_itching_in",
+      "version": "0.2.0",
+      "sha256": "e4db390a4495a68d7f946a6e363a9c7b6e8c95f635307f1e8bf1a74050072148",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_jaundice_in",
+      "version": "0.2.0",
+      "sha256": "80169509f397ebaf6b4dc0a0ff1d7e8f70eb9a2654e4e992ebc62ec02e4e612e",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 3,
+      "questions": 4
+    },
+    {
+      "id": "adult_leg_swelling_in",
+      "version": "0.2.0",
+      "sha256": "0e2a1cc2c44f6795d7fcf5c438dc753f918d6545fb5ee0a1abedb68bd97c952a",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_lipid_measurement_in",
+      "version": "0.2.0",
+      "sha256": "bdb276cf068d6a2dd2d7fd0ac1067296f3c98a5e8391f939e8946a620a193bf5",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_menstrual_irregularity_in",
+      "version": "0.2.0",
+      "sha256": "06da523481d4f05dd2a2f1defff60146521e8accc6286add8d88087d9683fec3",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_metabolic_symptoms_in",
+      "version": "0.1.0",
+      "sha256": "87abddb54d8a76bf37ed4f8747625f4f78a053665dd599bfb7b70ffbdb44652f",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 3,
+      "questions": 5
+    },
+    {
+      "id": "adult_metabolic_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "faf9e1e0c9ae7f0730dae561bbd362d7fb99a59286b248c2d32399eb3605d81e",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 3,
+      "questions": 5
+    },
+    {
+      "id": "adult_mucosal_bleeding_in",
+      "version": "0.2.0",
+      "sha256": "6f460ea9171e856d088209300e17c5351e7e828c60108aa332847e412ad09c38",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_nasal_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "818b97dbd784d8f0a5d1a26f0766bbb8b731fb78bdc8c53f2b99dd082703e55b",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_neck_swelling_in",
+      "version": "0.2.0",
+      "sha256": "bf036b07710fb87f2feae0d0f3423b4ff7b4f9c39edde08c1e8f9f17bab6202a",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_night_sweats_in",
+      "version": "0.2.0",
+      "sha256": "e18eb0da005a260e203978646d6ad431bc362e0d488b707d83858879dd4ea468",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_pleuritic_pain_in",
+      "version": "0.2.0",
+      "sha256": "44da9e5a7657ad946deb62dd935b52bc4e1692ada8c53a3af735c83463f6abe7",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_pulse_changes_in",
+      "version": "0.2.0",
+      "sha256": "d03c5487633fd30dc0a070257399684f45161f1c1193f559b2e586843e412b81",
+      "status": "draft",
+      "domain": "cardiology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_rectal_bleeding_in",
+      "version": "0.2.0",
+      "sha256": "ca811625cfe8f0f5b2bf769efc9f46032997a021f8979a9ece39e0aa9b11fa7b",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 3,
+      "questions": 4
+    },
+    {
+      "id": "adult_reflux_in",
+      "version": "0.2.0",
+      "sha256": "dfa13e1327eff2030855f2b17733746356d57536957bc1c514b48f0e27c5c1c9",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_sore_throat_in",
+      "version": "0.2.0",
+      "sha256": "5dead4f2b83548a07bfe51d8f4212e6c51f0e8e2956f5d3fa71102dc1e6972bc",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_sputum_change_in",
+      "version": "0.2.0",
+      "sha256": "137b0640ef1627fda968c3a749ce48821a36b66b2eda2675d124233c176b30aa",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_swallowing_difficulty_in",
+      "version": "0.2.0",
+      "sha256": "4031723aaf11171ecd0d959107401c963d9a155d2177d1e24b76159c27f17fe3",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 3,
+      "questions": 4
+    },
+    {
+      "id": "adult_thyroid_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "f13ceac6af6494b08e175507f323698c5ca7b6f498cc877ddd60838f7326c8e3",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_upper_abdominal_pain_in",
+      "version": "0.2.0",
+      "sha256": "eeceefc9a7a469f419645030561c4ea5f6260a73514e51dbbaf5834cd0c957b3",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_urinary_symptoms_in",
+      "version": "0.2.0",
+      "sha256": "eb3480348dc90425e3c81c81fb7409e1bc38a5d68e460f7d17e07eb71828dc49",
+      "status": "draft",
+      "domain": "infectious",
+      "rules": 3,
+      "questions": 3
+    },
+    {
+      "id": "adult_visual_change_in",
+      "version": "0.2.0",
+      "sha256": "3369a5bad920bd658fe6ecac7222b94a6fe3054f18ef9bb265ce56e4a012f717",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_vomiting_in",
+      "version": "0.2.0",
+      "sha256": "4fdd183e3592cb20b7f58fc15e1ea73430e25aa1238544b86ac29491be71c856",
+      "status": "draft",
+      "domain": "gastroenterology",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "adult_weight_change_in",
+      "version": "0.2.0",
+      "sha256": "abf6e142c66f1d95a07512e8bc91796b430b3d24f9a621289ff5460efdfe3986",
+      "status": "draft",
+      "domain": "endocrinology",
+      "rules": 1,
+      "questions": 4
+    },
+    {
+      "id": "adult_wheeze_in",
+      "version": "0.2.0",
+      "sha256": "812af4d2f4a9f2b8e69f9a07cd65374c299758d144a8a8dd7674a94c3ffb9bd3",
+      "status": "draft",
+      "domain": "respiratory",
+      "rules": 2,
+      "questions": 4
+    },
+    {
+      "id": "global_emergency",
+      "version": "0.1.0",
+      "sha256": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009",
+      "status": "draft",
+      "domain": "shared",
+      "rules": 11,
+      "questions": 0
+    },
+    {
+      "id": "global_emergency",
+      "version": "0.2.0",
+      "sha256": "47e3a8203455f4bb430a9acbe5cb593e2fc1a293f0dec581ca526a470975074c",
+      "status": "draft",
+      "domain": "shared",
+      "rules": 17,
+      "questions": 0
+    }
+  ]
+}

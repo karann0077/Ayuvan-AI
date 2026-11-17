@@ -1,0 +1,2 @@
+{"id": "no_route_no_emergency", "symptom_codes": ["vision_loss"], "facts": [{"code": "vision_loss", "state": "present", "value": null}], "episodes": [], "expected": {"status": "INSUFFICIENT_INFORMATION", "priority": null, "action": null}}
+{"id": "emergency_no_route", "symptom_codes": ["vision_loss"], "facts": [{"code": "severe_breathlessness", "state": "present", "value": null}], "episodes": [], "expected": {"status": "DECIDED", "priority": "P4", "action": "emergency_help"}}

@@ -19,11 +19,64 @@ AYUVAN Stage 1 is a modular FastAPI backend for the WhatsApp-based health-concer
 
 ## Deliberate Stage 1 boundaries
 
+### Versioned pathway library (engineering simulation)
+
+The supplied v0.2.0 pathway pack is integrated under `app/clinical/` and
+`clinical/`. It includes 49 draft pathway IDs, a restricted rule grammar,
+provenance-aware facts, version and content hashes, 143 engineering cases,
+coverage reports, and a release gate. All pathways remain **draft and
+clinically unvalidated**. The condition catalog is a routing aid, not a
+diagnosis engine. The existing WhatsApp intake and patient replies do not use
+these draft pathway decisions.
+
+`GET /api/v1/pathways` and `GET /api/v1/coverage` expose read-only engineering
+metadata. `POST /api/v1/assess` always returns 503. To use
+`POST /api/v1/simulate` with synthetic data, set `ENVIRONMENT=development`,
+`ENABLE_PATHWAY_SIMULATOR=true`, and a random `PATHWAY_SIMULATION_KEY` of at least
+32 characters. Send it in `X-Ayuvan-Simulation-Key`. The simulator is disabled
+in staging and production even with those settings. Do not expose it to the
+Internet or submit identifiable patient information. The request's `user_id`
+is only a developer label, not an authenticated identity.
+
+`app/services/pathway_simulation.py` provides a read-only adapter for comparing
+an existing episode against the draft engine in a developer session. It routes
+only exact concept codes and leaves free-text duration, missing safety answers,
+and unknown pregnancy status unresolved. It does not write an assessment or
+send a message. For isolated runs, use the synthetic files in `examples/` and
+the imported checks:
+
+```bash
+.venv/bin/python scripts/validate_pathways.py
+.venv/bin/python -m pytest -q
+```
+
+The release gate is intentionally blocked. Before any patient-facing use,
+qualified clinical reviewers must approve the pathway content and questions,
+independent testing must evaluate clinical safety, and the product needs
+authenticated identity, release controls, and appropriate regulatory review.
+
+
 Voice transcription, document OCR/retrieval, embeddings/pgvector, authentication for the future mobile app, full consent onboarding, and clinician-approved pathways are extension points, not complete features yet. Incoming media is identified and persisted as a source reference, but it is not downloaded or interpreted.
 
 The webhook uses FastAPI background tasks for the local single-process test flow. The same task is dispatched to ARQ when `USE_ARQ=true` and is exposed in `app/worker.py`; configure Redis and run `arq app.worker.WorkerSettings` for durable production processing.
 
 ## Guided intake and clinician-review boundary
+
+### Draft symptom priority engine
+
+The backend now records an inspectable draft `P0`–`P2` priority and a separate
+`need_more_information` status after symptom intake. It asks for duration when
+missing, seeks explicit confirmation before treating a later report as continuous,
+and records a resolved episode separately from a new recurrence. An old similar
+episode alone cannot establish persistence. A two-week *confirmed* cough can
+raise a draft consultation signal based on India's NTEP criteria. Emergency
+signals still override routine questioning; the LLM only extracts reported facts.
+
+These labels are **software prototype states, not validated clinical triage**.
+P3/P4 disposition mapping, special populations, multilingual safety screening,
+exact consultation timeframes, and pathway approval remain necessary before
+real-patient deployment. Every persisted review includes the rule version,
+trigger codes, missing fields, relevant episode IDs and dimension values.
 
 For standard WhatsApp messages, AYUVAN uses compact button/list questions and asks only the next missing field. The starter pathways cover headache/neurological, chest, respiratory, fever, abdominal/urinary/injury/general concerns; all currently fall back to the controlled core questions where a specialist pack has not been clinically approved.
 

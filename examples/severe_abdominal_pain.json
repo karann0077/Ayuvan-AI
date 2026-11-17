@@ -1,0 +1,39 @@
+{
+  "user_id": "DEMO_PATIENT_DO_NOT_USE_REAL_PHI",
+  "request_id": "severe_abdominal_pain",
+  "as_of": "2026-11-16T10:00:00Z",
+  "population": {
+    "age_years": 28,
+    "pregnant": false,
+    "location_country": "IN"
+  },
+  "symptom_codes": [
+    "abdominal_pain"
+  ],
+  "facts": [
+    {
+      "code": "abdominal_pain",
+      "state": "present",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "sudden_severe_abdominal_pain",
+      "state": "present",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    }
+  ],
+  "episodes": [],
+  "desired_versions": {}
+}

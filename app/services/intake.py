@@ -80,6 +80,13 @@ RESPIRATORY_NOW = FollowUpQuestion(
     pathway_id="respiratory_v0_draft",
 )
 
+DURATION = FollowUpQuestion(
+    field="duration",
+    text="*How long has this been happening?* A rough number of days or weeks is fine. If you are not sure, say so.",
+    presentation="free_text",
+    pathway_id="general_symptom_intake_v0_draft",
+)
+
 SEVERITY = FollowUpQuestion(
     field="severity",
     text="*How much is this affecting you right now?*\nChoose the closest answer.",
@@ -170,6 +177,9 @@ class QuestionEngine:
         elif category == "respiratory":
             pack.append(RESPIRATORY_NOW)
 
+        # Ask duration only when it was not stated and continuity was not confirmed.
+        if not self._has_answer(summary, "duration") and summary.get("continuity") != "confirmed_continuous":
+            pack.append(DURATION)
         # Three concise questions give a usable factual record without a long free-text loop.
         # Severity may already be explicit in the patient's original message, so it is skipped.
         pack.extend([SEVERITY, PROGRESSION, FUNCTIONAL_IMPACT])

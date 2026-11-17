@@ -1,0 +1,926 @@
+status: draft_unreviewed
+version: 0.2.0
+notice: Associations are broad concepts not diagnostic features, differential probabilities, or validated triage criteria.
+  Some conditions are asymptomatic. Duplicate conditions retained as user-listed field entries.
+entries:
+- id: RESPIRATORY_01
+  domain: respiratory
+  name: Common cold
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - runny_nose
+  - nasal_congestion
+  - sneezing
+  - sore_throat
+  - cough
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_02
+  domain: respiratory
+  name: Acute respiratory tract infection
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - cough
+  - sore_throat
+  - fever
+  - runny_nose
+  - breathing_difficulty
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_03
+  domain: respiratory
+  name: Acute bronchitis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - cough
+  - sputum
+  - chest_congestion
+  source_ids:
+  - NICE_NG120
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_04
+  domain: respiratory
+  name: Asthma
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - wheezing
+  - breathing_difficulty
+  - cough
+  - night_cough
+  - chest_congestion
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_05
+  domain: respiratory
+  name: COPD
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - breathing_difficulty
+  - sputum
+  - cough
+  - breathlessness_on_exertion
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_06
+  domain: respiratory
+  name: Pneumonia
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - cough
+  - breathing_difficulty
+  - pleuritic_chest_pain
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_07
+  domain: respiratory
+  name: Pulmonary tuberculosis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - cough
+  - fever
+  - night_sweats
+  - unexplained_weight_loss
+  - coughing_blood
+  source_ids:
+  - NTEP_TB
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_08
+  domain: respiratory
+  name: Allergic rhinitis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - runny_nose
+  - sneezing
+  - nasal_congestion
+  - itching
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_09
+  domain: respiratory
+  name: Influenza
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - cough
+  - sore_throat
+  - body_aches
+  - fatigue
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: RESPIRATORY_10
+  domain: respiratory
+  name: Chronic bronchitis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - cough
+  - sputum
+  - breathing_difficulty
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_01
+  domain: infectious
+  name: Dengue fever
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - headache
+  - eye_pain
+  - body_aches
+  - joint_pain
+  - rash
+  - vomiting
+  - bleeding_gums
+  source_ids:
+  - WHO_DENGUE
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_02
+  domain: infectious
+  name: Malaria
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - chills
+  - headache
+  - body_aches
+  - nausea
+  - vomiting
+  source_ids:
+  - CDC_MALARIA
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_03
+  domain: infectious
+  name: Enteric fever
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - headache
+  - fatigue
+  - abdominal_pain
+  - diarrhea
+  - constipation
+  source_ids:
+  - WHO_TYPHOID
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_04
+  domain: infectious
+  name: Chikungunya
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - joint_pain
+  - rash
+  - swollen_joints
+  - headache
+  source_ids:
+  - WHO_CHIKUNGUNYA
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_05
+  domain: infectious
+  name: Influenza
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - cough
+  - sore_throat
+  - body_aches
+  - fatigue
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_06
+  domain: infectious
+  name: COVID-19
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fever
+  - cough
+  - sore_throat
+  - fatigue
+  - breathing_difficulty
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_07
+  domain: infectious
+  name: Tuberculosis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - cough
+  - fever
+  - night_sweats
+  - unexplained_weight_loss
+  - coughing_blood
+  source_ids:
+  - NTEP_TB
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_08
+  domain: infectious
+  name: Acute viral respiratory infection
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - sore_throat
+  - cough
+  - runny_nose
+  - fever
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_09
+  domain: infectious
+  name: Acute infectious gastroenteritis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - diarrhea
+  - vomiting
+  - nausea
+  - abdominal_pain
+  - fever
+  source_ids:
+  - NHS_DIARRHEA
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_10
+  domain: infectious
+  name: Viral hepatitis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - jaundice
+  - dark_urine
+  - fatigue
+  - nausea
+  - abdominal_pain
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_11
+  domain: infectious
+  name: Urinary tract infection
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - painful_urination
+  - urinary_urgency
+  - frequent_urination
+  - flank_pain
+  - fever
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: INFECTIOUS_12
+  domain: infectious
+  name: Intestinal parasitic infection
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - abdominal_pain
+  - diarrhea
+  - bloating
+  - loss_of_appetite
+  - anal_itch
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_01
+  domain: gastroenterology
+  name: GERD
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - heartburn
+  - acid_regurgitation
+  - cough
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_02
+  domain: gastroenterology
+  name: Gastritis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - abdominal_pain
+  - nausea
+  - vomiting
+  - bloating
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_03
+  domain: gastroenterology
+  name: Acute gastroenteritis
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - vomiting
+  - diarrhea
+  - abdominal_pain
+  - fever
+  source_ids:
+  - NHS_DIARRHEA
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_04
+  domain: gastroenterology
+  name: Peptic ulcer disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - abdominal_pain
+  - heartburn
+  - nausea
+  - black_stool
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_05
+  domain: gastroenterology
+  name: Irritable bowel syndrome
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - abdominal_pain
+  - bloating
+  - diarrhea
+  - constipation
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_06
+  domain: gastroenterology
+  name: Chronic constipation
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - constipation
+  - bloating
+  - abdominal_pain
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_07
+  domain: gastroenterology
+  name: Infectious diarrhea
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - diarrhea
+  - abdominal_pain
+  - vomiting
+  - fever
+  source_ids:
+  - NHS_DIARRHEA
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_08
+  domain: gastroenterology
+  name: Hemorrhoids
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - rectal_bleeding
+  - anal_itch
+  - anal_pain
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_09
+  domain: gastroenterology
+  name: Gallstone disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - upper_right_abdominal_pain
+  - abdominal_pain
+  - nausea
+  - vomiting
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_10
+  domain: gastroenterology
+  name: Metabolic dysfunction-associated steatotic liver disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fatigue
+  - abdominal_pain
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: GASTROENTEROLOGY_11
+  domain: gastroenterology
+  name: Intestinal helminth infection
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - abdominal_pain
+  - diarrhea
+  - bloating
+  - anal_itch
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_01
+  domain: cardiology
+  name: Hypertension
+  clinical_class: condition
+  presentation_mode: primarily_measurement_or_screening
+  associated_symptom_codes:
+  - high_bp_reading
+  - headache
+  - dizziness
+  - blurred_vision
+  source_ids:
+  - WHO_HYPERTENSION
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_02
+  domain: cardiology
+  name: Coronary artery disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - chest_discomfort
+  - chest_pressure
+  - breathlessness_on_exertion
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_03
+  domain: cardiology
+  name: Ischemic heart disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - chest_discomfort
+  - chest_pressure
+  - shortness_of_breath
+  source_ids:
+  - NICE_CG95
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_04
+  domain: cardiology
+  name: Angina
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - chest_discomfort
+  - chest_pressure
+  - breathlessness_on_exertion
+  source_ids:
+  - NICE_CG95
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_05
+  domain: cardiology
+  name: Heart failure
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - leg_swelling
+  - breathlessness_on_exertion
+  - orthopnea
+  - reduced_exercise_tolerance
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_06
+  domain: cardiology
+  name: Cardiac arrhythmia
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - palpitations
+  - dizziness
+  - fainting
+  - irregular_pulse
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_07
+  domain: cardiology
+  name: Atrial fibrillation
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - palpitations
+  - irregular_pulse
+  - breathlessness_on_exertion
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_08
+  domain: cardiology
+  name: Valvular heart disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - breathlessness_on_exertion
+  - fatigue
+  - fainting
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_09
+  domain: cardiology
+  name: Peripheral artery disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - calf_pain_walking
+  - cold_extremity
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_10
+  domain: cardiology
+  name: Rheumatic heart disease
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - breathlessness_on_exertion
+  - fatigue
+  - palpitations
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: CARDIOLOGY_11
+  domain: cardiology
+  name: Dyslipidemia (risk factor)
+  clinical_class: risk_state_or_risk_factor
+  presentation_mode: primarily_measurement_or_screening
+  associated_symptom_codes:
+  - abnormal_lipid_test
+  source_ids:
+  - WHO_HYPERTENSION
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_01
+  domain: endocrinology
+  name: Type 2 diabetes mellitus
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - excessive_thirst
+  - frequent_urination
+  - fatigue
+  - unexplained_weight_change
+  - blurred_vision
+  source_ids:
+  - ADA_2026
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_02
+  domain: endocrinology
+  name: Hypothyroidism
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - fatigue
+  - cold_intolerance
+  - weight_gain
+  - constipation
+  - hair_loss
+  - dry_skin
+  source_ids:
+  - NIDDK_HYPO
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_03
+  domain: endocrinology
+  name: Hyperthyroidism
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - heat_intolerance
+  - unexplained_weight_change
+  - fast_heart_rate
+  - tremor
+  - weight_loss
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_04
+  domain: endocrinology
+  name: Obesity
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - body_weight_concern
+  - weight_gain
+  - breathlessness_on_exertion
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_05
+  domain: endocrinology
+  name: Metabolic syndrome
+  clinical_class: condition
+  presentation_mode: primarily_measurement_or_screening
+  associated_symptom_codes:
+  - high_bp_reading
+  - abnormal_lipid_test
+  - abnormal_glucose_reading
+  - body_weight_concern
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_06
+  domain: endocrinology
+  name: Polycystic ovary syndrome
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - menstrual_irregularity
+  - acne
+  - excess_facial_hair
+  - hair_loss
+  - infertility_concern
+  source_ids:
+  - WHO_PCOS
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_07
+  domain: endocrinology
+  name: Goitre and thyroid nodules
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - neck_swelling
+  - difficulty_swallowing
+  - abnormal_thyroid_test
+  source_ids:
+  - ICMR_STW
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_08
+  domain: endocrinology
+  name: Gestational diabetes
+  clinical_class: condition
+  presentation_mode: primarily_measurement_or_screening
+  associated_symptom_codes:
+  - abnormal_glucose_reading
+  - abnormal_hba1c
+  source_ids:
+  - ADA_2026
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_09
+  domain: endocrinology
+  name: Type 1 diabetes mellitus
+  clinical_class: condition
+  presentation_mode: mixed_or_symptomatic
+  associated_symptom_codes:
+  - excessive_thirst
+  - frequent_urination
+  - unexplained_weight_loss
+  - fatigue
+  - vomiting
+  source_ids:
+  - ADA_2026
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending
+- id: ENDOCRINOLOGY_10
+  domain: endocrinology
+  name: Prediabetes (risk state)
+  clinical_class: risk_state_or_risk_factor
+  presentation_mode: primarily_measurement_or_screening
+  associated_symptom_codes:
+  - abnormal_hba1c
+  - abnormal_glucose_reading
+  source_ids:
+  - ADA_2026
+  strength: candidate_links_require_clinical_review
+  coding:
+    snomed_ct: null
+    icd11: null
+  clinical_review: pending

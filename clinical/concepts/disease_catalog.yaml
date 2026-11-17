@@ -1,0 +1,62 @@
+notice: Taxonomy only; listing a condition does not create a triage pathway or imply
+  a diagnosis.
+domains:
+  respiratory:
+  - Common cold
+  - Acute respiratory tract infection
+  - Acute bronchitis
+  - Asthma
+  - COPD
+  - Pneumonia
+  - Pulmonary tuberculosis
+  - Allergic rhinitis
+  - Influenza
+  - Chronic bronchitis
+  infectious:
+  - Dengue fever
+  - Malaria
+  - Enteric fever
+  - Chikungunya
+  - Influenza
+  - COVID-19
+  - Tuberculosis
+  - Acute viral respiratory infection
+  - Acute infectious gastroenteritis
+  - Viral hepatitis
+  - Urinary tract infection
+  - Intestinal parasitic infection
+  gastroenterology:
+  - GERD
+  - Gastritis
+  - Acute gastroenteritis
+  - Peptic ulcer disease
+  - Irritable bowel syndrome
+  - Chronic constipation
+  - Infectious diarrhea
+  - Hemorrhoids
+  - Gallstone disease
+  - Metabolic dysfunction-associated steatotic liver disease
+  - Intestinal helminth infection
+  cardiology:
+  - Hypertension
+  - Coronary artery disease
+  - Ischemic heart disease
+  - Angina
+  - Heart failure
+  - Cardiac arrhythmia
+  - Atrial fibrillation
+  - Valvular heart disease
+  - Peripheral artery disease
+  - Rheumatic heart disease
+  - Dyslipidemia (risk factor)
+  endocrinology:
+  - Type 2 diabetes mellitus
+  - Hypothyroidism
+  - Hyperthyroidism
+  - Obesity
+  - Metabolic syndrome
+  - Polycystic ovary syndrome
+  - Goitre and thyroid nodules
+  - Gestational diabetes
+  - Type 1 diabetes mellitus
+  - Prediabetes (risk state)

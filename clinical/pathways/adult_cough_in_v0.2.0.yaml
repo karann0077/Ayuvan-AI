@@ -1,0 +1,288 @@
+id: adult_cough_in
+version: 0.2.0
+status: draft
+domain: respiratory
+purpose: Assessment support for adult cough
+jurisdiction: IN
+languages:
+- en
+scope:
+  minimum_age_years: 18
+  exclude_pregnancy: true
+  require_known_pregnancy_status: false
+  exclusions:
+  - age_below_18
+  - pregnancy
+  - outside_india
+  - inability_to_assess_remotely
+routing:
+  symptom_codes:
+  - cough
+required_facts:
+- cough
+- duration_days
+- continuity
+- prior_episode_unresolved
+- breathing_difficulty
+- blood_in_sputum
+- worsening
+- functional_impairment
+rules:
+- id: COUGH_HEMOPTYSIS
+  when:
+    all:
+    - fact: cough
+      op: present
+    - fact: blood_in_sputum
+      op: present
+  priority: P3
+  action: prompt_clinical_assessment
+  timeframe: prompt; exact timeframe pending review
+  reason: Blood reported when coughing
+  response_key: prompt
+  evidence:
+  - NICE_NG120
+- id: COUGH_PERSISTENT_NTEP
+  when:
+    all:
+    - fact: cough
+      op: present
+    - fact: continuity
+      op: eq
+      value: continuous
+    - fact: duration_days
+      op: gt
+      value: 14
+  priority: P2
+  action: professional_assessment
+  timeframe: promptly; specific timeframe pending approval
+  reason: Confirmed persistent cough >2 weeks
+  response_key: routine
+  evidence:
+  - NTEP_TB
+- id: COUGH_WORSENING
+  when:
+    all:
+    - fact: cough
+      op: present
+    - fact: worsening
+      op: present
+    - fact: functional_impairment
+      op: present
+  priority: P2
+  action: professional_assessment
+  timeframe: timeframe pending clinician review
+  reason: Worsening and impairment
+  response_key: routine
+  evidence:
+  - NICE_NG120
+- id: COUGH_MILD_BRIEF
+  when:
+    all:
+    - fact: cough
+      op: present
+    - fact: duration_days
+      op: lte
+      value: 3
+    - fact: breathing_difficulty
+      op: absent
+    - fact: blood_in_sputum
+      op: absent
+    - fact: worsening
+      op: absent
+    - fact: functional_impairment
+      op: absent
+  priority: P0
+  action: monitor_with_safety_net
+  timeframe: reassess if changes
+  reason: Brief cough with no reported warning indicators
+  response_key: monitor
+  evidence:
+  - NICE_NG120
+questions:
+- id: COUGH_BREATH
+  priority: 100
+  fact: breathing_difficulty
+  when:
+    fact: breathing_difficulty
+    op: unknown
+  text:
+    en: Are you having any difficulty breathing right now?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: COUGH_BLOOD
+  priority: 95
+  fact: blood_in_sputum
+  when:
+    fact: blood_in_sputum
+    op: unknown
+  text:
+    en: Have you coughed up any blood?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  - code: unsure
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: COUGH_CONTINUITY
+  priority: 90
+  fact: continuity
+  when:
+    all:
+    - fact: continuity
+      op: unknown
+    - fact: prior_episode_unresolved
+      op: present
+  text:
+    en: Is this the same cough as before without fully stopping, or did it stop and then return?
+  choices:
+  - code: continuous
+    label_en: Continued
+    fact_state: present
+    fact_value: continuous
+  - code: resolved_then_recurred
+    label_en: Stopped, then returned
+    fact_state: present
+    fact_value: resolved_then_recurred
+  - code: unknown
+    label_en: Not sure
+    fact_state: unknown
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: COUGH_DURATION
+  priority: 80
+  fact: duration_days
+  when:
+    fact: duration_days
+    op: unknown
+  text:
+    en: How many days has this cough been present in the current episode?
+  choices: []
+  answer_schema:
+    kind: nonnegative_integer
+  can_change:
+  - clinical_disposition
+- id: COUGH_WORSEN
+  priority: 65
+  fact: worsening
+  when:
+    fact: worsening
+    op: unknown
+  text:
+    en: Has your cough been getting worse?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+- id: COUGH_FUNCTION
+  priority: 55
+  fact: functional_impairment
+  when:
+    fact: functional_impairment
+    op: unknown
+  text:
+    en: Is the cough interfering significantly with sleep or normal activities?
+  choices:
+  - code: 'yes'
+    label_en: 'Yes'
+    fact_state: present
+    fact_value: null
+  - code: 'no'
+    label_en: 'No'
+    fact_state: absent
+    fact_value: null
+  answer_schema:
+    kind: choice
+  can_change:
+  - clinical_disposition
+responses:
+  monitor:
+    en: This appears to be a brief cough based on the details provided. Monitor for changes and seek reassessment if
+      it persists or new concerning symptoms occur.
+  routine:
+    en: This cough pattern warrants a professional assessment. A persistent cough can have many causes; evaluation for
+      tuberculosis may be appropriate in India but the symptom does not diagnose TB.
+  prompt:
+    en: Coughing up blood merits prompt medical assessment; seek emergency help if you also have severe breathing difficulty
+      or substantial bleeding.
+unknown_case:
+  action: insufficient_information
+  never_default_to_P0: true
+follow_through:
+  opt_in_required: true
+  reassess_on:
+  - new_fact
+  - symptom_change
+  - confirmed_resolution
+  - new_document
+  silence_does_not_prove_persistence: true
+  close_on_confirmed_resolution: true
+governance:
+  clinical_owner: UNASSIGNED
+  reviewer: UNASSIGNED
+  approval:
+    clinician_id: null
+    approved_at: null
+    release_hash: null
+  references:
+  - NTEP_TB
+  - NICE_NG120
+  - WHO_SMART
+  change_log:
+  - version: 0.1.0
+    change: First engineering draft
+  - version: 0.2.0
+    change: Versioned fork to expanded taxonomy, mappings and coverage audit; no evidence of clinical approval.
+  tests_required: true
+  performance_indicators:
+  - emergency_undertriage
+  - clinical_undertriage
+  - overtriage
+  - question_burden
+  - uncertain_fact_handling
+  - longitudinal_episode_accuracy
+  - multilingual_negation_accuracy
+  - false_reassurance
+  review_date: null
+  rollback_version: null
+  limitations:
+  - not clinically validated
+  - not for direct patient use

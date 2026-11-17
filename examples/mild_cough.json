@@ -1,0 +1,83 @@
+{
+  "user_id": "DEMO_PATIENT_DO_NOT_USE_REAL_PHI",
+  "request_id": "mild_cough",
+  "as_of": "2026-11-16T10:00:00Z",
+  "population": {
+    "age_years": 28,
+    "pregnant": false,
+    "location_country": "IN"
+  },
+  "symptom_codes": [
+    "cough"
+  ],
+  "facts": [
+    {
+      "code": "cough",
+      "state": "present",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "duration_days",
+      "state": "present",
+      "value": 1,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "breathing_difficulty",
+      "state": "absent",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "blood_in_sputum",
+      "state": "absent",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "worsening",
+      "state": "absent",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    },
+    {
+      "code": "functional_impairment",
+      "state": "absent",
+      "value": null,
+      "observed_at": "2026-11-16T10:00:00Z",
+      "recorded_at": null,
+      "valid_until": null,
+      "source_type": "patient",
+      "source_id": "message-001",
+      "verification": "patient_confirmed"
+    }
+  ],
+  "episodes": [],
+  "desired_versions": {}
+}

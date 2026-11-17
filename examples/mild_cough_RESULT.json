@@ -1,0 +1,77 @@
+{
+  "assessment_id": "a18e103c-bd94-4db7-b9d7-63b94b3bdc42",
+  "simulated": true,
+  "intended_use": "Engineering simulation, NOT a validated clinical assessment",
+  "status": "DECIDED",
+  "priority": "P0",
+  "action": "monitor_with_safety_net",
+  "timeframe": "reassess if changes",
+  "reason_codes": [
+    "COUGH_MILD_BRIEF"
+  ],
+  "question": null,
+  "response": "This appears to be a brief cough based on the details provided. Monitor for changes and seek reassessment if it persists or new concerning symptoms occur.",
+  "results": [
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "INSUFFICIENT_INFORMATION",
+      "priority": null,
+      "action": null,
+      "timeframe": null,
+      "reason_codes": [
+        "NO_APPROVED_RULE_MATCHED"
+      ],
+      "evidence_ids": [],
+      "question": null,
+      "missing_or_conflicting": [
+        "severe_breathlessness",
+        "chest_pressure",
+        "chest_discomfort",
+        "cold_sweat",
+        "unilateral_weakness",
+        "unconscious",
+        "severe_allergic_swelling",
+        "severe_bleeding",
+        "seizure_ongoing",
+        "confusion_severe",
+        "sudden_severe_abdominal_pain",
+        "known_diabetes",
+        "persistent_vomiting",
+        "unable_to_drink"
+      ],
+      "response": null
+    },
+    {
+      "pathway_id": "adult_cough_in",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "DECIDED",
+      "priority": "P0",
+      "action": "monitor_with_safety_net",
+      "timeframe": "reassess if changes",
+      "reason_codes": [
+        "COUGH_MILD_BRIEF"
+      ],
+      "evidence_ids": [
+        "NICE_NG120"
+      ],
+      "question": null,
+      "missing_or_conflicting": [
+        "continuity",
+        "prior_episode_unresolved"
+      ],
+      "response": "This appears to be a brief cough based on the details provided. Monitor for changes and seek reassessment if it persists or new concerning symptoms occur."
+    }
+  ],
+  "pathway_versions": {
+    "global_emergency": "0.1.0",
+    "adult_cough_in": "0.1.0"
+  },
+  "pathway_sha256": {
+    "global_emergency": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009",
+    "adult_cough_in": "1efdd58eb92d25d6a3518d0ce394ba96aa1aa21d5d599b7effeff7e1f847cedc"
+  },
+  "unresolved_pathways": []
+}

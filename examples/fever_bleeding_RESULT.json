@@ -1,0 +1,118 @@
+{
+  "assessment_id": "c927b6d1-9399-416b-98bd-d16309e49f31",
+  "simulated": true,
+  "intended_use": "Engineering simulation, NOT a validated clinical assessment",
+  "status": "DECIDED",
+  "priority": "P3",
+  "action": "prompt_clinical_assessment",
+  "timeframe": "prompt; exact timeframe pending review",
+  "reason_codes": [
+    "FEVER_BLEEDING_RASH"
+  ],
+  "question": {
+    "id": "FEVER_CONFUSION",
+    "priority": 100,
+    "fact": "confusion_severe",
+    "when": {
+      "fact": "confusion_severe",
+      "op": "unknown"
+    },
+    "text": {
+      "en": "Is the person very confused or unusually difficult to wake?"
+    },
+    "choices": [],
+    "answer_schema": {
+      "kind": "confirmation_required_text"
+    },
+    "can_change": [
+      "clinical_disposition"
+    ]
+  },
+  "response": "Fever with these accompanying features needs prompt professional assessment. If severe deterioration occurs, seek emergency help.",
+  "results": [
+    {
+      "pathway_id": "global_emergency",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "INSUFFICIENT_INFORMATION",
+      "priority": null,
+      "action": null,
+      "timeframe": null,
+      "reason_codes": [
+        "NO_APPROVED_RULE_MATCHED"
+      ],
+      "evidence_ids": [],
+      "question": null,
+      "missing_or_conflicting": [
+        "severe_breathlessness",
+        "chest_pressure",
+        "breathing_difficulty",
+        "chest_discomfort",
+        "cold_sweat",
+        "unilateral_weakness",
+        "unconscious",
+        "severe_allergic_swelling",
+        "severe_bleeding",
+        "seizure_ongoing",
+        "confusion_severe",
+        "sudden_severe_abdominal_pain",
+        "known_diabetes",
+        "persistent_vomiting",
+        "unable_to_drink"
+      ],
+      "response": null
+    },
+    {
+      "pathway_id": "adult_fever_in",
+      "version": "0.1.0",
+      "pathway_status": "draft",
+      "status": "DECIDED",
+      "priority": "P3",
+      "action": "prompt_clinical_assessment",
+      "timeframe": "prompt; exact timeframe pending review",
+      "reason_codes": [
+        "FEVER_BLEEDING_RASH"
+      ],
+      "evidence_ids": [
+        "WHO_DENGUE"
+      ],
+      "question": {
+        "id": "FEVER_CONFUSION",
+        "priority": 100,
+        "fact": "confusion_severe",
+        "when": {
+          "fact": "confusion_severe",
+          "op": "unknown"
+        },
+        "text": {
+          "en": "Is the person very confused or unusually difficult to wake?"
+        },
+        "choices": [],
+        "answer_schema": {
+          "kind": "confirmation_required_text"
+        },
+        "can_change": [
+          "clinical_disposition"
+        ]
+      },
+      "missing_or_conflicting": [
+        "fever_duration_days",
+        "worsening",
+        "dehydration_signs",
+        "confusion_severe",
+        "unable_to_drink",
+        "body_aches"
+      ],
+      "response": "Fever with these accompanying features needs prompt professional assessment. If severe deterioration occurs, seek emergency help."
+    }
+  ],
+  "pathway_versions": {
+    "global_emergency": "0.1.0",
+    "adult_fever_in": "0.1.0"
+  },
+  "pathway_sha256": {
+    "global_emergency": "5b5cfb276f66c559951917ae0f7f87af61f3b49cdbf66f244c83c81565527009",
+    "adult_fever_in": "ad2621916d815b6c8e0e170cbcce16b202a3c8dc0e07d3488aa6de340456d6c4"
+  },
+  "unresolved_pathways": []
+}

@@ -1,4 +1,5 @@
 import asyncio
+from datetime import timedelta
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,6 +10,73 @@ import app.db.models  # noqa: F401
 from app.db.models import Conversation, HealthEpisode, Message
 from app.schemas import NormalizedIncomingMessage
 from app.services.conversation import ConversationService
+
+
+def test_old_cough_requires_continuity_confirmation_before_reusing_episode(monkeypatch) -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    session = sessionmaker(bind=engine, expire_on_commit=False)()
+    service = ConversationService(Settings(
+        allow_test_user_auto_provision=True, test_user_phone="919999999999", gemini_api_key=None,
+    ))
+    sent: list[str] = []
+
+    async def no_send(*args, **kwargs):
+        sent.append(args[1])
+        return None
+
+    monkeypatch.setattr(service.whatsapp, "send_text", no_send)
+    monkeypatch.setattr(service.whatsapp, "send_buttons", no_send)
+    monkeypatch.setattr(service.whatsapp, "send_list", no_send)
+    first = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="cough.first", sender="919999999999", message_type="text",
+        content="I have a cough",
+    ))
+    asyncio.run(service.process_message(session, first))
+    old = session.query(HealthEpisode).one()
+    old.last_reported_at -= timedelta(days=15)
+    old.created_at -= timedelta(days=15)
+    session.commit()
+
+    second = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="cough.second", sender="919999999999", message_type="text",
+        content="I am still coughing",
+    ))
+    asyncio.run(service.process_message(session, second))
+    assert session.query(HealthEpisode).count() == 1
+    assert session.query(Conversation).one().state["pending_continuity"]["episode_id"] == old.id
+
+    answer = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="cough.third", sender="919999999999", message_type="interactive",
+        content="Went away, returned", metadata={"reply_id": "RETURNED"},
+    ))
+    asyncio.run(service.process_message(session, answer))
+    assert session.query(HealthEpisode).count() == 2
+    assert session.query(HealthEpisode).filter_by(id=old.id).one().status == "resolved"
+    current = session.query(HealthEpisode).filter_by(status="active").one()
+    assert current.summary["continuity"] == "returned_after_resolution"
+    assert service.review.assess(current, service.context_builder.build(
+        session, current.patient_id, "cough"
+    )).evidence["reported_duration_days"] is None
+
+    current.last_reported_at -= timedelta(days=15)
+    current.created_at -= timedelta(days=15)
+    session.commit()
+    later = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="cough.fourth", sender="919999999999", message_type="text",
+        content="I am still coughing",
+    ))
+    asyncio.run(service.process_message(session, later))
+    assert session.query(Conversation).one().state["pending_continuity"]
+    continued = service.receive(session, NormalizedIncomingMessage(
+        provider_message_id="cough.fifth", sender="919999999999", message_type="interactive",
+        content="Continued", metadata={"reply_id": "CONTINUED"},
+    ))
+    asyncio.run(service.process_message(session, continued))
+    assert session.query(HealthEpisode).count() == 2
+    assert service.review.assess(current, service.context_builder.build(
+        session, current.patient_id, "cough"
+    )).priority == "P2"
 
 
 def test_guided_headache_intake_collects_change_and_impact_before_closing(monkeypatch) -> None:
