@@ -58,7 +58,11 @@ authenticated identity, release controls, and appropriate regulatory review.
 
 Voice transcription, document OCR/retrieval, embeddings/pgvector, authentication for the future mobile app, full consent onboarding, and clinician-approved pathways are extension points, not complete features yet. Incoming media is identified and persisted as a source reference, but it is not downloaded or interpreted.
 
-The webhook uses FastAPI background tasks for the local single-process test flow. The same task is dispatched to ARQ when `USE_ARQ=true` and is exposed in `app/worker.py`; configure Redis and run `arq app.worker.WorkerSettings` for durable production processing.
+The webhook uses FastAPI background tasks only for local single-process testing. On Cloud Run, set `USE_CLOUD_TASKS=true` so a saved incoming message is enqueued before the webhook acknowledges it. Cloud Tasks sends an authenticated request to `/api/v1/tasks/whatsapp`; failed processing receives a non-2xx response and is retried. A dedicated invoker service account and signed OIDC token protect that route. The ARQ worker remains an optional Redis-backed alternative when `USE_ARQ=true` outside Cloud Run.
+
+Cloud Run needs `CLOUD_TASKS_PROJECT`, `CLOUD_TASKS_LOCATION`, `CLOUD_TASKS_QUEUE`, `CLOUD_TASKS_TARGET_URL` (the service URL without a path), and `CLOUD_TASKS_INVOKER_SERVICE_ACCOUNT`. Grant the runtime service account `roles/cloudtasks.enqueuer` on the queue and `roles/iam.serviceAccountUser` on the invoker service account. The Cloud Tasks service agent also needs `roles/iam.serviceAccountUser` on the invoker service account to mint OIDC tokens. Grant the invoker service account `roles/run.invoker` on the Cloud Run service. Use a queue in the same region, initially with one concurrent dispatch to preserve the demo conversation flow. Configure a Cloud Run request timeout at least as long as the task dispatch deadline.
+
+Cloud Tasks provides at-least-once delivery. AYUVAN atomically claims each incoming message so duplicate task deliveries do not process it concurrently. A crash between sending a WhatsApp message and recording the provider response can still result in a duplicate reply on retry; a transactional outbound outbox is needed before treating this as exactly-once delivery.
 
 ## Guided intake and clinician-review boundary
 

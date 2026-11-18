@@ -1,9 +1,9 @@
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import and_, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -29,6 +29,10 @@ URGENT_PATHWAY_RESPONSE = (
 )
 
 
+class MessageProcessingInProgress(RuntimeError):
+    """A second task must retry later rather than acknowledge unfinished work."""
+
+
 class ConversationService:
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
@@ -45,7 +49,7 @@ class ConversationService:
             Message.provider == "whatsapp", Message.provider_message_id == incoming.provider_message_id
         ))
         if existing:
-            return None
+            return existing.id if existing.processing_status in {"received", "failed"} else None
         patient = self._find_or_provision_patient(db, incoming.sender)
         if patient is None:
             logger.warning("Rejected unlinked WhatsApp sender")
@@ -69,11 +73,28 @@ class ConversationService:
         return message.id
 
     async def process_message(self, db: Session, message_id: str) -> None:
-        message = db.get(Message, message_id)
-        if message is None or message.processing_status in {"processed", "processing"}:
-            return
-        message.processing_status = "processing"
+        now = datetime.now(timezone.utc)
+        claimed = db.execute(
+            update(Message).where(
+                Message.id == message_id,
+                or_(
+                    Message.processing_status.in_(("received", "failed")),
+                    and_(
+                        Message.processing_status == "processing",
+                        Message.updated_at < now - timedelta(minutes=20),
+                    ),
+                ),
+            ).values(processing_status="processing", updated_at=now)
+        ).rowcount
         db.commit()
+        if not claimed:
+            current = db.get(Message, message_id)
+            if current is not None and current.processing_status == "processing":
+                raise MessageProcessingInProgress(message_id)
+            return
+        message = db.get(Message, message_id)
+        if message is None:
+            return
         try:
             conversation = db.get(Conversation, message.conversation_id)
             if conversation is None or message.patient_id is None:
@@ -301,6 +322,7 @@ class ConversationService:
                 }
                 db.commit()
             logger.exception("Message processing failed for internal message id %s", message_id)
+            raise
 
     def _find_or_provision_patient(self, db: Session, phone: str) -> PatientProfile | None:
         identity = db.scalar(select(ExternalIdentity).where(

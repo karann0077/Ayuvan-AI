@@ -16,6 +16,12 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./ayuvan.db"
     redis_url: str | None = None
     use_arq: bool = False
+    use_cloud_tasks: bool = False
+    cloud_tasks_project: str | None = None
+    cloud_tasks_location: str = "asia-south1"
+    cloud_tasks_queue: str = "ayuvan-whatsapp"
+    cloud_tasks_target_url: str | None = None
+    cloud_tasks_invoker_service_account: str | None = None
 
     whatsapp_phone_number_id: str | None = None
     whatsapp_business_account_id: str | None = None

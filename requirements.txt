@@ -10,3 +10,6 @@ arq==0.26.1
 redis==5.2.1
 python-dotenv==1.0.1
 PyYAML==6.0.3
+google-cloud-tasks==2.26.0
+google-auth==2.62.2
+requests==2.32.5
