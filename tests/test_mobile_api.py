@@ -5,7 +5,10 @@ from sqlalchemy.pool import StaticPool
 
 from app.core.config import Settings
 from app.db.base import Base
-from app.db.models import ExternalIdentity, PatientProfile, User
+from app.db.models import (
+    ConsentRecord, Conversation, ExternalIdentity, HealthEpisode, MedicalCondition,
+    Message, PatientAccess, PatientProfile, User,
+)
 from app.db.session import get_db
 from app.main import create_app
 
@@ -106,7 +109,11 @@ def test_account_deletion_removes_family_and_blocks_old_session(monkeypatch):
 
 def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     client = client_with_database(monkeypatch)
-    headers, _ = register(client, "9876543240", "Mobile account")
+    headers, mobile_patient_id = register(client, "9876543240", "Mobile account")
+    assert client.post(f"/api/v1/mobile/patients/{mobile_patient_id}/health-items/conditions",
+                       headers=headers, json={"name": "Asthma"}).status_code == 201
+    assert client.post(f"/api/v1/mobile/patients/{mobile_patient_id}/chat/messages", headers=headers,
+                       json={"text": "I have a headache", "client_message_id": "mobile-message-1"}).status_code == 200
     db_generator = client.app.dependency_overrides[get_db]()
     db = next(db_generator)
     whatsapp_user = User()
@@ -114,8 +121,17 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     db.flush()
     whatsapp_patient = PatientProfile(user_id=whatsapp_user.id)
     db.add(whatsapp_patient)
+    db.flush()
     db.add(ExternalIdentity(user_id=whatsapp_user.id, provider="whatsapp",
                             external_id="919876543240", is_active=True))
+    db.add(MedicalCondition(patient_id=whatsapp_patient.id, name="Migraine"))
+    db.add(HealthEpisode(patient_id=whatsapp_patient.id, primary_symptom="cough",
+                         normalized_symptom="cough", summary={"note": "Earlier WhatsApp report"}))
+    db.add(Conversation(patient_id=whatsapp_patient.id, channel="whatsapp", state={}))
+    db.add(Message(patient_id=whatsapp_patient.id, provider="whatsapp",
+                   provider_message_id="wa-history-1", direction="incoming", message_type="text",
+                   content="I have a cough", processing_status="processed", metadata_json={}))
+    db.add(ConsentRecord(patient_id=whatsapp_patient.id, purpose="notifications", status="withdrawn"))
     db.commit()
     whatsapp_patient_id = whatsapp_patient.id
     db_generator.close()
@@ -134,8 +150,55 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     verified = client.post("/api/v1/mobile/whatsapp-link/verify", headers=headers,
                            json={"code": code})
     assert verified.status_code == 200, verified.text
-    assert verified.json()["patients"][0]["id"] == whatsapp_patient_id
-    assert client.get(f"/api/v1/mobile/patients/{whatsapp_patient_id}/health", headers=headers).status_code == 200
+    assert verified.json()["patients"][0]["id"] == mobile_patient_id
+    assert len(verified.json()["patients"]) == 1
+    health = client.get(f"/api/v1/mobile/patients/{mobile_patient_id}/health", headers=headers).json()
+    assert {item["name"] for item in health["conditions"]} == {"Asthma", "Migraine"}
+    assert {item["symptom"] for item in health["episodes"]} == {"headache", "cough"}
+    assert client.get(f"/api/v1/mobile/patients/{whatsapp_patient_id}/health", headers=headers).status_code == 404
+    assert client.post("/api/v1/mobile/whatsapp-link/request", headers=headers).json()["status"] == "already_linked"
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    identity = db.query(ExternalIdentity).filter_by(external_id="919876543240").one()
+    assert db.query(PatientProfile).filter_by(user_id=identity.user_id).one().id == mobile_patient_id
+    assert db.query(Message).filter_by(provider_message_id="wa-history-1").one().patient_id == mobile_patient_id
+    assert db.query(ConsentRecord).filter_by(patient_id=mobile_patient_id, purpose="notifications").order_by(
+        ConsentRecord.created_at.desc()).first().status == "withdrawn"
+    db_generator.close()
+    assert client.post("/api/v1/mobile/auth/delete", headers=headers,
+                       json={"password": "secure-pass-123"}).status_code == 200
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    assert db.query(ExternalIdentity).filter_by(external_id="919876543240").first() is None
+    assert db.query(PatientProfile).filter_by(id=mobile_patient_id).first() is None
+    db_generator.close()
+
+
+def test_previously_verified_separate_whatsapp_profile_is_combined(monkeypatch):
+    client = client_with_database(monkeypatch)
+    headers, mobile_patient_id = register(client, "9876543241", "Mobile account")
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    mobile_patient = db.get(PatientProfile, mobile_patient_id)
+    whatsapp_user = User()
+    db.add(whatsapp_user)
+    db.flush()
+    whatsapp_patient = PatientProfile(user_id=whatsapp_user.id)
+    db.add(whatsapp_patient)
+    db.flush()
+    db.add(ExternalIdentity(user_id=whatsapp_user.id, provider="whatsapp",
+                            external_id="919876543241", is_active=True))
+    db.add(PatientAccess(account_user_id=mobile_patient.user_id, patient_id=whatsapp_patient.id,
+                         relationship="self", role="linked"))
+    db.add(MedicalCondition(patient_id=whatsapp_patient.id, name="Prior condition"))
+    db.commit()
+    db_generator.close()
+    result = client.post("/api/v1/mobile/whatsapp-link/request", headers=headers)
+    assert result.status_code == 200, result.text
+    assert result.json()["status"] == "linked"
+    assert [patient["id"] for patient in result.json()["patients"]] == [mobile_patient_id]
+    health = client.get(f"/api/v1/mobile/patients/{mobile_patient_id}/health", headers=headers).json()
+    assert [item["name"] for item in health["conditions"]] == ["Prior condition"]
 
 
 def test_document_facts_remain_draft_until_patient_review(monkeypatch):

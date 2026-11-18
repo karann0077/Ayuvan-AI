@@ -1936,8 +1936,14 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
         }
         Spacer(Modifier.height(12.dp))
         OutlinedButton(onClick = { action {
-            api.requestWhatsAppLink(); linkDialog = true
-            message = "We sent a code to your WhatsApp number. Enter it here."
+            val result = api.requestWhatsAppLink()
+            if (result.optString("status") == "code_sent") {
+                linkDialog = true
+                message = "We sent a code to your WhatsApp number. Enter it here."
+            } else {
+                onPatientsRefresh(result.optJSONArray("patients") ?: JSONArray())
+                message = "Your WhatsApp history and app health record are connected."
+            }
         } }, modifier = Modifier.fillMaxWidth(), enabled = !busy) { Text("Link WhatsApp history") }
         Text("Linking requires a code sent to your WhatsApp. Your phone and password alone cannot expose an existing medical record.",
             style = MaterialTheme.typography.bodyMedium, color = AyuvanColors.SecondaryText)
@@ -2000,14 +2006,16 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
             val linked = api.verifyWhatsAppLink(linkCode)
             val linkedPatients = linked.optJSONArray("patients") ?: JSONArray()
             onPatientsRefresh(linkedPatients)
-            linkedPatients.rows().firstOrNull { it.optString("role") == "linked" }
+            linkedPatients.rows().firstOrNull { it.optString("role") == "owner" && it.optString("relationship") == "self" }
                 ?.optString("id")?.let(onPatientChange)
-            message = "WhatsApp history linked and selected. Your next symptom chat will use that record."
+            message = "Your WhatsApp history and app health record are now combined."
         } }, enabled = linkCode.length == 6) { Text("Link") } },
         dismissButton = { TextButton(onClick = { linkDialog = false }) { Text("Cancel") } })
     if (deleteDialog) AlertDialog(onDismissRequest = { deleteDialog = false }, title = { Text("Delete account?") },
         text = { Column {
-            Text("This deletes your app account and app-owned profiles. A separately linked WhatsApp record remains in WhatsApp until you request its deletion.")
+            Text(if (patients.rows().any { it.optString("role") == "linked" })
+                "This deletes your app account and app-owned profiles. A separately linked WhatsApp record remains until you delete it separately."
+                else "This permanently deletes your account and AYUVAN health data, including any WhatsApp history combined with it.")
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(value = deletePassword, onValueChange = { deletePassword = it },
                 label = { Text("Confirm password") },

@@ -191,6 +191,59 @@ def _patients(db: Session, user_id: str) -> list[dict[str, Any]]:
     return [_patient_data(patient, access) for patient, access in rows]
 
 
+def _merge_whatsapp_patient(db: Session, account_user_id: str, whatsapp_patient: PatientProfile) -> PatientProfile:
+    """Make the account's own profile the shared record for both channels.
+
+    The WhatsApp identity is moved only after the caller has proved control of
+    that number. Record IDs remain stable, so source links and timelines survive.
+    """
+    owner = db.scalar(select(PatientProfile).where(PatientProfile.user_id == account_user_id))
+    if owner is None:
+        raise HTTPException(status_code=404, detail="Account profile unavailable")
+    if whatsapp_patient.id == owner.id:
+        return owner
+    old_id, old_user_id = whatsapp_patient.id, whatsapp_patient.user_id
+    if db.scalar(select(PatientAccess).where(
+        PatientAccess.patient_id == old_id, PatientAccess.account_user_id != account_user_id
+    )) or db.scalar(select(MobileCredential).where(MobileCredential.user_id == old_user_id)) or db.scalar(
+        select(PatientAccess).where(PatientAccess.account_user_id == old_user_id)
+    ):
+        raise HTTPException(status_code=409, detail="WhatsApp history belongs to another account")
+    if db.scalar(select(Message.id).where(
+        Message.patient_id == old_id, Message.processing_status == "processing"
+    )):
+        raise HTTPException(status_code=409, detail="A WhatsApp message is still processing. Try linking again shortly")
+
+    # A withdrawal on either profile must remain in force after the merge.
+    withdrawn = []
+    for purpose in ("health_processing", "ai_assistance", "notifications"):
+        latest = db.scalar(select(ConsentRecord).where(
+            ConsentRecord.patient_id == old_id, ConsentRecord.purpose == purpose
+        ).order_by(ConsentRecord.created_at.desc(), ConsentRecord.id.desc()))
+        if latest is not None and latest.status == "withdrawn":
+            withdrawn.append(purpose)
+
+    db.flush()
+    # Summaries are derived snapshots with a patient/version uniqueness key.
+    # Rebuild one from the combined episodes after the transfer.
+    db.execute(delete(PatientSummary).where(PatientSummary.patient_id.in_((old_id, owner.id))))
+    for model in (ConsentRecord, Conversation, Message, HealthEpisode, MedicalCondition, Allergy,
+                  MedicationRecord, MedicalObservation, MedicalDocument, ClinicalAssessment,
+                  CarePlan, MediaAsset, AuditLog, WhatsAppLinkChallenge):
+        db.execute(update(model).where(model.patient_id == old_id).values(patient_id=owner.id))
+    db.execute(update(ExternalIdentity).where(ExternalIdentity.user_id == old_user_id)
+               .values(user_id=account_user_id))
+    db.execute(delete(PatientAccess).where(PatientAccess.patient_id == old_id))
+    db.execute(delete(PatientProfile).where(PatientProfile.id == old_id))
+    db.execute(delete(User).where(User.id == old_user_id))
+    for purpose in withdrawn:
+        db.add(ConsentRecord(patient_id=owner.id, purpose=purpose, status="withdrawn",
+                             policy_version="2026-11", withdrawn_at=datetime.now(timezone.utc)))
+    ConversationService._refresh_summary(db, owner.id)
+    _audit(db, owner.id, "whatsapp_history_merged", "patient", owner.id)
+    return owner
+
+
 @router.post("/auth/register", status_code=201)
 def register(payload: Registration, db: Session = Depends(get_db)) -> dict[str, Any]:
     if not payload.terms_accepted or not payload.health_processing_consent:
@@ -868,7 +921,7 @@ def review_document(patient_id: str, document_id: str, payload: ExtractionReview
 
 @router.post("/whatsapp-link/request")
 async def request_whatsapp_link(session: MobileSession = Depends(get_current_session),
-                                db: Session = Depends(get_db)) -> dict[str, str]:
+                                db: Session = Depends(get_db)) -> dict[str, Any]:
     credential = db.scalar(select(MobileCredential).where(MobileCredential.user_id == session.user_id))
     if credential is None:
         raise HTTPException(status_code=404, detail="Account not found")
@@ -878,6 +931,8 @@ async def request_whatsapp_link(session: MobileSession = Depends(get_current_ses
         ExternalIdentity.external_id.in_((normalized, credential.phone))))
     if identity is None:
         raise HTTPException(status_code=404, detail="No WhatsApp history is associated with this number")
+    if identity.user_id == session.user_id:
+        return {"status": "already_linked", "patients": _patients(db, session.user_id)}
     patient = db.scalar(select(PatientProfile).where(PatientProfile.user_id == identity.user_id))
     if patient is None:
         raise HTTPException(status_code=404, detail="WhatsApp profile not found")
@@ -887,7 +942,9 @@ async def request_whatsapp_link(session: MobileSession = Depends(get_current_ses
         raise HTTPException(status_code=409, detail="This WhatsApp profile is linked to another account")
     if db.scalar(select(PatientAccess).where(PatientAccess.patient_id == patient.id,
                                               PatientAccess.account_user_id == session.user_id)):
-        return {"status": "already_linked"}
+        _merge_whatsapp_patient(db, session.user_id, patient)
+        db.commit()
+        return {"status": "linked", "patients": _patients(db, session.user_id)}
     recent = db.scalar(select(WhatsAppLinkChallenge).where(
         WhatsAppLinkChallenge.account_user_id == session.user_id,
         WhatsAppLinkChallenge.created_at > datetime.now(timezone.utc) - timedelta(minutes=2)))
@@ -912,7 +969,8 @@ def verify_whatsapp_link(payload: LinkCode, session: MobileSession = Depends(get
                          db: Session = Depends(get_db)) -> dict[str, Any]:
     challenge = db.scalar(select(WhatsAppLinkChallenge).where(
         WhatsAppLinkChallenge.account_user_id == session.user_id,
-        WhatsAppLinkChallenge.used_at.is_(None)).order_by(WhatsAppLinkChallenge.created_at.desc()))
+        WhatsAppLinkChallenge.used_at.is_(None)).order_by(
+            WhatsAppLinkChallenge.created_at.desc()).with_for_update())
     now = datetime.now(timezone.utc)
     if challenge is None or challenge.expires_at.replace(tzinfo=timezone.utc) <= now or challenge.attempts >= 5:
         raise HTTPException(status_code=400, detail="Code expired. Request a new one")
@@ -921,13 +979,16 @@ def verify_whatsapp_link(payload: LinkCode, session: MobileSession = Depends(get
     if not secrets.compare_digest(provided, challenge.code_hash):
         db.commit()
         raise HTTPException(status_code=400, detail="Incorrect code")
-    challenge.used_at = now
+    credential = db.scalar(select(MobileCredential).where(MobileCredential.user_id == session.user_id))
+    identity = db.scalar(select(ExternalIdentity).where(
+        ExternalIdentity.provider == "whatsapp", ExternalIdentity.is_active.is_(True),
+        ExternalIdentity.external_id.in_((credential.phone, credential.phone.lstrip("+")))
+    ).with_for_update()) if credential else None
     linked_patient = db.get(PatientProfile, challenge.patient_id)
-    if linked_patient and not linked_patient.display_name:
-        linked_patient.display_name = "WhatsApp history"
-    db.add(PatientAccess(account_user_id=session.user_id, patient_id=challenge.patient_id,
-                         relationship="self", role="linked"))
-    _audit(db, challenge.patient_id, "whatsapp_profile_linked", "patient", challenge.patient_id)
+    if identity is None or linked_patient is None or identity.user_id != linked_patient.user_id:
+        raise HTTPException(status_code=409, detail="WhatsApp record changed. Request a new code")
+    challenge.used_at = now
+    _merge_whatsapp_patient(db, session.user_id, linked_patient)
     db.commit()
     return {"status": "linked", "patients": _patients(db, session.user_id)}
 

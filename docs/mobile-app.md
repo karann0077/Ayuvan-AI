@@ -7,7 +7,7 @@
 - Backend: `/api/v1/mobile` on the existing FastAPI service. `alembic upgrade head` applies the mobile identity and access migration.
 - Session: random bearer token, SHA-256 hash in PostgreSQL, 30-day expiry, server-side revocation; Android stores the token with AES-GCM in Android Keystore.
 - Password: Argon2id. Login locks a credential after five failed attempts for 15 minutes.
-- Account boundary: registration creates a new profile. A WhatsApp patient is linked only after a six-digit code sent to the same WhatsApp number is verified. A family member has a separate patient profile. Every patient-scoped route checks `PatientAccess`.
+- Account boundary: registration creates a new profile. After a six-digit code sent to the same WhatsApp number is verified, WhatsApp history is merged into that account profile and the WhatsApp identity points to it. Earlier app and WhatsApp reports then share one longitudinal record. A family member has a separate patient profile. Every patient-scoped route checks `PatientAccess`.
 
 ## Features and data flow
 
@@ -19,7 +19,7 @@
 | Documents | Private Google Cloud Storage upload/download; Gemini extraction is an unverified draft; only patient-selected facts are added to the record |
 | Care Plan | Patient-created tasks can be added, edited, completed and deleted. Android WorkManager schedules one-time local notifications when consent and OS permission are granted |
 | Discover | Backend-only Places API (New) Text Search, explicit area input, Google Maps attribution and links that open the map; 40 search attempts per account and 100 total attempts per rolling day, with a five-second per-account cooldown |
-| Profile | Purpose-specific consent, verified WhatsApp link, complete JSON export, individual document deletion, linked WhatsApp record deletion and account-owned data deletion |
+| Profile | Purpose-specific consent, verified WhatsApp history merge, complete JSON export, individual document deletion and account-owned data deletion. An older separately linked WhatsApp profile can still be deleted independently |
 
 ## Cloud configuration
 
