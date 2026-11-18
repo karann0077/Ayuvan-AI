@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     test_user_phone: str | None = None
     pathway_simulation_key: SecretStr | None = None
     enable_pathway_simulator: bool = False
+    google_places_api_key: SecretStr | None = None
+    medical_documents_bucket: str | None = None
+    mobile_session_days: int = 30
 
     @field_validator("database_url")
     @classmethod

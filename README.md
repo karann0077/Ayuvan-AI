@@ -1,4 +1,4 @@
-# AYUVAN Stage 1 Backend
+# AYUVAN Backend and Android App
 
 AYUVAN Stage 1 is a modular FastAPI backend for the WhatsApp-based health-concern intake flow. It stores a longitudinal, source-traceable patient record in PostgreSQL, processes Meta Cloud API webhooks, asks persistent interactive follow-up questions, and uses Gemini only for validated language extraction—not clinical decisions.
 
@@ -56,7 +56,13 @@ independent testing must evaluate clinical safety, and the product needs
 authenticated identity, release controls, and appropriate regulatory review.
 
 
-Voice transcription, document OCR/retrieval, embeddings/pgvector, authentication for the future mobile app, full consent onboarding, and clinician-approved pathways are extension points, not complete features yet. Incoming media is identified and persisted as a source reference, but it is not downloaded or interpreted.
+Voice transcription, embeddings/pgvector, and clinician-approved pathways remain extension points. Incoming WhatsApp media is identified and persisted as a source reference; mobile document uploads use a separate private Cloud Storage path with an explicit patient review step.
+
+## Android mobile integration
+
+The Android app now uses authenticated `/api/v1/mobile` endpoints rather than demo data. It supports phone and password accounts, Argon2id password hashes, revocable sessions, distinct family profiles, a verified WhatsApp history link, the shared symptom conversation engine, symptom corrections, editable health items, private document upload/download and review, care tasks, local reminder notifications, Google Places search, consent controls, data export and deletion. See [docs/mobile-app.md](docs/mobile-app.md) for deployment and testing.
+
+Registration does not prove ownership of the phone number. The app cannot read a WhatsApp health history until a one-time code sent to that WhatsApp number is verified. Google Places requests run only through the backend and are capped per account and service-wide; they require a billed Places API (New) key. Android reminder notifications are scheduled on the device and may arrive around their due time.
 
 The webhook uses FastAPI background tasks only for local single-process testing. On Cloud Run, set `USE_CLOUD_TASKS=true` so a saved incoming message is enqueued before the webhook acknowledges it. Cloud Tasks sends an authenticated request to `/api/v1/tasks/whatsapp`; failed processing receives a non-2xx response and is retried. A dedicated invoker service account and signed OIDC token protect that route. The ARQ worker remains an optional Redis-backed alternative when `USE_ARQ=true` outside Cloud Run.
 

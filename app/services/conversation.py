@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings, get_settings
 from app.db.models import (
-    AuditLog, Conversation, ExternalIdentity, HealthEpisode, Message, PatientProfile,
+    AuditLog, ConsentRecord, Conversation, ExternalIdentity, HealthEpisode, Message, PatientProfile,
     PatientSummary, SymptomEvent, User,
 )
 from app.schemas import SafetyOutcome, SymptomExtraction
@@ -42,6 +42,16 @@ class ConversationService:
         self.questions = QuestionEngine()
         self.review = ClinicalReviewEngine()
         self.whatsapp = WhatsAppClient(self.settings)
+        self.channel = "whatsapp"
+
+    def _save_outgoing(
+        self, db: Session, patient_id: str, conversation_id: str, provider_id: str | None,
+        text: str, message_type: str, metadata: dict[str, Any] | None = None,
+    ) -> None:
+        outgoing = save_outgoing_message(
+            db, patient_id, conversation_id, provider_id, text, message_type, metadata
+        )
+        outgoing.provider = self.channel
 
     def receive(self, db: Session, incoming: NormalizedIncomingMessage) -> str | None:
         """Persist the event before it is queued. Returns a message ID or None when duplicate."""
@@ -118,6 +128,25 @@ class ConversationService:
                 message.processing_status = "processed"
                 db.commit()
                 return
+
+            if self.channel == "whatsapp":
+                opted_out = False
+                for purpose in ("health_processing", "ai_assistance"):
+                    choice = db.scalar(select(ConsentRecord).where(
+                        ConsentRecord.patient_id == message.patient_id,
+                        ConsentRecord.purpose == purpose,
+                    ).order_by(ConsentRecord.created_at.desc()))
+                    opted_out = opted_out or (choice is not None and choice.status == "withdrawn")
+                if opted_out:
+                    await self._send_and_record(
+                        db, message.patient_id, conversation.id,
+                        self._phone_for_patient(db, message.patient_id),
+                        "Health processing or AI assistance is turned off for this AYUVAN profile. You can change this in the app's Privacy choices.",
+                        "text",
+                    )
+                    message.processing_status = "processed"
+                    db.commit()
+                    return
 
             if self._is_explicit_resolution(user_text):
                 active = db.get(HealthEpisode, conversation.active_episode_id) if conversation.active_episode_id else None
@@ -302,7 +331,7 @@ class ConversationService:
                     self._phone_for_patient(db, message.patient_id), question,
                     [("CONTINUED", "Continued"), ("RETURNED", "Went away, returned"), ("NOT_SURE", "Not sure")],
                 )
-                save_outgoing_message(db, message.patient_id, conversation.id, provider_id, question, "interactive")
+                self._save_outgoing(db, message.patient_id, conversation.id, provider_id, question, "interactive")
                 message.processing_status = "processed"
                 db.commit()
                 return
@@ -517,7 +546,7 @@ class ConversationService:
                 phone, prefix + flow_text, self.settings.whatsapp_symptom_intake_flow_id,
                 self.settings.whatsapp_symptom_intake_flow_screen,
             )
-            save_outgoing_message(
+            self._save_outgoing(
                 db, episode.patient_id, conversation.id, provider_id, prefix + flow_text, "interactive",
                 {"presentation": "flow", "episode_id": episode.id},
             )
@@ -539,26 +568,26 @@ class ConversationService:
                     question.button_label or "Choose one",
                     [(option_id, label, label) for option_id, label in question.options],
                 )
-                save_outgoing_message(
+                self._save_outgoing(
                     db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "interactive",
                     {"field": question.field, "presentation": "list"},
                 )
             elif question.options:
                 provider_id = await self.whatsapp.send_buttons(phone, prefix + question.text, question.options)
-                save_outgoing_message(
+                self._save_outgoing(
                     db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "interactive",
                     {"field": question.field, "presentation": "buttons"},
                 )
             else:
                 provider_id = await self.whatsapp.send_text(phone, prefix + question.text)
-                save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "text", {"field": question.field})
+                self._save_outgoing(db, episode.patient_id, conversation.id, provider_id, prefix + question.text, "text", {"field": question.field})
         else:
             conversation.state = {"pending_question": None}
             review = self.review.assess(episode, context)
             self._record_review_assessment(db, episode.patient_id, episode.id, review, context.summary_version)
             response = prefix + self._completion_message(episode, review)
             provider_id = await self.whatsapp.send_text(phone, response)
-            save_outgoing_message(db, episode.patient_id, conversation.id, provider_id, response, "text")
+            self._save_outgoing(db, episode.patient_id, conversation.id, provider_id, response, "text")
 
     @staticmethod
     def _needs_urgent_escalation(pending: dict[str, Any], selected_id: str | None) -> bool:
@@ -665,4 +694,4 @@ class ConversationService:
 
     async def _send_and_record(self, db: Session, patient_id: str, conversation_id: str, phone: str, text: str, message_type: str) -> None:
         provider_id = await self.whatsapp.send_text(phone, text)
-        save_outgoing_message(db, patient_id, conversation_id, provider_id, text, message_type)
+        self._save_outgoing(db, patient_id, conversation_id, provider_id, text, message_type)

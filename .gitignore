@@ -12,6 +12,8 @@ __pycache__/
 .venv/
 venv/
 .gradle/
+android-app/.local-gradle/
+android-app/gradle-*-bin.zip
 dist/
 build/
 *.egg-info/

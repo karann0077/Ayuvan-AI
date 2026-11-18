@@ -1,0 +1,11 @@
+# Deploy only the backend runtime. Local credentials, patient data, Android files,
+# design assets and test artifacts must never enter a Cloud Build source archive.
+*
+!app/
+!app/**
+!clinical/
+!clinical/**
+!requirements.txt
+**/__pycache__/
+**/*.pyc
+**/.DS_Store

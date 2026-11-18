@@ -26,6 +26,8 @@ class PatientProfile(TimestampMixin, Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
     preferred_language: Mapped[str | None] = mapped_column(String(16))
+    display_name: Mapped[str | None] = mapped_column(String(160))
+    sex: Mapped[str | None] = mapped_column(String(32))
     date_of_birth: Mapped[date | None] = mapped_column(Date)
     summary_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     user: Mapped[User] = relationship(back_populates="patient_profile")
@@ -239,3 +241,43 @@ class AuditLog(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
+
+
+class MobileCredential(TimestampMixin, Base):
+    __tablename__ = "mobile_credentials"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, unique=True)
+    phone: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    failed_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class MobileSession(TimestampMixin, Base):
+    __tablename__ = "mobile_sessions"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PatientAccess(TimestampMixin, Base):
+    __tablename__ = "patient_access"
+    __table_args__ = (UniqueConstraint("account_user_id", "patient_id", name="account_patient_access"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    account_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patient_profiles.id"), nullable=False, index=True)
+    relationship: Mapped[str] = mapped_column(String(32), nullable=False, default="self")
+    role: Mapped[str] = mapped_column(String(32), nullable=False, default="owner")
+
+
+class WhatsAppLinkChallenge(TimestampMixin, Base):
+    __tablename__ = "whatsapp_link_challenges"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    account_user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    patient_id: Mapped[str] = mapped_column(ForeignKey("patient_profiles.id"), nullable=False)
+    code_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
