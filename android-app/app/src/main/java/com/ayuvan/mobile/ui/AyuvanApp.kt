@@ -41,6 +41,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -94,6 +95,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -107,6 +110,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.gms.maps.model.LatLng
 import com.ayuvan.mobile.R
 import com.ayuvan.mobile.data.MobileApi
@@ -136,7 +140,7 @@ fun AyuvanApp() {
 
     val onboardingStep = OnboardingStep.valueOf(stepName)
     val selectedTab = MainTab.valueOf(tabName)
-    BackHandler(enabled = showChat || selectedTab == MainTab.DISCOVER || selectedTab == MainTab.PROFILE) {
+    BackHandler(enabled = showChat || selectedTab != MainTab.HOME) {
         if (showChat) showChat = false else tabName = MainTab.HOME.name
     }
 
@@ -156,7 +160,15 @@ fun AyuvanApp() {
 
     Surface(modifier = Modifier.fillMaxSize(), color = AyuvanColors.Page) {
         if (!sessionChecked) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                Image(painterResource(R.drawable.ayu_brand_mark), null, Modifier.size(74.dp))
+                Spacer(Modifier.height(10.dp))
+                Text("AYUVAN", color = AyuvanColors.Brand700, fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(32.dp))
+                CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
+            }
         } else if (!finishedOnboarding) {
             OnboardingFlow(
                 step = onboardingStep,
@@ -193,9 +205,10 @@ fun AyuvanApp() {
                     finishedOnboarding = false
                     stepName = OnboardingStep.WELCOME.name
                 },
-                onTabChange = { tabName = it.name },
+                onTabChange = { if (it == MainTab.MY_HEALTH) recordsEntry = "Timeline"; tabName = it.name },
                 onOpenChat = { text -> chatSeed = text; showChat = true },
                 onOpenDocuments = { recordsEntry = "Documents"; tabName = MainTab.MY_HEALTH.name },
+                onOpenFamily = { recordsEntry = "Medical profile"; tabName = MainTab.MY_HEALTH.name },
             )
         }
     }
@@ -208,13 +221,15 @@ private fun OnboardingFlow(
     api: MobileApi,
     onComplete: (JSONObject) -> Unit,
 ) {
+    var chosenLanguage by rememberSaveable { mutableStateOf("en") }
     when (step) {
         OnboardingStep.WELCOME -> WelcomeScreen(
             onStart = { onStepChange(OnboardingStep.INTRO) },
             onExistingAccount = { onStepChange(OnboardingStep.PHONE) },
         )
-        OnboardingStep.INTRO -> IntroductionScreen(onNext = { onStepChange(OnboardingStep.PHONE) })
-        else -> PhoneScreen(api = api, onAuthenticated = onComplete)
+        OnboardingStep.INTRO -> IntroductionScreen(onBack = { onStepChange(OnboardingStep.WELCOME) },
+            onNext = { chosenLanguage = it; onStepChange(OnboardingStep.PHONE) })
+        else -> PhoneScreen(api = api, initialLanguage = chosenLanguage, onBack = { onStepChange(OnboardingStep.WELCOME) }, onAuthenticated = onComplete)
     }
 }
 
@@ -234,118 +249,119 @@ private fun OnboardingBackground(content: @Composable () -> Unit) {
 
 @Composable
 private fun WelcomeScreen(onStart: () -> Unit, onExistingAccount: () -> Unit) {
-    OnboardingBackground {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 28.dp, vertical = 28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(Modifier.height(30.dp))
-            Image(
-                painter = painterResource(R.drawable.ayuvan_logo_horizontal),
-                contentDescription = "AYUVAN",
-                modifier = Modifier.width(156.dp).height(48.dp),
-                contentScale = ContentScale.Fit,
-            )
-            Spacer(Modifier.weight(0.42f))
-            Image(
-                painter = painterResource(R.drawable.welcome_hero),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth().heightIn(max = 290.dp),
-                contentScale = ContentScale.Fit,
-            )
-            Text("Your health, all in one place.", style = MaterialTheme.typography.displaySmall, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(12.dp))
-            Text(
-                "Understand your health, organise medical information and keep your next steps within reach.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = AyuvanColors.SecondaryText,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.weight(0.5f))
-            PrimaryButton("Get started", onStart)
-            TextButton(onClick = onExistingAccount) { Text("I already have an account") }
+    Column(Modifier.fillMaxSize().background(Color.White).verticalScroll(rememberScrollState())
+        .padding(horizontal = 22.dp)) {
+        Spacer(Modifier.height(27.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(painterResource(R.drawable.ayu_brand_mark), null, Modifier.size(36.dp))
+            Spacer(Modifier.width(7.dp))
+            Text("AYUVAN", color = AyuvanColors.Brand700, fontSize = 24.sp, fontWeight = FontWeight.Bold)
         }
+        Spacer(Modifier.height(19.dp))
+        Image(painterResource(R.drawable.ayu_ill_wellbeing), null,
+            Modifier.fillMaxWidth().height(174.dp), contentScale = ContentScale.Fit)
+        Spacer(Modifier.height(14.dp))
+        AyuTitle("Feel more in control of your health",
+            "Understand your concerns, follow doctor instructions, and keep records together.")
+        Spacer(Modifier.height(20.dp))
+        AyuDetailRow(R.drawable.ayu_message_circle, "Understand a concern", "Ask in your own words")
+        Spacer(Modifier.height(8.dp))
+        AyuDetailRow(R.drawable.ayu_calendar, "Follow your care", "Keep track of recommended next steps")
+        Spacer(Modifier.height(8.dp))
+        AyuDetailRow(R.drawable.ayu_folder, "Organize records", "Prescriptions and reports in one place")
+        Spacer(Modifier.height(28.dp))
+        AyuPrimaryButton("Get started", onStart)
+        TextButton(onClick = onExistingAccount, modifier = Modifier.fillMaxWidth()) {
+            Text("I already have an account")
+        }
+        Text("AYUVAN does not replace professional healthcare.",
+            color = AyuvanColors.SecondaryText, fontSize = 12.sp,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 25.dp), textAlign = TextAlign.Center)
     }
 }
 
 @Composable
-private fun IntroductionScreen(onNext: () -> Unit) {
-    OnboardingBackground {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            BrandMark()
-            Spacer(Modifier.height(28.dp))
-            Image(
-                painter = painterResource(R.drawable.onboarding_health_guidance),
-                contentDescription = null,
-                modifier = Modifier.size(220.dp),
-            )
-            Text("Complete health in one place", style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(22.dp))
-            listOf(
-                "Track your health and medical records",
-                "Get AI-assisted health guidance",
-                "Follow your care plan with reminders",
-                "Find nearby healthcare options",
-            ).forEach { item -> BenefitRow(item) }
-            Spacer(Modifier.weight(1f))
-            Text("●  ●  ●  ●", color = AyuvanColors.Brand500, letterSpacing = 4.sp)
-            Spacer(Modifier.height(18.dp))
-            PrimaryButton("Continue", onNext)
+private fun IntroductionScreen(onBack: () -> Unit, onNext: (String) -> Unit) {
+    var selected by rememberSaveable { mutableStateOf("en") }
+    Column(Modifier.fillMaxSize().background(Color.White).padding(horizontal = 20.dp)) {
+        AyuPageHeader("Language", onBack = onBack)
+        Spacer(Modifier.height(20.dp))
+        AyuTitle("Choose your language", "You can change this any time.")
+        Spacer(Modifier.height(24.dp))
+        listOf("English" to "en", "हिन्दी (Hindi)" to "hi",
+            "Hinglish — English interface" to "en-hinglish").forEach { (label, code) ->
+            AyuCardRow(R.drawable.ayu_language, label,
+                if (selected == code) "Selected" else null,
+                onClick = { selected = code }, modifier = Modifier.padding(bottom = 9.dp), trailing = false)
         }
+        if (selected == "en-hinglish") {
+            Text("The app interface is in English for now. You can describe concerns in Hinglish.",
+                fontSize = 13.sp, color = AyuvanColors.SecondaryText)
+        }
+        Spacer(Modifier.weight(1f))
+        AyuPrimaryButton("Continue", onClick = { onNext(if (selected == "en-hinglish") "en" else selected) })
+        Spacer(Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun PhoneScreen(api: MobileApi, onAuthenticated: (JSONObject) -> Unit) {
+private fun PhoneScreen(api: MobileApi, initialLanguage: String, onBack: () -> Unit,
+                        onAuthenticated: (JSONObject) -> Unit) {
     var phone by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var birthDate by rememberSaveable { mutableStateOf("") }
     var sex by rememberSaveable { mutableStateOf("") }
-    var language by rememberSaveable { mutableStateOf("en") }
     var consent by rememberSaveable { mutableStateOf(false) }
     var aiConsent by rememberSaveable { mutableStateOf(false) }
     var registering by rememberSaveable { mutableStateOf(false) }
+    var registerStep by rememberSaveable { mutableStateOf(0) }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    OnboardingBackground {
-        Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            BrandMark()
-            Spacer(Modifier.height(28.dp))
-            Text(if (registering) "Create your account" else "Sign in to continue", style = MaterialTheme.typography.headlineMedium)
-            Spacer(Modifier.height(8.dp))
-            Text("Use your mobile number and password.", style = MaterialTheme.typography.bodyMedium, color = AyuvanColors.SecondaryText, textAlign = TextAlign.Center)
+    Column(Modifier.fillMaxSize().background(Color.White)) {
+        AyuPageHeader(if (registering) "Create account" else "Sign in", onBack = {
+            if (registering && registerStep > 0) registerStep-- else onBack()
+        })
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp)) {
+            Spacer(Modifier.height(20.dp))
+            AyuTitle(when {
+                registering && registerStep == 1 -> "A few details about you"
+                registering && registerStep == 2 -> "Your health information stays yours"
+                registering -> "Create your account"
+                else -> "Your number, your health record"
+            }, when {
+                registering && registerStep == 2 -> "Choose how AYUVAN can help."
+                registering -> "Use your mobile number and a password."
+                else -> "Sign in securely with your mobile number and password."
+            })
             Spacer(Modifier.height(22.dp))
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it.filter(Char::isDigit).take(10) },
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = { Icon(Icons.Default.Phone, null, tint = AyuvanColors.Brand700) },
-                prefix = { Text("+91  ") },
-                label = { Text("Mobile number") },
-                placeholder = { Text("Enter your mobile number") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                singleLine = true,
-            )
-            Spacer(Modifier.height(12.dp))
-            OutlinedTextField(value = password, onValueChange = { password = it },
-                modifier = Modifier.fillMaxWidth(), label = { Text("Password") },
-                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), singleLine = true)
-            if (registering) {
+            if (!registering || registerStep == 0) {
+                OutlinedTextField(value = phone, onValueChange = { phone = it.filter(Char::isDigit).take(10) },
+                    modifier = Modifier.fillMaxWidth(), label = { Text("Mobile number") },
+                    prefix = { Text("+91  ") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    singleLine = true)
                 Spacer(Modifier.height(12.dp))
+                OutlinedTextField(value = password, onValueChange = { password = it },
+                    modifier = Modifier.fillMaxWidth(), label = { Text("Password") },
+                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), singleLine = true)
+                if (registering) Text("Use at least 10 characters.", fontSize = 12.sp,
+                    color = AyuvanColors.SecondaryText, modifier = Modifier.padding(top = 7.dp))
+                Spacer(Modifier.height(14.dp))
+                Text("Your phone number signs you in. Linking WhatsApp health history requires a separate verification code.",
+                    fontSize = 13.sp, lineHeight = 18.sp, color = AyuvanColors.SecondaryText)
+            }
+            if (registering && registerStep == 1) {
                 OutlinedTextField(value = name, onValueChange = { name = it.take(160) },
                     modifier = Modifier.fillMaxWidth(), label = { Text("Full name") }, singleLine = true)
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(10.dp))
                 OutlinedTextField(value = birthDate, onValueChange = { birthDate = it.take(10) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Date of birth (optional, YYYY-MM-DD)") }, singleLine = true)
+                    modifier = Modifier.fillMaxWidth(), label = { Text("Date of birth (optional, YYYY-MM-DD)") },
+                    singleLine = true)
+                Spacer(Modifier.height(14.dp))
+                Text("Sex (optional)", fontWeight = FontWeight.SemiBold)
                 Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf("Woman" to "woman", "Man" to "man", "Other" to "other",
                         "Prefer not to say" to "prefer_not_to_say").forEach { (label, code) ->
@@ -353,30 +369,44 @@ private fun PhoneScreen(api: MobileApi, onAuthenticated: (JSONObject) -> Unit) {
                             leadingIcon = if (sex == code) ({ Icon(Icons.Default.Check, null) }) else null)
                     }
                 }
-                Spacer(Modifier.height(14.dp))
-                Text("Preferred language", modifier = Modifier.fillMaxWidth(), style = MaterialTheme.typography.labelLarge)
-                Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf("English" to "en", "हिंदी" to "hi", "मराठी" to "mr", "தமிழ்" to "ta").forEach { (label, code) ->
-                        AssistChip(onClick = { language = code }, label = { Text(label) },
-                            leadingIcon = if (language == code) ({ Icon(Icons.Default.Check, null) }) else null)
-                    }
-                }
-                Row(modifier = Modifier.fillMaxWidth().clickable { consent = !consent }, verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = consent, onCheckedChange = { consent = it })
-                    Text("I agree to the Terms, Privacy Policy and processing my health data.", style = MaterialTheme.typography.bodyMedium)
-                }
-                Row(modifier = Modifier.fillMaxWidth().clickable { aiConsent = !aiConsent }, verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = aiConsent, onCheckedChange = { aiConsent = it })
-                    Text("Use AI assistance for symptom chat and document extraction.", style = MaterialTheme.typography.bodyMedium)
-                }
             }
-            if (error != null) Text(error!!, color = AyuvanColors.Danger, modifier = Modifier.padding(top = 10.dp))
-            Spacer(Modifier.height(24.dp))
-            PrimaryButton(if (registering) "Create account" else "Sign in", enabled = !busy && phone.length == 10 && password.length >= (if (registering) 10 else 1) && (!registering || (name.trim().length >= 2 && consent)), onClick = {
-                scope.launch {
+            if (registering && registerStep == 2) {
+                AyuCardRow(R.drawable.ayu_shield_check, "Core health information",
+                    "Needed for your health assistant", onClick = { consent = !consent }, trailing = false)
+                Row(Modifier.fillMaxWidth().clickable { consent = !consent }, verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = consent, onCheckedChange = { consent = it })
+                    Text("I agree to the Terms, Privacy Policy and health data processing.", fontSize = 14.sp)
+                }
+                Spacer(Modifier.height(10.dp))
+                AyuCardRow(R.drawable.ayu_sparkle, "AI assistance",
+                    "Optional for symptom chat and document extraction", onClick = { aiConsent = !aiConsent }, trailing = false)
+                Row(Modifier.fillMaxWidth().clickable { aiConsent = !aiConsent }, verticalAlignment = Alignment.CenterVertically) {
+                    Checkbox(checked = aiConsent, onCheckedChange = { aiConsent = it })
+                    Text("I agree to AI assistance.", fontSize = 14.sp)
+                }
+                Spacer(Modifier.height(12.dp))
+                Text("AYUVAN helps organize information and is not a doctor or emergency service.",
+                    fontSize = 13.sp, color = AyuvanColors.SecondaryText)
+            }
+            LoadError(error)
+        }
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 14.dp)) {
+            AyuPrimaryButton(when {
+                busy -> "Please wait…"
+                registering && registerStep < 2 -> "Continue"
+                registering -> "Agree and create account"
+                else -> "Sign in"
+            }, enabled = !busy && when {
+                !registering -> phone.length == 10 && password.isNotBlank()
+                registerStep == 0 -> phone.length == 10 && password.length >= 10
+                registerStep == 1 -> name.trim().length >= 2
+                else -> consent
+            }, onClick = {
+                if (registering && registerStep < 2) registerStep++
+                else scope.launch {
                     busy = true; error = null
                     try {
-                        val account = if (registering) api.register(phone, password, name.trim(), language,
+                        val account = if (registering) api.register(phone, password, name.trim(), initialLanguage,
                             consent, aiConsent, birthDate.ifBlank { null }, sex.ifBlank { null })
                             else api.login(phone, password)
                         onAuthenticated(account)
@@ -384,7 +414,9 @@ private fun PhoneScreen(api: MobileApi, onAuthenticated: (JSONObject) -> Unit) {
                     busy = false
                 }
             })
-            TextButton(onClick = { registering = !registering; error = null }) {
+            if (registerStep == 0) TextButton(onClick = {
+                registering = !registering; error = null
+            }, modifier = Modifier.fillMaxWidth()) {
                 Text(if (registering) "Already have an account? Sign in" else "New to AYUVAN? Create an account")
             }
         }
@@ -517,6 +549,7 @@ private fun MainShell(
     onTabChange: (MainTab) -> Unit,
     onOpenChat: (String) -> Unit,
     onOpenDocuments: () -> Unit,
+    onOpenFamily: () -> Unit,
 ) {
     Scaffold(
         containerColor = AyuvanColors.Page,
@@ -527,11 +560,13 @@ private fun MainShell(
             when (selectedTab) {
                 MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat, onOpenDocuments, onTabChange)
                 MainTab.MY_HEALTH -> ConnectedHealthScreen(api, patientId, patients, onPatientChange, onPatientsRefresh,
-                    initialSection = recordsEntry, onProfile = { onTabChange(MainTab.PROFILE) })
-                MainTab.CARE_PLAN -> ConnectedCareScreen(api, patientId)
+                    initialSection = recordsEntry, onBackToHome = { onTabChange(MainTab.HOME) })
+                MainTab.CARE_PLAN -> ConnectedCareScreen(api, patientId,
+                    onFindCare = { onTabChange(MainTab.DISCOVER) },
+                    onBackToHome = { onTabChange(MainTab.HOME) })
                 MainTab.DISCOVER -> ConnectedDiscoverScreen(api, onBack = { onTabChange(MainTab.HOME) })
                 MainTab.PROFILE -> ConnectedProfileScreen(api, patientId, patients, onPatientChange, onPatientsRefresh, onSignOut,
-                    onBack = { onTabChange(MainTab.HOME) })
+                    onBack = { onTabChange(MainTab.HOME) }, onOpenFamily = onOpenFamily)
             }
         }
     }
@@ -539,24 +574,30 @@ private fun MainShell(
 
 @Composable
 private fun MainNavigation(selected: MainTab, onSelect: (MainTab) -> Unit) {
-    NavigationBar(containerColor = Color.White, tonalElevation = 2.dp) {
-        listOf(MainTab.HOME, MainTab.CARE_PLAN, MainTab.MY_HEALTH).forEach { tab ->
-            NavigationBarItem(
-                selected = tab == selected,
-                onClick = { onSelect(tab) },
-                icon = { AssetIcon(tabIcon(tab), tab.label, Modifier.size(25.dp)) },
-                label = { Text(tab.label, maxLines = 1, fontSize = 12.sp) },
-            )
+    Column(Modifier.fillMaxWidth().background(Color.White)) {
+        HorizontalDivider(color = AyuvanColors.Border, thickness = 1.dp)
+        Row(Modifier.fillMaxWidth().height(67.dp), verticalAlignment = Alignment.CenterVertically) {
+            listOf(MainTab.HOME, MainTab.CARE_PLAN, MainTab.MY_HEALTH).forEach { tab ->
+                val active = tab == selected
+                Column(Modifier.weight(1f).fillMaxSize().clickable { onSelect(tab) },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center) {
+                    AyuIcon(tabIcon(tab), null, Modifier.size(24.dp))
+                    Text(tab.label, fontSize = 12.sp,
+                        color = if (active) AyuvanColors.Brand700 else AyuvanColors.SecondaryText,
+                        fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal)
+                }
+            }
         }
     }
 }
 
 private fun tabIcon(tab: MainTab) = when (tab) {
-    MainTab.HOME -> R.drawable.handoff_home
-    MainTab.MY_HEALTH -> R.drawable.handoff_folder
-    MainTab.CARE_PLAN -> R.drawable.handoff_calendar
-    MainTab.DISCOVER -> R.drawable.handoff_map_pin
-    MainTab.PROFILE -> R.drawable.icon_profile
+    MainTab.HOME -> R.drawable.ayu_home
+    MainTab.MY_HEALTH -> R.drawable.ayu_folder
+    MainTab.CARE_PLAN -> R.drawable.ayu_calendar
+    MainTab.DISCOVER -> R.drawable.ayu_map_pin
+    MainTab.PROFILE -> R.drawable.ayu_user
 }
 
 @Composable
@@ -1268,8 +1309,17 @@ private suspend fun renderDocumentPage(context: android.content.Context, bytes: 
 
 @Composable
 private fun LoadError(message: String?) {
-    if (message != null) Text(message, color = AyuvanColors.Danger,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp))
+    if (message != null) Card(Modifier.fillMaxWidth().padding(vertical = 10.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = AyuvanColors.DangerBg)) {
+        Row(Modifier.padding(14.dp), verticalAlignment = Alignment.Top) {
+            Icon(Icons.Default.WarningAmber, null, tint = AyuvanColors.Danger,
+                modifier = Modifier.size(20.dp))
+            Spacer(Modifier.width(9.dp))
+            Text(message, color = AyuvanColors.Danger,
+                fontSize = 13.sp, lineHeight = 18.sp)
+        }
+    }
 }
 
 @Composable
@@ -1282,6 +1332,13 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
     var draft by rememberSaveable(patientId) { mutableStateOf("") }
     var uploadBusy by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val voiceLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            val heard = result.data?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull().orEmpty()
+            if (heard.isNotBlank()) draft = listOf(draft.trim(), heard.trim()).filter { it.isNotBlank() }.joinToString(" ")
+        }
+    }
     val uploadLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null && !uploadBusy) scope.launch {
             uploadBusy = true; error = null
@@ -1295,67 +1352,81 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
             health = api.health(patientId); care = api.care(patientId)
         } catch (e: Exception) { error = e.message }
     }
-    val episodes = health?.list("episodes")?.filter { it.optString("status") == "active" } ?: emptyList()
-    val tasks = care?.list("tasks") ?: emptyList()
-    val upcoming = tasks.filter { it.optString("status") == "pending" }.minByOrNull { it.optString("due_at") }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
-        Spacer(Modifier.height(12.dp))
-        AppHeader(onNotifications = { onTabChange(MainTab.CARE_PLAN) }, showNotificationButton = upcoming != null,
-            hasReminder = upcoming != null, onProfile = { onTabChange(MainTab.PROFILE) })
-        Spacer(Modifier.height(24.dp))
-        Box(Modifier.fillMaxWidth().height(154.dp).clip(RoundedCornerShape(20.dp))) {
-            Image(painterResource(R.drawable.handoff_home_landscape), null,
-                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            Text("How can we help\nyou today?", style = MaterialTheme.typography.headlineMedium,
-                color = AyuvanColors.Text, fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(20.dp))
-        }
-        Spacer(Modifier.height(8.dp))
-        Text("For $patientName · Tell us what is happening in your own words.",
-            color = AyuvanColors.SecondaryText)
-        Spacer(Modifier.height(20.dp))
-        Card(colors = CardDefaults.cardColors(containerColor = Color.White),
-            border = BorderStroke(1.dp, AyuvanColors.Border), shape = RoundedCornerShape(20.dp)) {
-            Column(Modifier.padding(16.dp)) {
-                OutlinedTextField(value = draft, onValueChange = { draft = it.take(4000) },
-                    modifier = Modifier.fillMaxWidth(), minLines = 3, maxLines = 5,
-                    placeholder = { Text("Describe how you feel or ask a health question…") },
-                    label = { Text("Your message") })
-                Spacer(Modifier.height(12.dp))
-                Button(onClick = { val text = draft.trim(); draft = ""; onOpenChat(text) },
-                    enabled = draft.isNotBlank(), modifier = Modifier.fillMaxWidth().height(52.dp)) {
-                    Text("Send to AYUVAN"); Spacer(Modifier.width(8.dp)); Icon(Icons.AutoMirrored.Filled.Send, null)
-                }
-                TextButton(onClick = { onOpenChat("") }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Continue conversation")
-                }
-                TextButton(onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) },
-                    enabled = !uploadBusy, modifier = Modifier.fillMaxWidth()) {
-                    Image(painterResource(R.drawable.handoff_paperclip), null, Modifier.size(22.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(if (uploadBusy) "Uploading report…" else "Attach a prescription or report")
+    val active = health?.list("episodes")?.firstOrNull { it.optString("status") == "active" }
+    val nextTask = care?.list("tasks")?.filter { it.optString("status") == "pending" }
+        ?.minByOrNull { it.optString("due_at") }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        AyuBrandHeader(onProfile = { onTabChange(MainTab.PROFILE) },
+            onNotifications = { onTabChange(MainTab.CARE_PLAN) })
+        Box(Modifier.fillMaxWidth().height(330.dp)) {
+            Box(Modifier.fillMaxWidth().height(182.dp).clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))) {
+                Image(painterResource(R.drawable.ayu_ill_home_landscape), null,
+                    modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+                Text("How can we help\nyou today?", color = AyuvanColors.Text,
+                    fontSize = 30.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(22.dp))
+            }
+            Card(Modifier.fillMaxWidth().padding(horizontal = 20.dp).offset(y = 150.dp)
+                .shadow(12.dp, RoundedCornerShape(19.dp)),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, AyuvanColors.Border), shape = RoundedCornerShape(19.dp)) {
+                Column(Modifier.padding(17.dp)) {
+                    BasicTextField(value = draft, onValueChange = { draft = it.take(4000) },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 72.dp),
+                        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 16.sp,
+                            lineHeight = 22.sp, color = AyuvanColors.Text),
+                        decorationBox = { inner -> Box {
+                            if (draft.isBlank()) Text("Describe how you are feeling, ask a question, or upload a report…",
+                                fontSize = 16.sp, lineHeight = 22.sp, color = AyuvanColors.SecondaryText)
+                            inner()
+                        } })
+                    Spacer(Modifier.height(11.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) },
+                            enabled = !uploadBusy, modifier = Modifier.size(48.dp)) {
+                            AyuIcon(R.drawable.ayu_paperclip, "Attach a prescription or report")
+                        }
+                        IconButton(onClick = {
+                            try { voiceLauncher.launch(Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                                putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                                    android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                                putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Describe your concern")
+                            }) } catch (_: Exception) { error = "Voice input is unavailable on this device. You can type instead." }
+                        }, modifier = Modifier.size(48.dp)) { AyuIcon(R.drawable.ayu_mic, "Use voice input") }
+                        Spacer(Modifier.weight(1f))
+                        IconButton(onClick = { val text = draft.trim(); draft = ""; onOpenChat(text) },
+                            enabled = draft.isNotBlank(), modifier = Modifier.size(48.dp)) {
+                            AyuIcon(R.drawable.ayu_send, "Send to AYUVAN")
+                        }
+                    }
                 }
             }
         }
-        Spacer(Modifier.height(24.dp))
-        LoadError(error)
-        when {
-            episodes.isNotEmpty() -> BasicRowCard(onClick = { onOpenChat("") },
-                leadingIcon = R.drawable.icon_heart_pulse, title = "Continue your concern",
-                subtitle = "${episodes.first().optString("symptom", "Health concern")} · ${episodes.first().optString("last_reported_at").take(10)}",
-                trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
-            upcoming != null -> BasicRowCard(onClick = { onTabChange(MainTab.CARE_PLAN) },
-                leadingIcon = R.drawable.icon_care_plan, title = "Next in your care",
-                subtitle = upcoming.optString("description"),
-                trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
-            else -> Text("A simple place to start. Share a concern and we’ll help you understand the next step.",
-                color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 12.dp))
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+            LoadError(error)
+            Text(when { active != null -> "Continue where you left off"
+                nextTask != null -> "Your next step"
+                else -> "A simple place to start" },
+                fontSize = 19.sp, fontWeight = FontWeight.Bold, color = AyuvanColors.Text)
+            Spacer(Modifier.height(12.dp))
+            when {
+                active != null -> AyuCardRow(R.drawable.ayu_activity, "Continue your concern",
+                    "${active.optString("symptom", "Health concern")} · Last update ${active.optString("last_reported_at").take(10)}",
+                    onClick = { onOpenChat("") })
+                nextTask != null -> AyuCardRow(R.drawable.ayu_calendar, "Next in your care",
+                    nextTask.optString("description"), onClick = { onTabChange(MainTab.CARE_PLAN) })
+                else -> AyuCardRow(R.drawable.ayu_shield_check, "Share a concern or a report",
+                    "We’ll help organize the details and understand the next steps.",
+                    onClick = { onOpenChat("") }, trailing = false)
+            }
+            Spacer(Modifier.height(15.dp))
+            if (active != null) TextButton(onClick = { onTabChange(MainTab.MY_HEALTH) }) { Text("See your activity") }
+            else if (nextTask != null) TextButton(onClick = { onTabChange(MainTab.CARE_PLAN) }) { Text("See My Care") }
+            TextButton(onClick = { onTabChange(MainTab.DISCOVER) }) {
+                Text("Find a healthcare facility  →", fontWeight = FontWeight.SemiBold)
+            }
+            Spacer(Modifier.height(24.dp))
         }
-        Spacer(Modifier.height(16.dp))
-        TextButton(onClick = { onTabChange(MainTab.DISCOVER) }) {
-            Text("Find a healthcare facility  →")
-        }
-        Spacer(Modifier.height(24.dp))
     }
 }
 
@@ -1370,6 +1441,7 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
     var pendingId by remember(patientId) { mutableStateOf<String?>(null) }
     var pendingReplyId by remember(patientId) { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
+    var showTextAnswer by rememberSaveable(patientId) { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     fun send(text: String, replyId: String? = null, retry: Boolean = false) {
         if (text.isBlank() || busy) return
@@ -1415,58 +1487,87 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
         if (listState.layoutInfo.totalItemsCount > 0)
             listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
     }
-    Scaffold(containerColor = AyuvanColors.Page,
-        topBar = { TopAppBar(title = { Text("Talk to AYUVAN · $patientName", style = MaterialTheme.typography.titleMedium) },
-            navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } }) },
-        bottomBar = { Row(modifier = Modifier.fillMaxWidth().background(Color.White).imePadding().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            OutlinedTextField(value = composer, onValueChange = { composer = it.take(4000) },
-                modifier = Modifier.weight(1f), placeholder = { Text("Describe a health concern…") }, maxLines = 4)
-            IconButton(onClick = { send(composer) }, enabled = !busy && composer.isNotBlank()) {
-                Icon(Icons.AutoMirrored.Filled.Send, "Send message", tint = AyuvanColors.Brand700)
-            }
-        } }) { padding ->
-        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item { Spacer(Modifier.height(8.dp)); ChatSafetyNote(); LoadError(error) }
-            if (messages.isEmpty()) item { MessageBubble(ChatMessage("welcome", "Tell me what is happening. I will ask only the details needed to understand your concern.", false)) }
-            items(messages, key = { it.optString("id") }) { m ->
-                MessageBubble(ChatMessage(m.optString("id"), m.optString("text"),
-                    m.optString("direction") == "incoming"))
-            }
-            if (pendingText != null) item(key = "pending-message") {
-                Column {
-                    MessageBubble(ChatMessage("pending", pendingText!!, true))
-                    Text(if (busy) "Sending · waiting for AYUVAN…" else "Could not confirm delivery",
-                        color = AyuvanColors.SecondaryText, modifier = Modifier.padding(8.dp))
-                    if (busy) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-                    else TextButton(onClick = { send(pendingText!!, pendingReplyId, retry = true) }) {
-                        Text("Retry this message")
+    val lastQuestionText = messages.lastOrNull { it.optString("direction") == "outgoing" }
+        ?.optString("text").orEmpty()
+    val lastConcern = messages.lastOrNull { it.optString("direction") == "incoming" }
+        ?.optString("text").orEmpty()
+    Scaffold(containerColor = Color.White,
+        topBar = { AyuPageHeader(if (options.isNotEmpty()) "Your concern" else "Talk to AYUVAN", onBack) },
+        bottomBar = {
+            if (options.isEmpty() || showTextAnswer) {
+                Row(modifier = Modifier.fillMaxWidth().background(Color.White).imePadding().padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(value = composer, onValueChange = { composer = it.take(4000) },
+                        modifier = Modifier.weight(1f), placeholder = { Text("Describe your concern…") },
+                        maxLines = 4, shape = RoundedCornerShape(16.dp))
+                    IconButton(onClick = { send(composer); showTextAnswer = false },
+                        enabled = !busy && composer.isNotBlank(), modifier = Modifier.size(48.dp)) {
+                        AyuIcon(R.drawable.ayu_send, "Send message")
                     }
                 }
             }
-            if (options.isNotEmpty()) item {
-                Card(colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(20.dp)) {
-                    Column(Modifier.padding(14.dp)) {
-                        Text(question?.optString("text").orEmpty().ifBlank { "Choose an answer" },
-                            style = MaterialTheme.typography.titleMedium)
-                        options.forEach { option ->
-                            OutlinedButton(onClick = { send(option.optString("label"), option.optString("id")) },
-                                enabled = !busy, modifier = Modifier.fillMaxWidth()) { Text(option.optString("label")) }
+        }) { padding ->
+        if (options.isNotEmpty() && !busy && pendingText == null) {
+            Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)) {
+                Spacer(Modifier.height(22.dp))
+                Text("A FEW DETAILS CAN HELP", fontSize = 12.sp, fontWeight = FontWeight.SemiBold,
+                    color = AyuvanColors.Brand700, letterSpacing = 1.sp)
+                Spacer(Modifier.height(12.dp))
+                Text(lastQuestionText.ifBlank { "Choose the answer that fits best" },
+                    fontSize = 25.sp, lineHeight = 31.sp, fontWeight = FontWeight.Bold,
+                    color = AyuvanColors.Text)
+                if (lastConcern.isNotBlank()) {
+                    Spacer(Modifier.height(12.dp))
+                    Text("You reported: $lastConcern", fontSize = 13.sp,
+                        color = AyuvanColors.SecondaryText)
+                }
+                Spacer(Modifier.height(24.dp))
+                options.forEach { option ->
+                    AyuCardRow(R.drawable.ayu_check_circle, option.optString("label"), onClick = {
+                        send(option.optString("label"), option.optString("id")); showTextAnswer = false
+                    }, modifier = Modifier.padding(bottom = 9.dp), trailing = false)
+                }
+                Spacer(Modifier.height(10.dp))
+                TextButton(onClick = { showTextAnswer = !showTextAnswer }) {
+                    Text(if (showTextAnswer) "Use the choices above" else "Type a different answer")
+                }
+                Spacer(Modifier.height(18.dp))
+                Text("You can correct an answer later in Records.", fontSize = 13.sp,
+                    color = AyuvanColors.SecondaryText)
+            }
+        } else {
+            LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(padding)
+                .padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                item { Spacer(Modifier.height(8.dp)); ChatSafetyNote(); LoadError(error) }
+                if (messages.isEmpty()) item { AyuEmpty(R.drawable.ayu_ill_voice,
+                    "Tell us what is bothering you", "You don’t need medical terms. Describe it in your own words.") }
+                items(messages, key = { it.optString("id") }) { m ->
+                    MessageBubble(ChatMessage(m.optString("id"), m.optString("text"),
+                        m.optString("direction") == "incoming"))
+                }
+                if (pendingText != null) item(key = "pending-message") {
+                    Column {
+                        MessageBubble(ChatMessage("pending", pendingText!!, true))
+                        Text(if (busy) "Reviewing your information…" else "Could not confirm delivery",
+                            color = AyuvanColors.SecondaryText, modifier = Modifier.padding(8.dp))
+                        if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+                        else TextButton(onClick = { send(pendingText!!, pendingReplyId, retry = true) }) {
+                            Text("Retry this message")
                         }
                     }
                 }
+                item { Spacer(Modifier.height(8.dp)) }
             }
-            item { Spacer(Modifier.height(8.dp)) }
         }
     }
+
 }
 
 @Composable
 private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                   onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
-                                  initialSection: String, onProfile: () -> Unit) {
+                                  initialSection: String, onBackToHome: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var data by remember(patientId) { mutableStateOf<JSONObject?>(null) }
@@ -1475,6 +1576,8 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     var busy by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var recordsSection by rememberSaveable(patientId) { mutableStateOf("Timeline") }
+    var recordFilter by rememberSaveable(patientId) { mutableStateOf("All") }
+    var selectedDocumentId by rememberSaveable(patientId) { mutableStateOf<String?>(null) }
     LaunchedEffect(initialSection, patientId) { recordsSection = initialSection }
     var recordSearch by rememberSaveable(patientId) { mutableStateOf("") }
     var addKind by remember { mutableStateOf<String?>(null) }
@@ -1510,6 +1613,16 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     val uploadLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) action { api.upload(patientId, uri) }
     }
+    var captureFile by remember { mutableStateOf<java.io.File?>(null) }
+    var captureUri by remember { mutableStateOf<Uri?>(null) }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { saved ->
+        val uri = captureUri
+        val file = captureFile
+        if (saved && uri != null) action {
+            try { api.upload(patientId, uri) } finally { file?.delete() }
+        } else file?.delete()
+        captureFile = null; captureUri = null
+    }
     val saveLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
         val id = downloadDocumentId
         if (uri != null && id != null) action {
@@ -1525,116 +1638,166 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     }
     val episodes = data?.list("episodes") ?: emptyList()
     val docRows = documents?.list("documents") ?: emptyList()
+    val selectedDocument = docRows.firstOrNull { it.optString("id") == selectedDocumentId }
+    BackHandler(enabled = selectedDocument != null || recordsSection != "Timeline") {
+        if (selectedDocument != null) selectedDocumentId = null else recordsSection = "Timeline"
+    }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Column(Modifier.padding(20.dp)) {
-            AppHeader(onProfile = onProfile)
-            Spacer(Modifier.height(18.dp))
-            Text("Your records", style = MaterialTheme.typography.headlineMedium)
-            Text("A clear history for your next conversation with a clinician.",
-                color = AyuvanColors.SecondaryText)
-        }
-        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(onClick = { expanded = true }, modifier = Modifier.weight(1f)) {
-                    Icon(Icons.Default.Person, null); Spacer(Modifier.width(8.dp))
-                    Text(current?.optString("display_name") ?: "My Profile", modifier = Modifier.weight(1f))
-                    Icon(Icons.Default.ArrowDropDown, null)
-                }
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    patients.rows().forEach { patient -> DropdownMenuItem(
-                        text = { Text(patient.optString("display_name")) },
-                        onClick = { expanded = false; onPatientChange(patient.optString("id")) }) }
-                }
-                Spacer(Modifier.width(8.dp))
-                TextButton(onClick = { familyDialog = true }) { Text("Add family") }
-            }
-            Spacer(Modifier.height(14.dp)); LoadError(error)
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("Timeline", "Medical profile", "Documents").forEach { section ->
-                    AssistChip(onClick = { recordsSection = section }, label = { Text(section) },
-                        leadingIcon = if (recordsSection == section) ({ Icon(Icons.Default.Check, null) }) else null)
-                }
-            }
-            Spacer(Modifier.height(16.dp))
-            if (recordsSection == "Timeline") {
-            OutlinedTextField(value = recordSearch, onValueChange = { recordSearch = it.take(80) },
-                label = { Text("Search concerns") }, modifier = Modifier.fillMaxWidth())
+        AyuPageHeader(when { selectedDocument != null -> "Record detail"
+            recordsSection == "Medical profile" -> "Health profile"
+            recordsSection == "Documents" -> "Medical records"
+            else -> "Records" },
+            onBack = { when { selectedDocument != null -> selectedDocumentId = null
+                recordsSection != "Timeline" -> recordsSection = "Timeline"
+                else -> onBackToHome() } })
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(12.dp))
-            Text("Health timeline", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(8.dp))
-            if (episodes.isEmpty()) EmptyInformationCard(R.drawable.icon_timeline, "No symptoms recorded", "Your WhatsApp and app history appears here after verified linking.")
-            else episodes.filter { recordSearch.isBlank() || it.optString("symptom").contains(recordSearch, true) ||
-                it.optString("last_reported_at").contains(recordSearch, true) }.forEach { episode ->
-                BasicRowCard(onClick = { correctionEpisode = episode }, leadingIcon = R.drawable.icon_heart_pulse,
-                    title = episode.optString("symptom", "Concern"),
-                    subtitle = "${episode.optString("status")} · ${episode.optString("last_reported_at").take(10)} · Tap to correct",
-                    trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
-                Spacer(Modifier.height(8.dp))
-            }
-            }
-            if (recordsSection == "Medical profile") {
-            Spacer(Modifier.height(20.dp))
-            listOf("conditions" to "Conditions", "allergies" to "Allergies", "medications" to "Medicines").forEach { (kind, title) ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                    TextButton(onClick = { addKind = kind; editItemId = null; addName = ""; addDetails = "" }) { Text("Add") }
+            LoadError(error)
+            when {
+                selectedDocument != null -> {
+                    AyuTitle("Medical document", "Original file and reviewed information.")
+                    Spacer(Modifier.height(14.dp))
+                    AyuCardRow(R.drawable.ayu_file, "Original document",
+                        selectedDocument.optString("created_at").take(10), onClick = { scope.launch {
+                            try { previewMime = selectedDocument.optString("content_type"); previewPage = 0
+                                previewRendered = null; previewBytes = api.download(patientId, selectedDocument.optString("id")) }
+                            catch (e: Exception) { error = e.message }
+                        } })
+                    Spacer(Modifier.height(12.dp))
+                    AyuCardRow(R.drawable.ayu_file_check, "Processing status",
+                        selectedDocument.optString("processing_status"), onClick = {})
+                    Spacer(Modifier.height(18.dp))
+                    AyuPrimaryButton("View original", onClick = { scope.launch {
+                        try { previewMime = selectedDocument.optString("content_type"); previewPage = 0
+                            previewRendered = null; previewBytes = api.download(patientId, selectedDocument.optString("id")) }
+                        catch (e: Exception) { error = e.message }
+                    } })
+                    OutlinedButton(onClick = { downloadDocumentId = selectedDocument.optString("id")
+                        saveLauncher.launch("ayuvan-record") }, modifier = Modifier.fillMaxWidth()) { Text("Download selected record") }
+                    if (selectedDocument.optString("processing_status") == "uploaded")
+                        OutlinedButton(onClick = { action { api.extract(patientId, selectedDocument.optString("id")) } },
+                            modifier = Modifier.fillMaxWidth()) { Text("Extract details for review") }
+                    if (selectedDocument.optJSONObject("extraction")?.optString("verification_status") == "unverified")
+                        OutlinedButton(onClick = { selectedFacts.clear(); reviewDocument = selectedDocument },
+                            modifier = Modifier.fillMaxWidth()) { Text("Review extracted details") }
+                    TextButton(onClick = { deleteDocumentId = selectedDocument.optString("id") }) {
+                        Text("Delete document", color = AyuvanColors.Danger)
+                    }
                 }
-                val records = data?.list(kind) ?: emptyList()
-                if (records.isEmpty()) Text("No $title recorded", color = AyuvanColors.MutedText,
-                    modifier = Modifier.padding(bottom = 12.dp))
-                else records.forEach { record ->
-                    BasicRowCard(onClick = {
-                        addKind = kind; editItemId = record.optString("id"); addName = record.optString("name")
-                        addDetails = when (kind) { "medications" -> record.optString("dosage")
-                            "allergies" -> record.optString("reaction"); else -> "" }
-                    }, leadingIcon = if (kind == "medications") R.drawable.icon_pill else R.drawable.icon_heart_pulse,
-                        title = record.optString("name"), subtitle = when (kind) { "medications" -> record.optString("dosage")
-                            "allergies" -> record.optString("reaction"); else -> record.optString("verification_status", "Patient reported") },
-                        trailing = { IconButton(onClick = { action { api.deleteHealthItem(patientId, kind, record.optString("id")) } }) {
-                            Icon(Icons.Default.Close, "Remove") } })
-                    Spacer(Modifier.height(7.dp))
-                }
-                Spacer(Modifier.height(8.dp))
-            }
-            Spacer(Modifier.height(12.dp))
-            FilledTonalButton(onClick = { action { summaryText = formatHealthSummary(api.summary(patientId)) } },
-                modifier = Modifier.fillMaxWidth()) { Text("Prepare health summary") }
-            }
-            if (recordsSection == "Documents") {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("Medical Records", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-                TextButton(onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) }) { Text("Upload") }
-            }
-            Text("PDF or image, up to 10 MB. Extracted facts enter your record only after review.",
-                color = AyuvanColors.SecondaryText, style = MaterialTheme.typography.bodyMedium)
-            Spacer(Modifier.height(8.dp))
-            if (docRows.isEmpty()) EmptyInformationCard(R.drawable.icon_folder, "No documents", "Upload a prescription or report to keep it in your private record.")
-            else docRows.forEach { doc ->
-                Card(modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp), colors = CardDefaults.cardColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(18.dp)) {
-                    Column(Modifier.padding(14.dp)) {
-                        Text(doc.optJSONObject("extraction")?.optJSONObject("result")?.optString("filename") ?: "Medical document",
-                            style = MaterialTheme.typography.titleMedium)
-                        Text("${doc.optString("created_at").take(10)} · ${doc.optString("processing_status")}", color = AyuvanColors.SecondaryText)
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            TextButton(onClick = { scope.launch {
-                                try { previewMime = doc.optString("content_type"); previewPage = 0
-                                    previewRendered = null; previewBytes = api.download(patientId, doc.optString("id")) }
-                                catch (e: Exception) { error = e.message }
-                            } }) { Text("View") }
-                            TextButton(onClick = { downloadDocumentId = doc.optString("id"); saveLauncher.launch("ayuvan-record") }) { Text("Save") }
-                            TextButton(onClick = { deleteDocumentId = doc.optString("id") }) { Text("Delete", color = AyuvanColors.Danger) }
-                            if (doc.optString("processing_status") == "uploaded") TextButton(onClick = {
-                                action { api.extract(patientId, doc.optString("id")) }
-                            }) { Text("Extract") }
-                            val extracted = doc.optJSONObject("extraction")
-                            if (extracted?.optString("verification_status") == "unverified" && doc.optString("processing_status") == "extracted")
-                                TextButton(onClick = { selectedFacts.clear(); reviewDocument = doc }) { Text("Review draft") }
+                recordsSection == "Timeline" -> {
+                    AyuTitle("Your health records", "A timeline of your reports and consultations.")
+                    Spacer(Modifier.height(18.dp))
+                    OutlinedTextField(value = recordSearch, onValueChange = { recordSearch = it.take(80) },
+                        placeholder = { Text("Search reports, prescriptions or visits") },
+                        modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    Spacer(Modifier.height(10.dp))
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("All", "Reports", "Prescriptions", "Visits").forEach { filter ->
+                            AssistChip(onClick = { recordFilter = filter }, label = { Text(filter) },
+                                leadingIcon = if (recordFilter == filter) ({ Icon(Icons.Default.Check, null) }) else null)
                         }
+                    }
+                    Spacer(Modifier.height(20.dp))
+                    Text("Timeline", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = AyuvanColors.Text)
+                    Spacer(Modifier.height(10.dp))
+                    val matchingDocs = docRows.filter { doc ->
+                        val title = doc.optJSONObject("extraction")?.optJSONObject("result")?.optString("filename") ?: "Medical document"
+                        (recordSearch.isBlank() || title.contains(recordSearch, true) ||
+                            doc.optString("created_at").contains(recordSearch, true)) &&
+                            (recordFilter == "All" || recordFilter == "Reports" ||
+                             (recordFilter == "Prescriptions" && title.contains("prescription", true)))
+                    }
+                    val matchingEpisodes = episodes.filter { episode ->
+                        recordFilter == "All" && (recordSearch.isBlank() ||
+                            episode.optString("symptom").contains(recordSearch, true))
+                    }
+                    if (matchingDocs.isEmpty() && matchingEpisodes.isEmpty())
+                        AyuEmpty(R.drawable.ayu_ill_empty_records, "No records found",
+                            if (recordSearch.isBlank()) "Your records will appear here once you add them."
+                            else "Try another search or filter.")
+                    val timeline = (matchingDocs.map { Triple(it.optString("created_at"), "document", it) } +
+                        matchingEpisodes.map { Triple(it.optString("last_reported_at"), "episode", it) })
+                        .sortedByDescending { it.first }
+                    timeline.forEach { (_, kind, row) ->
+                        if (kind == "document") AyuCardRow(R.drawable.ayu_file_medical,
+                            row.optJSONObject("extraction")?.optJSONObject("result")?.optString("filename") ?: "Medical document",
+                            "${row.optString("created_at").take(10)} · ${row.optString("processing_status")}",
+                            onClick = { selectedDocumentId = row.optString("id") },
+                            modifier = Modifier.padding(bottom = 8.dp))
+                        else AyuCardRow(R.drawable.ayu_activity, row.optString("symptom", "Symptom update"),
+                            "${row.optString("last_reported_at").take(10)} · Patient-reported",
+                            onClick = { correctionEpisode = row }, modifier = Modifier.padding(bottom = 8.dp))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    AyuCardRow(R.drawable.ayu_file, "Health profile",
+                        "Conditions, allergies, current medicines", onClick = { recordsSection = "Medical profile" })
+                    Spacer(Modifier.height(8.dp))
+                    AyuCardRow(R.drawable.ayu_upload, "Add a medical record", "Photo or document",
+                        onClick = { recordsSection = "Documents" })
+                }
+                recordsSection == "Medical profile" -> {
+                    AyuTitle("Your medical overview", "Only known and verified information.")
+                    Spacer(Modifier.height(18.dp))
+                    listOf(Triple("conditions", "Conditions", R.drawable.ayu_heart),
+                        Triple("allergies", "Allergies", R.drawable.ayu_shield),
+                        Triple("medications", "Current medicines", R.drawable.ayu_pill)).forEach { (kind, title, icon) ->
+                        Text(title, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = AyuvanColors.Text)
+                        Spacer(Modifier.height(6.dp))
+                        val records = data?.list(kind) ?: emptyList()
+                        if (records.isEmpty()) AyuCardRow(icon, "Not answered / Add your information",
+                            onClick = { addKind = kind; editItemId = null; addName = ""; addDetails = "" })
+                        else records.forEach { record ->
+                            AyuCardRow(icon, record.optString("name"),
+                                when (kind) { "medications" -> record.optString("dosage")
+                                    "allergies" -> record.optString("reaction")
+                                    else -> record.optString("verification_status", "Patient reported") },
+                                onClick = { addKind = kind; editItemId = record.optString("id")
+                                    addName = record.optString("name")
+                                    addDetails = if (kind == "medications") record.optString("dosage")
+                                        else record.optString("reaction") },
+                                modifier = Modifier.padding(bottom = 6.dp))
+                        }
+                        Spacer(Modifier.height(14.dp))
+                    }
+                    AyuPrimaryButton("Prepare a consultation summary", onClick = {
+                        action { summaryText = formatHealthSummary(api.summary(patientId)) }
+                    })
+                    TextButton(onClick = { familyDialog = true }) { Text("Add an authorized family profile") }
+                }
+                else -> {
+                    AyuTitle("Add a health document", "Bring prescriptions and reports into one place.")
+                    Spacer(Modifier.height(18.dp))
+                    Image(painterResource(R.drawable.ayu_ill_document_scan), null,
+                        modifier = Modifier.fillMaxWidth().height(140.dp), contentScale = ContentScale.Fit)
+                    Spacer(Modifier.height(16.dp))
+                    AyuCardRow(R.drawable.ayu_camera, "Take a photo", "Use your camera to capture a document",
+                        onClick = {
+                            try {
+                                val directory = java.io.File(context.cacheDir, "captured_documents").apply { mkdirs() }
+                                val file = java.io.File.createTempFile("record_", ".jpg", directory)
+                                val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+                                captureFile = file; captureUri = uri
+                                cameraLauncher.launch(uri)
+                            } catch (e: Exception) { error = "Camera unavailable. Choose a document instead." }
+                        })
+                    Spacer(Modifier.height(8.dp))
+                    AyuCardRow(R.drawable.ayu_upload, "Choose a document", "PDF or image file",
+                        onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) })
+                    Spacer(Modifier.height(10.dp))
+                    Text("You review extracted details before they enter your health record.",
+                        fontSize = 13.sp, color = AyuvanColors.SecondaryText)
+                    Spacer(Modifier.height(22.dp))
+                    if (docRows.isNotEmpty()) Text("Your documents", fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold, color = AyuvanColors.Text)
+                    docRows.forEach { doc ->
+                        Spacer(Modifier.height(8.dp))
+                        AyuCardRow(R.drawable.ayu_file, "Medical document",
+                            "${doc.optString("created_at").take(10)} · ${doc.optString("processing_status")}",
+                            onClick = { selectedDocumentId = doc.optString("id") })
                     }
                 }
             }
-            }
+            Spacer(Modifier.height(26.dp))
         }
     }
     if (addKind != null) AlertDialog(onDismissRequest = { addKind = null },
@@ -1757,7 +1920,8 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
 }
 
 @Composable
-private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
+private fun ConnectedCareScreen(api: MobileApi, patientId: String, onFindCare: () -> Unit,
+                                onBackToHome: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var data by remember(patientId) { mutableStateOf<JSONObject?>(null) }
@@ -1769,6 +1933,9 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
     var deleteTaskId by remember(patientId) { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     var notificationConsent by remember(patientId) { mutableStateOf(false) }
+    var careFilter by rememberSaveable(patientId) { mutableStateOf("Today") }
+    var selectedTaskId by rememberSaveable(patientId) { mutableStateOf<String?>(null) }
+    var helpReason by rememberSaveable(patientId) { mutableStateOf<String?>(null) }
     val requestPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
     LaunchedEffect(patientId) {
         if (patientId.isNotBlank()) try {
@@ -1786,94 +1953,153 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
         busy = false
     } }
     val tasks = data?.list("tasks") ?: emptyList()
+    val selectedTask = tasks.firstOrNull { it.optString("id") == selectedTaskId }
+    BackHandler(enabled = selectedTask != null || helpReason != null) {
+        if (helpReason != null) helpReason = null else selectedTaskId = null
+    }
+    val today = java.time.LocalDate.now().toString()
+    val visibleTasks = tasks.filter { task ->
+        val completed = task.optString("status") == "completed"
+        val dueDate = task.optString("due_at").takeIf { it.length >= 10 && it[0].isDigit() }
+            ?.take(10).orEmpty()
+        when (careFilter) {
+            "Completed" -> completed
+            "Upcoming" -> !completed && dueDate.isNotBlank() && dueDate > today
+            else -> !completed && (dueDate.isBlank() || dueDate <= today)
+        }
+    }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
-        Spacer(Modifier.height(16.dp)); AppHeader(); Spacer(Modifier.height(22.dp))
-        Text("My Care", style = MaterialTheme.typography.headlineMedium)
-        Text("Today · Focus on what matters next.",
-            color = AyuvanColors.SecondaryText)
-        Spacer(Modifier.height(16.dp)); LoadError(error)
-        Text("Your next actions", style = MaterialTheme.typography.titleLarge)
-        if (tasks.isEmpty()) Text("No confirmed tasks yet. You can add a personal reminder below.",
-            color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 12.dp))
-        Spacer(Modifier.height(12.dp))
-        TextButton(onClick = { showTaskEditor = !showTaskEditor }) {
-            Text(if (showTaskEditor) "Close reminder form" else "+ Add a personal reminder")
-        }
-        if (showTaskEditor || editingTaskId != null) {
-        Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
-            Column(Modifier.padding(16.dp)) {
-                Text(if (editingTaskId == null) "Personal reminder" else "Edit reminder",
-                    style = MaterialTheme.typography.titleLarge)
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(value = description, onValueChange = { description = it.take(1000) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("What do you need to do?") })
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(value = due, onValueChange = { due = it.take(16) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("When (YYYY-MM-DD HH:MM, optional)") })
-                Spacer(Modifier.height(10.dp))
-                Button(onClick = {
-                    val dueAt = try {
-                        if (due.isBlank()) null else java.time.LocalDateTime.parse(due,
-                            java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                            .atZone(java.time.ZoneId.systemDefault()).toInstant().toString()
-                    } catch (_: Exception) { error = "Use YYYY-MM-DD HH:MM for the reminder time"; return@Button }
-                    val taskId = editingTaskId
-                    val value = description.trim()
-                    refresh {
-                        if (taskId == null) api.addTask(patientId, value, dueAt)
-                        else api.editTask(patientId, taskId, value, dueAt)
-                        description = ""; due = ""; editingTaskId = null; showTaskEditor = false
-                    }
-                }, enabled = !busy && description.trim().length >= 2) {
-                    Text(if (editingTaskId == null) "Save reminder" else "Save changes")
-                }
-            }
-        }
-        }
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Notify me about due tasks", modifier = Modifier.weight(1f))
-            Checkbox(checked = notificationConsent, onCheckedChange = { checked ->
-                refresh { api.setConsent(patientId, "notifications", checked); notificationConsent = checked }
-                if (checked && Build.VERSION.SDK_INT >= 33)
-                    requestPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            })
-        }
-        Text("Notifications may arrive around the scheduled time; use your usual medicine alarm for time-critical doses.",
-            color = AyuvanColors.MutedText, style = MaterialTheme.typography.bodyMedium)
+        AyuPageHeader(if (selectedTask == null) "My Care" else "Care task", onBack = {
+            if (helpReason != null) helpReason = null
+            else if (selectedTaskId != null) selectedTaskId = null
+            else onBackToHome()
+        })
         Spacer(Modifier.height(14.dp))
-        tasks.forEach { task ->
-            Card(Modifier.fillMaxWidth().padding(bottom = 8.dp), colors = CardDefaults.cardColors(containerColor = Color.White),
-                shape = RoundedCornerShape(18.dp)) {
-                Column {
-                Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    IconBadge(R.drawable.icon_care_plan, null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(task.optString("description"), style = MaterialTheme.typography.titleMedium)
-                        Text("${task.optString("status")} · ${task.optString("due_at").take(16)} · ${task.optString("source")}",
-                            color = AyuvanColors.SecondaryText)
-                    }
-                    Checkbox(checked = task.optString("status") == "completed",
-                        onCheckedChange = { checked -> refresh { api.updateTask(patientId, task.optString("id"),
-                            if (checked) "completed" else "pending") } })
+        if (selectedTask == null) {
+            AyuTitle(careFilter, "Focus on what matters now.")
+            Spacer(Modifier.height(22.dp))
+            AyuSegment(listOf("Today", "Upcoming", "Completed"), careFilter) { careFilter = it }
+            Spacer(Modifier.height(24.dp))
+            LoadError(error)
+            if (helpReason != null) {
+                AyuTitle("What is making this difficult?", "Select one to see relevant options.")
+                Spacer(Modifier.height(14.dp))
+                listOf("Cost or affordability", "Finding a nearby place", "I am unsure what to do",
+                    "Transport or time", "Something else", "Prefer not to say").forEach { reason ->
+                    AyuCardRow(R.drawable.ayu_help_circle, reason,
+                        if (helpReason == reason) "Selected" else null,
+                        onClick = { helpReason = reason },
+                        modifier = Modifier.padding(bottom = 7.dp), trailing = false)
                 }
-                if (task.optString("source") == "patient_created") Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 14.dp), horizontalArrangement = Arrangement.End) {
-                    TextButton(onClick = {
-                        editingTaskId = task.optString("id")
-                        showTaskEditor = true
-                        description = task.optString("description")
-                        due = try {
-                            java.time.Instant.parse(task.optString("due_at"))
-                                .atZone(java.time.ZoneId.systemDefault())
-                                .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                        } catch (_: Exception) { "" }
-                    }) { Text("Edit") }
-                    TextButton(onClick = { deleteTaskId = task.optString("id") }) {
-                        Text("Delete", color = AyuvanColors.Danger)
+                if (!helpReason.isNullOrBlank()) {
+                    Spacer(Modifier.height(9.dp))
+                    Text(when (helpReason) {
+                        "Cost or affordability" -> "Ask a facility about charges and any available support before visiting."
+                        "I am unsure what to do" -> "Confirm unclear clinical instructions with your healthcare professional."
+                        "Transport or time" -> "Contact a facility directly to check practical visiting details."
+                        else -> "You can search for a facility and contact them directly."
+                    }, color = AyuvanColors.SecondaryText, fontSize = 13.sp)
+                    Spacer(Modifier.height(13.dp))
+                    AyuPrimaryButton("Find care", onFindCare)
+                }
+                TextButton(onClick = { helpReason = null }) { Text("Not now") }
+            } else {
+                Text(if (careFilter == "Today") "Today's actions" else "$careFilter actions",
+                    fontSize = 18.sp, fontWeight = FontWeight.Bold, color = AyuvanColors.Text)
+                Spacer(Modifier.height(12.dp))
+                if (visibleTasks.isEmpty()) AyuEmpty(R.drawable.ayu_ill_empty_care,
+                    if (careFilter == "Completed") "Nothing completed yet" else "No actions here",
+                    if (careFilter == "Today") "Your confirmed care tasks will appear here when they are due."
+                    else "Your tasks will appear here when available.")
+                visibleTasks.forEach { task ->
+                    AyuCardRow(icon = if (task.optString("source") == "patient_created") R.drawable.ayu_calendar
+                        else R.drawable.ayu_checklist,
+                        title = task.optString("description"),
+                        subtitle = listOf(task.optString("due_at").take(10).takeIf { it.isNotBlank() },
+                            if (task.optString("source") == "patient_created") "You added this" else "Care plan")
+                            .filterNotNull().joinToString(" · "),
+                        onClick = { selectedTaskId = task.optString("id") },
+                        modifier = Modifier.padding(bottom = 8.dp))
+                }
+                Spacer(Modifier.height(12.dp))
+                TextButton(onClick = { showTaskEditor = true; editingTaskId = null; description = ""; due = "" }) {
+                    Text("+ Add a personal reminder")
+                }
+                if (showTaskEditor || editingTaskId != null) {
+                    Card(colors = CardDefaults.cardColors(containerColor = Color.White),
+                        border = BorderStroke(1.dp, AyuvanColors.Border), shape = RoundedCornerShape(16.dp)) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text(if (editingTaskId == null) "Personal reminder" else "Edit reminder",
+                                style = MaterialTheme.typography.titleLarge)
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(value = description, onValueChange = { description = it.take(1000) },
+                                modifier = Modifier.fillMaxWidth(), label = { Text("What do you need to do?") })
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(value = due, onValueChange = { due = it.take(16) },
+                                modifier = Modifier.fillMaxWidth(), label = { Text("When (YYYY-MM-DD HH:MM, optional)") })
+                            Spacer(Modifier.height(12.dp))
+                            AyuPrimaryButton(if (editingTaskId == null) "Save reminder" else "Save changes",
+                                enabled = !busy && description.trim().length >= 2, onClick = {
+                                val dueAt = try {
+                                    if (due.isBlank()) null else java.time.LocalDateTime.parse(due,
+                                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                        .atZone(java.time.ZoneId.systemDefault()).toInstant().toString()
+                                } catch (_: Exception) { error = "Use YYYY-MM-DD HH:MM for the reminder time"; return@AyuPrimaryButton }
+                                val taskId = editingTaskId
+                                val value = description.trim()
+                                refresh {
+                                    if (taskId == null) api.addTask(patientId, value, dueAt)
+                                    else api.editTask(patientId, taskId, value, dueAt)
+                                    description = ""; due = ""; editingTaskId = null; showTaskEditor = false
+                                }
+                            })
+                        }
                     }
                 }
+                Spacer(Modifier.height(12.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Notify me about due tasks", modifier = Modifier.weight(1f))
+                    Checkbox(checked = notificationConsent, onCheckedChange = { checked ->
+                        refresh { api.setConsent(patientId, "notifications", checked); notificationConsent = checked }
+                        if (checked && Build.VERSION.SDK_INT >= 33)
+                            requestPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    })
+                }
+                Text("Use your usual medicine alarm for time-critical doses.",
+                    color = AyuvanColors.MutedText, style = MaterialTheme.typography.bodySmall)
+            }
+        } else {
+            AyuTitle(selectedTask.optString("description"), "From your care plan.")
+            Spacer(Modifier.height(18.dp))
+            AyuDetailRow(R.drawable.ayu_calendar, "Due",
+                selectedTask.optString("due_at").takeIf { it.length >= 10 && it[0].isDigit() }
+                    ?.take(16) ?: "No due time confirmed")
+            Spacer(Modifier.height(8.dp))
+            AyuDetailRow(R.drawable.ayu_file, "Source",
+                if (selectedTask.optString("source") == "patient_created") "You added this reminder"
+                else selectedTask.optString("source"))
+            Spacer(Modifier.height(8.dp))
+            AyuDetailRow(R.drawable.ayu_check_circle, "Status", selectedTask.optString("status"))
+            Spacer(Modifier.height(20.dp))
+            if (selectedTask.optString("status") != "completed") AyuPrimaryButton("Mark completed", onClick = {
+                refresh {
+                    api.updateTask(patientId, selectedTask.optString("id"), "completed")
+                    selectedTaskId = null
+                }
+            }, enabled = !busy)
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = { selectedTaskId = null; helpReason = "" }, modifier = Modifier.fillMaxWidth()) {
+                Text("I need help with this")
+            }
+            if (selectedTask.optString("source") == "patient_created") {
+                TextButton(onClick = {
+                    editingTaskId = selectedTask.optString("id"); showTaskEditor = true
+                    description = selectedTask.optString("description")
+                    due = selectedTask.optString("due_at").take(16).replace('T', ' ')
+                    selectedTaskId = null
+                }) { Text("Edit reminder") }
+                TextButton(onClick = { deleteTaskId = selectedTask.optString("id") }) {
+                    Text("Delete reminder", color = AyuvanColors.Danger)
                 }
             }
         }
@@ -1897,6 +2123,7 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
     var category by rememberSaveable { mutableStateOf("Doctors") }
     var results by remember { mutableStateOf<JSONObject?>(null) }
     var selectedPlace by remember { mutableStateOf<JSONObject?>(null) }
+    var viewMode by rememberSaveable { mutableStateOf("List") }
     var currentLocation by remember { mutableStateOf<LatLng?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
@@ -1916,90 +2143,106 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
         } else error = "Location permission was declined. You can search by city instead."
     }
     val places = results?.list("places") ?: emptyList()
+    BackHandler(enabled = selectedPlace != null) { selectedPlace = null }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
-                Text("Find care", style = MaterialTheme.typography.titleLarge)
-            }
-            Spacer(Modifier.height(18.dp))
-            Text("Find healthcare near you", style = MaterialTheme.typography.headlineMedium)
-            Text("Search by area or service.", color = AyuvanColors.SecondaryText)
-            Spacer(Modifier.height(20.dp))
-            OutlinedTextField(value = area, onValueChange = { area = it.take(100) },
-                modifier = Modifier.fillMaxWidth(), label = { Text("City or neighbourhood") },
-                placeholder = { Text("e.g. Andheri, Mumbai") })
-            TextButton(onClick = {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                    scope.launch {
-                        busy = true; error = null
-                        try {
-                            val found = findCurrentArea(context)
-                            if (found != null) {
-                                currentLocation = LatLng(found.first.latitude, found.first.longitude)
-                                if (found.second.isNotBlank()) area = found.second
-                                else error = "Enter a nearby city to search facilities."
-                            } else error = "Location unavailable. Search by city instead."
-                        } catch (_: SecurityException) { error = "Location permission is needed." }
-                        busy = false
+        AyuPageHeader(if (selectedPlace == null) "Find care" else "Facility details",
+            onBack = { if (selectedPlace == null) onBack() else selectedPlace = null })
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
+            Spacer(Modifier.height(12.dp))
+            if (selectedPlace != null) {
+                val place = selectedPlace!!
+                AyuTitle(place.optString("name"), place.optString("type").ifBlank { "Healthcare facility" })
+                Spacer(Modifier.height(18.dp))
+                AyuDetailRow(R.drawable.ayu_map_pin, "Address", place.optString("address"))
+                Spacer(Modifier.height(8.dp))
+                AyuDetailRow(R.drawable.ayu_info, "Source", "Facility information from Google Maps")
+                Spacer(Modifier.height(16.dp))
+                AyuPrimaryButton("Get directions", onClick = {
+                    val url = place.optString("maps_url")
+                    if (url.startsWith("https://")) context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }, enabled = place.optString("maps_url").startsWith("https://"))
+                val phone = place.optString("phone")
+                if (phone.isNotBlank()) OutlinedButton(onClick = {
+                    context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
+                }, modifier = Modifier.fillMaxWidth()) { Text("Call facility") }
+                Text("Confirm services and hours directly with the facility before visiting.",
+                    color = AyuvanColors.SecondaryText, fontSize = 13.sp,
+                    modifier = Modifier.padding(top = 14.dp))
+            } else {
+                AyuTitle("Find healthcare near you", "Search by location or service.")
+                Spacer(Modifier.height(18.dp))
+                OutlinedTextField(value = area, onValueChange = { area = it.take(100) },
+                    modifier = Modifier.fillMaxWidth(), label = { Text("City, neighbourhood or PIN") },
+                    placeholder = { Text("e.g. Andheri, Mumbai") }, singleLine = true)
+                TextButton(onClick = {
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                        scope.launch {
+                            busy = true; error = null
+                            try {
+                                val found = findCurrentArea(context)
+                                if (found != null) {
+                                    currentLocation = LatLng(found.first.latitude, found.first.longitude)
+                                    if (found.second.isNotBlank()) area = found.second
+                                    else error = "Enter a nearby city to search facilities."
+                                } else error = "Location unavailable. Search by city instead."
+                            } catch (_: SecurityException) { error = "Location permission is needed." }
+                            busy = false
+                        }
+                    else locationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION))
+                }) { AyuIcon(R.drawable.ayu_navigation, null, Modifier.size(18.dp));
+                    Spacer(Modifier.width(6.dp)); Text("Use my current location") }
+                OutlinedTextField(value = query, onValueChange = { query = it.take(100) },
+                    modifier = Modifier.fillMaxWidth(), label = { Text("Doctor or service (optional)") },
+                    placeholder = { Text("Dermatologist, X-ray…") }, singleLine = true)
+                Spacer(Modifier.height(10.dp))
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf("Doctors", "Hospitals", "Diagnostics", "Clinics").forEach { item ->
+                        AssistChip(onClick = { category = item }, label = { Text(item) },
+                            leadingIcon = if (category == item) ({ Icon(Icons.Default.Check, null) }) else null)
                     }
-                else locationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION))
-            }) { Text("⌖  Use my current location") }
-            OutlinedTextField(value = query, onValueChange = { query = it.take(100) },
-                modifier = Modifier.fillMaxWidth(), label = { Text("Specialty or service (optional)") },
-                placeholder = { Text("Dermatologist, X-ray…") })
-            Spacer(Modifier.height(10.dp))
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("Doctors", "Hospitals", "Diagnostics", "Clinics").forEach { item ->
-                    AssistChip(onClick = { category = item }, label = { Text(item) },
-                        leadingIcon = if (category == item) ({ Icon(Icons.Default.Check, null) }) else null)
+                }
+                Spacer(Modifier.height(14.dp))
+                AyuPrimaryButton(if (busy) "Searching…" else "Search facilities",
+                    enabled = !busy && area.trim().length >= 3, onClick = {
+                        scope.launch { busy = true; error = null
+                            try { results = api.discover(query.trim(), category, area.trim()); selectedPlace = null }
+                            catch (e: Exception) { error = e.message }; busy = false }
+                    })
+                Spacer(Modifier.height(14.dp)); LoadError(error)
+                if (results == null) AyuEmpty(R.drawable.ayu_ill_find_care, "Search by area",
+                    "Enter a city or use your location to find real facilities.")
+                else {
+                    AyuSegment(listOf("List", "Map"), viewMode) { viewMode = it }
+                    Spacer(Modifier.height(14.dp))
+                    if (viewMode == "Map") {
+                        Card(shape = RoundedCornerShape(16.dp), border = BorderStroke(1.dp, AyuvanColors.Border)) {
+                            CareMap(places, currentLocation, selectedPlace) { selectedPlace = it }
+                        }
+                        Text("Map data © Google Maps", fontSize = 11.sp, color = AyuvanColors.SecondaryText,
+                            modifier = Modifier.padding(top = 5.dp))
+                        Spacer(Modifier.height(14.dp))
+                    }
+                    if (places.isEmpty()) AyuEmpty(R.drawable.ayu_ill_find_care, "No results found",
+                        "Try another area or service.")
+                    else places.forEach { place ->
+                        AyuCardRow(R.drawable.ayu_hospital, place.optString("name"),
+                            place.optString("address"), onClick = { selectedPlace = place },
+                            modifier = Modifier.padding(bottom = 8.dp))
+                    }
                 }
             }
-            Spacer(Modifier.height(12.dp))
-            PrimaryButton(if (busy) "Searching…" else "Search facilities", enabled = !busy && area.trim().length >= 3, onClick = {
-                scope.launch { busy = true; error = null
-                    try { results = api.discover(query.trim(), category, area.trim()); selectedPlace = null }
-                    catch (e: Exception) { error = e.message }; busy = false }
-            })
-            Spacer(Modifier.height(15.dp)); LoadError(error)
-            Text("Map overview", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(10.dp))
-            Card(shape = RoundedCornerShape(20.dp), border = BorderStroke(1.dp, AyuvanColors.Border)) {
-                CareMap(places, currentLocation, selectedPlace) { selectedPlace = it }
-            }
-            Text("Map and facility details from Google Maps", style = MaterialTheme.typography.bodySmall,
-                color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 8.dp))
-            if (selectedPlace != null) {
-                Text(selectedPlace!!.optString("name"), style = MaterialTheme.typography.titleMedium)
-                Text(selectedPlace!!.optString("address"), color = AyuvanColors.SecondaryText)
-                TextButton(onClick = {
-                    val url = selectedPlace!!.optString("maps_url")
-                    if (url.startsWith("https://")) context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                }) { Text("Directions in Google Maps  →") }
-            }
-            if (results != null) Text("Facilities", style = MaterialTheme.typography.titleLarge)
-            if (results != null && places.isEmpty()) EmptyInformationCard(R.drawable.icon_location_pin,
-                "No results found", "Try another area or specialty.")
-            places.forEach { place ->
-                Spacer(Modifier.height(8.dp))
-                BasicRowCard(onClick = {
-                    selectedPlace = place
-                }, leadingIcon = R.drawable.icon_location_pin,
-                    title = place.optString("name"), subtitle = place.optString("address"),
-                    trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
-            }
-            if (results == null) Text("Search by area to see live facility results.",
-                color = AyuvanColors.SecondaryText)
         }
     }
+
 }
 
 @Composable
 private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                    onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
-                                   onSignOut: () -> Unit, onBack: () -> Unit) {
+                                   onSignOut: () -> Unit, onBack: () -> Unit,
+                                   onOpenFamily: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val requestNotificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -2021,7 +2264,7 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     var deletePassword by remember { mutableStateOf("") }
     var exportPayload by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
-    var profileSection by rememberSaveable { mutableStateOf("Account") }
+    var profileSection by rememberSaveable { mutableStateOf("Overview") }
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) try {
             context.contentResolver.openOutputStream(uri)?.use { it.write((exportPayload ?: "{}").toByteArray()) }
@@ -2040,26 +2283,130 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     } }
     val current = patients.rows().firstOrNull { it.optString("id") == patientId }
     val consentRows = consents?.list("consents") ?: emptyList()
+    BackHandler(enabled = profileSection != "Overview") { profileSection = "Overview" }
     fun granted(purpose: String) = consentRows.firstOrNull { it.optString("purpose") == purpose }
         ?.optString("status") == "granted"
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
-        Spacer(Modifier.height(12.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
-            Text("Account", style = MaterialTheme.typography.titleLarge)
-        }
-        Spacer(Modifier.height(22.dp))
-        Text("Your profile", style = MaterialTheme.typography.headlineMedium)
-        Text("Manage your account and privacy.", color = AyuvanColors.SecondaryText)
+        AyuPageHeader(when (profileSection) {
+            "Overview" -> "Profile"; "Settings" -> "Settings"; "WhatsApp" -> "WhatsApp linking"
+            "Notifications" -> "Notifications"; "Privacy" -> "Privacy and consent"
+            "Help" -> "Help & support"; else -> "My profile"
+        }, onBack = { if (profileSection == "Overview") onBack() else profileSection = "Overview" })
+        Spacer(Modifier.height(14.dp))
+        AyuTitle(when (profileSection) {
+            "Overview" -> "Your account"; "Settings" -> "Privacy and preferences"
+            "WhatsApp" -> "Stay connected across channels"
+            "Notifications" -> "Choose your reminders"
+            "Privacy" -> "Your information, your choice"
+            "Help" -> "Help is here"; else -> "Your profile"
+        }, when (profileSection) {
+            "Overview" -> "Manage your preferences and privacy."
+            "WhatsApp" -> "Connect WhatsApp to your same AYUVAN account."
+            "Notifications" -> "Set what is useful for you."
+            else -> null
+        })
         Spacer(Modifier.height(16.dp)); LoadError(error)
         if (message != null) Text(message!!, color = AyuvanColors.Success)
-        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("Account", "Privacy", "Help").forEach { section ->
-                AssistChip(onClick = { profileSection = section }, label = { Text(section) },
-                    leadingIcon = if (profileSection == section) ({ Icon(Icons.Default.Check, null) }) else null)
+        if (profileSection == "Overview") {
+            AyuCardRow(R.drawable.ayu_user, "My profile", "Personal details and language",
+                onClick = { profileSection = "Account" })
+            Spacer(Modifier.height(16.dp))
+            Text("Family", fontWeight = FontWeight.SemiBold, color = AyuvanColors.Text)
+            Spacer(Modifier.height(7.dp))
+            patients.rows().forEach { p ->
+                AyuCardRow(R.drawable.ayu_users, p.optString("display_name"),
+                    if (p.optString("id") == patientId) "Selected profile" else "Tap to switch profile",
+                    onClick = { onPatientChange(p.optString("id")) }, modifier = Modifier.padding(bottom = 7.dp))
+            }
+            AyuCardRow(R.drawable.ayu_users, "Add family profile", "Only for someone you are authorized to manage",
+                onClick = onOpenFamily)
+            Spacer(Modifier.height(10.dp))
+            Text("Preferences", fontWeight = FontWeight.SemiBold, color = AyuvanColors.Text)
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_settings, "Settings", "Language, notifications and account",
+                onClick = { profileSection = "Settings" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_message_circle, "WhatsApp linking", "Connect your number securely",
+                onClick = { profileSection = "WhatsApp" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_lock, "Privacy and consent", "Your information, your choice",
+                onClick = { profileSection = "Privacy" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_help_circle, "Help and support", "Get assistance",
+                onClick = { profileSection = "Help" })
+        }
+        if (profileSection == "Settings") {
+            AyuCardRow(R.drawable.ayu_language, "Language", "Manage your preferred language",
+                onClick = { profileSection = "Account" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_bell, "Notifications", "Medicines, tests and check-ins",
+                onClick = { profileSection = "Notifications" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_shield_check, "Consent and privacy", "Access, download and deletion",
+                onClick = { profileSection = "Privacy" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_message_circle, "WhatsApp account", "Link and permissions",
+                onClick = { profileSection = "WhatsApp" })
+            Spacer(Modifier.height(7.dp))
+            AyuCardRow(R.drawable.ayu_help_circle, "Help and support", "Support and feedback",
+                onClick = { profileSection = "Help" })
+        }
+        if (profileSection == "Notifications") {
+            AyuDetailRow(R.drawable.ayu_pill, "Medicine reminders", "Only from confirmed schedules")
+            Spacer(Modifier.height(7.dp))
+            AyuDetailRow(R.drawable.ayu_calendar, "Tests and follow-ups", "From your care plan")
+            Spacer(Modifier.height(7.dp))
+            AyuDetailRow(R.drawable.ayu_activity, "Symptom check-ins", "Only when a check-in is available and you consent")
+            Spacer(Modifier.height(12.dp))
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text("Enable app reminders", modifier = Modifier.weight(1f))
+                Checkbox(checked = granted("notifications"), onCheckedChange = { checked ->
+                    action {
+                        api.setConsent(patientId, "notifications", checked)
+                        ReminderScheduler.reconcile(context, api.care(patientId).list("tasks"), checked)
+                    }
+                    if (checked && Build.VERSION.SDK_INT >= 33)
+                        requestNotificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                })
+            }
+            Text("Sensitive health details are not shown in lock-screen reminders.",
+                color = AyuvanColors.SecondaryText, fontSize = 13.sp)
+        }
+        if (profileSection == "WhatsApp") {
+            val linkedProfile = patients.rows().firstOrNull { it.optString("role") == "linked" }
+            Image(painterResource(R.drawable.ayu_ill_privacy_lock), null,
+                modifier = Modifier.fillMaxWidth().height(150.dp), contentScale = ContentScale.Fit)
+            Spacer(Modifier.height(12.dp))
+            AyuDetailRow(R.drawable.ayu_shield_check, "Secure verification",
+                "Your number alone never unlocks health history.")
+            Spacer(Modifier.height(7.dp))
+            AyuDetailRow(R.drawable.ayu_repeat, "Shared care plan",
+                "Updates stay in sync with your app.")
+            Spacer(Modifier.height(7.dp))
+            AyuDetailRow(R.drawable.ayu_bell, "Optional reminders", "You control what you receive.")
+            Spacer(Modifier.height(15.dp))
+            Text(if (linkedProfile == null) "Status: Not linked" else "Status: Linked",
+                fontSize = 13.sp, color = AyuvanColors.SecondaryText)
+            Spacer(Modifier.height(10.dp))
+            if (linkedProfile == null) AyuPrimaryButton("Link securely", enabled = !busy, onClick = { action {
+                    val result = api.requestWhatsAppLink()
+                    if (result.optString("status") == "code_sent") {
+                        linkDialog = true
+                        message = "We sent a code to your WhatsApp number. Enter it here."
+                    } else {
+                        onPatientsRefresh(result.optJSONArray("patients") ?: JSONArray())
+                        message = "Your WhatsApp history and app health record are connected."
+                    }
+                } })
+            else {
+                AyuPrimaryButton("Open linked health record", onClick = {
+                    onPatientChange(linkedProfile.optString("id")); onBack()
+                })
+                TextButton(onClick = { whatsappDeleteDialog = true }) {
+                    Text("Delete linked WhatsApp health history", color = AyuvanColors.Danger)
+                }
             }
         }
-        Spacer(Modifier.height(16.dp))
         if (profileSection == "Account") {
         Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
             Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -2089,13 +2436,15 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
         Spacer(Modifier.height(20.dp))
         Text("Language", style = MaterialTheme.typography.titleLarge)
         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf("English" to "en", "हिंदी" to "hi", "मराठी" to "mr", "தமிழ்" to "ta").forEach { (label, code) ->
+            listOf("English" to "en", "हिंदी" to "hi").forEach { (label, code) ->
                 AssistChip(onClick = { action { api.updateProfile(patientId, language = code)
                     onPatientsRefresh(api.me().optJSONArray("patients") ?: JSONArray()) } },
                     label = { Text(label) }, leadingIcon = if (current?.optString("preferred_language") == code)
                         ({ Icon(Icons.Default.Check, null) }) else null)
             }
         }
+        Text("You can describe concerns in Hinglish. The app interface currently uses English or Hindi.",
+            fontSize = 12.sp, color = AyuvanColors.SecondaryText)
         Spacer(Modifier.height(18.dp))
         OutlinedButton(onClick = { changePasswordDialog = true }, modifier = Modifier.fillMaxWidth()) {
             Text("Change password")

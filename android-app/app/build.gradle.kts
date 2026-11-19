@@ -18,8 +18,8 @@ android {
         applicationId = "com.ayuvan.mobile"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
         val apiBaseUrl = providers.gradleProperty("ayuvanApiBaseUrl")
             .orElse("https://ayuvan-api-516889485331.asia-south1.run.app").get()
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")

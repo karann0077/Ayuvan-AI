@@ -4,7 +4,7 @@
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">#FBF9FD</item>
-        <item name="android:colorAccent">#5B2A91</item>
+        <item name="android:navigationBarColor">#F8FAF9</item>
+        <item name="android:colorAccent">#0C5F4A</item>
     </style>
 </resources>

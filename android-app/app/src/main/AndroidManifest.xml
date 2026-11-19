@@ -6,10 +6,18 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
         android:allowBackup="false"
+        android:icon="@drawable/ayu_app_icon"
         android:label="AYUVAN"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ayuvan">
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="${MAPS_API_KEY}" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/ayu_file_paths" />
+        </provider>
         <activity
             android:name=".MainActivity"
             android:exported="true">
