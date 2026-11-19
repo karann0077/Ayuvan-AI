@@ -56,3 +56,7 @@ def test_three_isolated_demo_profiles_and_document(monkeypatch):
     assert document.status_code == 200
     assert document.content.startswith(b"%PDF-")
     assert client.get(f"/api/v1/mobile/patients/{urgent}/documents/{docs[0]['id']}/download", headers=headers).status_code == 404
+    deleted = client.post("/api/v1/mobile/auth/delete", headers=headers,
+                          json={"password": "demo-secret-pass"})
+    assert deleted.status_code == 200, deleted.text
+    assert client.get(f"/api/v1/mobile/patients/{care}/documents", headers=headers).status_code == 401

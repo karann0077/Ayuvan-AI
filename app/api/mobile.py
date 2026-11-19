@@ -1204,9 +1204,10 @@ class DeleteAccount(BaseModel):
 def _erase_patient(db: Session, patient: PatientProfile) -> None:
     patient_id = patient.id
     documents = db.scalars(select(MedicalDocument).where(MedicalDocument.patient_id == patient_id)).all()
-    if documents:
+    stored_documents = [document for document in documents if document.storage_key != _DEMO_DOCUMENT_KEY]
+    if stored_documents:
         bucket = _documents_bucket()
-        for document in documents:
+        for document in stored_documents:
             try:
                 bucket.blob(document.storage_key).delete()
             except NotFound:
