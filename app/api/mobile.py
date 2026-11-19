@@ -6,6 +6,7 @@ import json
 import secrets
 import uuid
 from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -414,19 +415,30 @@ def _require_health_consent(db: Session, patient_id: str) -> None:
         raise HTTPException(status_code=403, detail="Enable health record processing in Privacy choices to add new health information")
 
 
-def _chat_view(db: Session, conversation: Conversation) -> dict[str, Any]:
-    messages = list(reversed(db.scalars(select(Message).where(Message.conversation_id == conversation.id)
-                                        .order_by(Message.created_at.desc(), Message.id.desc()).limit(150)).all()))
-    pending = (conversation.state or {}).get("pending_question") or {}
-    if (conversation.state or {}).get("pending_continuity"):
+def _chat_view(db: Session, patient_id: str, conversation: Conversation | None) -> dict[str, Any]:
+    """Show verified patient's messages from both channels in one chronological view.
+
+    A mobile question remains scoped to the active mobile conversation; WhatsApp
+    history cannot become an answerable mobile question merely by being displayed.
+    """
+    messages = list(reversed(db.scalars(select(Message).where(
+        Message.patient_id == patient_id,
+        Message.provider.in_(("mobile", "whatsapp")),
+        Message.content.is_not(None),
+    ).order_by(func.coalesce(Message.message_timestamp, Message.created_at).desc(),
+               Message.created_at.desc(), Message.id.desc()).limit(150)).all()))
+    pending = ((conversation.state or {}).get("pending_question") or {}) if conversation else {}
+    if conversation and (conversation.state or {}).get("pending_continuity"):
         options = [{"id": "CONTINUED", "label": "Continued"},
                    {"id": "RETURNED", "label": "Went away, returned"},
                    {"id": "NOT_SURE", "label": "Not sure"}]
     else:
         options = [{"id": key, "label": label} for key, label in pending.get("options", {}).items()]
-    return {"conversation_id": conversation.id,
+    return {"conversation_id": conversation.id if conversation else None,
             "messages": [{"id": m.id, "text": m.content, "direction": m.direction,
-                          "status": m.processing_status, "created_at": m.created_at.isoformat()}
+                          "channel": "WhatsApp" if m.provider == "whatsapp" else "App",
+                          "status": m.processing_status,
+                          "created_at": (m.message_timestamp or m.created_at).isoformat()}
                          for m in messages],
             "question": {"field": pending.get("field"), "options": options} if options else None}
 
@@ -438,8 +450,7 @@ def get_chat(patient_id: str, session: MobileSession = Depends(get_current_sessi
     conversation = db.scalar(select(Conversation).where(
         Conversation.patient_id == patient_id, Conversation.channel == "mobile",
         Conversation.status == "active").order_by(Conversation.updated_at.desc()))
-    return _chat_view(db, conversation) if conversation else {
-        "conversation_id": None, "messages": [], "question": None}
+    return _chat_view(db, patient_id, conversation)
 
 
 @router.post("/patients/{patient_id}/chat/messages")
@@ -462,7 +473,7 @@ async def send_chat(patient_id: str, payload: ChatInput,
             except Exception:
                 raise HTTPException(status_code=503, detail="Message saved; response temporarily unavailable. Refresh shortly") from None
             db.refresh(conversation)
-        return _chat_view(db, conversation)
+        return _chat_view(db, patient_id, conversation)
     message = Message(patient_id=patient_id, conversation_id=conversation.id, provider="mobile",
                       provider_message_id=incoming_id, direction="incoming", message_type="text",
                       content=payload.text.strip(), message_timestamp=datetime.now(timezone.utc),
@@ -474,7 +485,7 @@ async def send_chat(patient_id: str, payload: ChatInput,
     except Exception:
         raise HTTPException(status_code=503, detail="Message saved; response temporarily unavailable. Refresh shortly") from None
     db.refresh(conversation)
-    return _chat_view(db, conversation)
+    return _chat_view(db, patient_id, conversation)
 
 
 @router.get("/patients/{patient_id}/health")
@@ -490,11 +501,28 @@ def health_record(patient_id: str, session: MobileSession = Depends(get_current_
                            .order_by(MedicalDocument.created_at.desc()).limit(100)).all()
     assessments = db.scalars(select(ClinicalAssessment).where(ClinicalAssessment.patient_id == patient_id)
                              .order_by(ClinicalAssessment.created_at.desc()).limit(25)).all()
+    episode_ids = [episode.id for episode in episodes]
+    events = db.scalars(select(SymptomEvent).where(SymptomEvent.episode_id.in_(episode_ids))
+                        .order_by(SymptomEvent.recorded_at.desc()).limit(300)).all() if episode_ids else []
+    message_ids = [event.source_message_id for event in events if event.source_message_id]
+    sources = {message.id: message.provider for message in db.scalars(select(Message).where(
+        Message.id.in_(message_ids))).all()} if message_ids else {}
+    event_map: dict[str, list[dict[str, Any]]] = {episode_id: [] for episode_id in episode_ids}
+    for event in events:
+        event_map[event.episode_id].append({
+            "id": event.id, "symptom": event.symptom, "details": event.details,
+            "source": "WhatsApp" if sources.get(event.source_message_id) == "whatsapp"
+                      else "App" if sources.get(event.source_message_id) == "mobile"
+                      else "Patient correction" if event.source_type == "patient_correction"
+                      else "Recorded history",
+            "recorded_at": event.recorded_at.isoformat(),
+        })
     return {
         "patient": _patient_data(patient, access),
         "episodes": [{"id": e.id, "symptom": e.primary_symptom, "status": e.status,
                       "onset_date": e.onset_date.isoformat() if e.onset_date else None,
-                      "last_reported_at": e.last_reported_at.isoformat(), "summary": e.summary}
+                      "last_reported_at": e.last_reported_at.isoformat(), "summary": e.summary,
+                      "events": event_map.get(e.id, [])}
                      for e in episodes],
         "conditions": [{"id": r.id, "name": r.name, "verification_status": r.verification_status} for r in conditions],
         "allergies": [{"id": r.id, "name": r.allergen, "reaction": r.reaction,
@@ -507,6 +535,42 @@ def health_record(patient_id: str, session: MobileSession = Depends(get_current_
         "assessments": [{"id": a.id, "episode_id": a.episode_id, "outcome": a.outcome,
                          "created_at": a.created_at.isoformat()} for a in assessments],
     }
+
+
+@router.get("/patients/{patient_id}/care-navigation")
+def care_navigation(patient_id: str, session: MobileSession = Depends(get_current_session),
+                    db: Session = Depends(get_db)) -> dict[str, Any]:
+    """Offer a facility search based on recorded action, never an LLM diagnosis.
+
+    Non-emergency cases use a general physician as a starting point because this
+    project has no clinician-approved symptom-to-specialist routing table yet.
+    """
+    require_patient(db, session.user_id, patient_id)
+    episode = db.scalar(select(HealthEpisode).where(
+        HealthEpisode.patient_id == patient_id, HealthEpisode.status == "active"
+    ).order_by(HealthEpisode.last_reported_at.desc()))
+    if episode is None:
+        return {"action": "none", "reason": "No active concern", "episode_id": None}
+    assessment = db.scalar(select(ClinicalAssessment).where(
+        ClinicalAssessment.patient_id == patient_id,
+        ClinicalAssessment.episode_id == episode.id,
+    ).order_by(ClinicalAssessment.created_at.desc(), ClinicalAssessment.id.desc()))
+    if assessment is None:
+        return {"action": "none", "reason": "Assessment unavailable", "episode_id": episode.id}
+    if assessment.outcome == "emergency":
+        return {"action": "emergency", "episode_id": episode.id,
+                "facility_type": "Emergency department", "category": "Hospitals",
+                "query": "emergency department",
+                "message": "Seek emergency medical help now. Call local emergency services; a map search must not delay care.",
+                "pathway_version": assessment.pathway_version}
+    if assessment.outcome == "timely_assessment":
+        return {"action": "find_clinician", "episode_id": episode.id,
+                "facility_type": "General physician", "category": "Doctors",
+                "query": "general physician",
+                "message": "A general physician is a starting point and can advise if specialist care is needed.",
+                "pathway_version": assessment.pathway_version}
+    return {"action": "none", "reason": "No professional-care recommendation recorded",
+            "episode_id": episode.id}
 
 
 @router.post("/patients/{patient_id}/episodes/{episode_id}/corrections", status_code=201)
@@ -721,6 +785,17 @@ def _documents_bucket():
     return storage.Client().bucket(bucket_name)
 
 
+_DEMO_DOCUMENT_KEY = "demo://evaluation-consultation-v1"
+
+
+def _demo_document_bytes(document: MedicalDocument) -> bytes | None:
+    """Serve only the bundled fictional sample for the isolated demo profile."""
+    if document.storage_key != _DEMO_DOCUMENT_KEY:
+        return None
+    return (Path(__file__).resolve().parents[1] / "demo_assets" /
+            "evaluation_consultation.pdf").read_bytes()
+
+
 def _document_view(db: Session, document: MedicalDocument) -> dict[str, Any]:
     extraction = db.scalar(select(DocumentExtraction).where(
         DocumentExtraction.document_id == document.id).order_by(DocumentExtraction.created_at.desc()))
@@ -787,7 +862,9 @@ async def download_document(patient_id: str, document_id: str,
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
     try:
-        data = await asyncio.to_thread(_documents_bucket().blob(document.storage_key).download_as_bytes)
+        data = _demo_document_bytes(document)
+        if data is None:
+            data = await asyncio.to_thread(_documents_bucket().blob(document.storage_key).download_as_bytes)
     except Exception:
         raise HTTPException(status_code=503, detail="Document temporarily unavailable") from None
     _audit(db, patient_id, "document_downloaded", "document", document.id)
@@ -805,12 +882,13 @@ async def delete_document(patient_id: str, document_id: str,
                                                        MedicalDocument.patient_id == patient_id))
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
-    try:
-        await asyncio.to_thread(_documents_bucket().blob(document.storage_key).delete)
-    except NotFound:
-        pass
-    except Exception:
-        raise HTTPException(status_code=503, detail="Document storage temporarily unavailable") from None
+    if document.storage_key != _DEMO_DOCUMENT_KEY:
+        try:
+            await asyncio.to_thread(_documents_bucket().blob(document.storage_key).delete)
+        except NotFound:
+            pass
+        except Exception:
+            raise HTTPException(status_code=503, detail="Document storage temporarily unavailable") from None
     db.execute(delete(DocumentExtraction).where(DocumentExtraction.document_id == document_id))
     db.delete(document)
     _audit(db, patient_id, "document_deleted", "document", document_id)
@@ -964,6 +1042,20 @@ async def request_whatsapp_link(session: MobileSession = Depends(get_current_ses
     return {"status": "code_sent"}
 
 
+@router.get("/whatsapp-link/status")
+def whatsapp_link_status(session: MobileSession = Depends(get_current_session),
+                         db: Session = Depends(get_db)) -> dict[str, Any]:
+    """Authenticated status only; matching numbers never expose health data."""
+    credential = db.scalar(select(MobileCredential).where(MobileCredential.user_id == session.user_id))
+    if credential is None:
+        raise HTTPException(status_code=404, detail="Account not found")
+    identity = db.scalar(select(ExternalIdentity).where(
+        ExternalIdentity.provider == "whatsapp", ExternalIdentity.is_active.is_(True),
+        ExternalIdentity.external_id.in_((credential.phone, credential.phone.lstrip("+")))))
+    return {"status": "linked" if identity and identity.user_id == session.user_id
+            else "available_to_verify" if identity else "no_history"}
+
+
 @router.post("/whatsapp-link/verify")
 def verify_whatsapp_link(payload: LinkCode, session: MobileSession = Depends(get_current_session),
                          db: Session = Depends(get_db)) -> dict[str, Any]:
@@ -996,9 +1088,15 @@ def verify_whatsapp_link(payload: LinkCode, session: MobileSession = Depends(get
 @router.get("/discover")
 async def discover(query: str = Query(default="", max_length=100),
                    category: str = Query(default="Doctors", pattern="^(Doctors|Hospitals|Diagnostics|Clinics)$"),
-                   area: str = Query(min_length=3, max_length=100),
+                   area: str = Query(default="", max_length=100),
+                   latitude: float | None = Query(default=None, ge=-90, le=90),
+                   longitude: float | None = Query(default=None, ge=-180, le=180),
                    session: MobileSession = Depends(get_current_session),
                    db: Session = Depends(get_db)) -> dict[str, Any]:
+    if (latitude is None) != (longitude is None):
+        raise HTTPException(status_code=422, detail="Provide both location coordinates")
+    if latitude is None and len(area.strip()) < 3:
+        raise HTTPException(status_code=422, detail="Enter a city or use your current location")
     owner_patient = db.scalar(select(PatientProfile).where(PatientProfile.user_id == session.user_id))
     if owner_patient is None:
         raise HTTPException(status_code=403, detail="Account profile unavailable")
@@ -1022,7 +1120,16 @@ async def discover(query: str = Query(default="", max_length=100),
         raise HTTPException(status_code=503, detail="Google Places search is not configured")
     terms = {"Doctors": "doctor", "Hospitals": "hospital", "Diagnostics": "diagnostic laboratory",
              "Clinics": "medical clinic"}
-    search_text = " ".join(filter(None, (query.strip(), terms[category], "in", area.strip(), "India")))
+    search_text = " ".join(filter(None, (query.strip(), terms[category],
+                                       "in" if latitude is None else "",
+                                       area.strip() if latitude is None else "",
+                                       "India" if latitude is None else "")))
+    search_body: dict[str, Any] = {"textQuery": search_text, "pageSize": 10,
+                                   "languageCode": "en", "regionCode": "IN"}
+    if latitude is not None and longitude is not None:
+        search_body["locationBias"] = {"circle": {"center": {
+            "latitude": latitude, "longitude": longitude}, "radius": 15000.0}}
+        search_body["rankPreference"] = "DISTANCE"
     # Count the attempt before the paid request, including failures, so the daily
     # safety cap cannot be bypassed by repeated upstream errors.
     _audit(db, owner_patient.id, "places_search", "places_query", None)
@@ -1033,7 +1140,7 @@ async def discover(query: str = Query(default="", max_length=100),
                 "https://places.googleapis.com/v1/places:searchText",
                 headers={"X-Goog-Api-Key": settings.google_places_api_key.get_secret_value(),
                          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.googleMapsUri"},
-                json={"textQuery": search_text, "pageSize": 10, "languageCode": "en"})
+                json=search_body)
             response.raise_for_status()
             places = response.json().get("places", [])
         except (httpx.HTTPError, ValueError):

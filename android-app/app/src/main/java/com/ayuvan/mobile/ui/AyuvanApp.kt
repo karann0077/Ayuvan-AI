@@ -135,6 +135,9 @@ fun AyuvanApp() {
     var recordsEntry by rememberSaveable { mutableStateOf("Timeline") }
     var showChat by rememberSaveable { mutableStateOf(false) }
     var chatSeed by rememberSaveable { mutableStateOf("") }
+    var careSearchQuery by rememberSaveable { mutableStateOf("") }
+    var careSearchCategory by rememberSaveable { mutableStateOf("Doctors") }
+    var profileEntry by rememberSaveable { mutableStateOf("Overview") }
     val selectedPatient = patients.rows().firstOrNull { it.optString("id") == selectedPatientId }
         ?.optString("display_name") ?: "My Profile"
 
@@ -188,6 +191,10 @@ fun AyuvanApp() {
                 initialMessage = chatSeed,
                 onInitialConsumed = { chatSeed = "" },
                 onBack = { showChat = false },
+                onFindCare = { query, category ->
+                    careSearchQuery = query; careSearchCategory = category
+                    showChat = false; tabName = MainTab.DISCOVER.name
+                },
             )
         } else {
             MainShell(
@@ -197,6 +204,9 @@ fun AyuvanApp() {
                 selectedTab = selectedTab,
                 recordsEntry = recordsEntry,
                 selectedPatient = selectedPatient,
+                careSearchQuery = careSearchQuery,
+                careSearchCategory = careSearchCategory,
+                profileEntry = profileEntry,
                 onPatientChange = { id -> selectedPatientId = id },
                 onPatientsRefresh = { refreshed -> patients = refreshed },
                 onSignOut = {
@@ -205,7 +215,12 @@ fun AyuvanApp() {
                     finishedOnboarding = false
                     stepName = OnboardingStep.WELCOME.name
                 },
-                onTabChange = { if (it == MainTab.MY_HEALTH) recordsEntry = "Timeline"; tabName = it.name },
+                onTabChange = {
+                    if (it == MainTab.MY_HEALTH) recordsEntry = "Timeline"
+                    if (it == MainTab.PROFILE) profileEntry = "Overview"
+                    tabName = it.name
+                },
+                onOpenWhatsApp = { profileEntry = "WhatsApp"; tabName = MainTab.PROFILE.name },
                 onOpenChat = { text -> chatSeed = text; showChat = true },
                 onOpenDocuments = { recordsEntry = "Documents"; tabName = MainTab.MY_HEALTH.name },
                 onOpenFamily = { recordsEntry = "Medical profile"; tabName = MainTab.MY_HEALTH.name },
@@ -543,6 +558,9 @@ private fun MainShell(
     selectedTab: MainTab,
     recordsEntry: String,
     selectedPatient: String,
+    careSearchQuery: String,
+    careSearchCategory: String,
+    profileEntry: String,
     onPatientChange: (String) -> Unit,
     onPatientsRefresh: (JSONArray) -> Unit,
     onSignOut: () -> Unit,
@@ -550,6 +568,7 @@ private fun MainShell(
     onOpenChat: (String) -> Unit,
     onOpenDocuments: () -> Unit,
     onOpenFamily: () -> Unit,
+    onOpenWhatsApp: () -> Unit,
 ) {
     Scaffold(
         containerColor = AyuvanColors.Page,
@@ -558,15 +577,19 @@ private fun MainShell(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (selectedTab) {
-                MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat, onOpenDocuments, onTabChange)
+                MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat,
+                    onOpenDocuments, onTabChange, onOpenWhatsApp)
                 MainTab.MY_HEALTH -> ConnectedHealthScreen(api, patientId, patients, onPatientChange, onPatientsRefresh,
-                    initialSection = recordsEntry, onBackToHome = { onTabChange(MainTab.HOME) })
+                    initialSection = recordsEntry, onBackToHome = { onTabChange(MainTab.HOME) },
+                    onOpenChat = { onOpenChat("") })
                 MainTab.CARE_PLAN -> ConnectedCareScreen(api, patientId,
                     onFindCare = { onTabChange(MainTab.DISCOVER) },
                     onBackToHome = { onTabChange(MainTab.HOME) })
-                MainTab.DISCOVER -> ConnectedDiscoverScreen(api, onBack = { onTabChange(MainTab.HOME) })
+                MainTab.DISCOVER -> ConnectedDiscoverScreen(api, careSearchQuery,
+                    careSearchCategory, onBack = { onTabChange(MainTab.HOME) })
                 MainTab.PROFILE -> ConnectedProfileScreen(api, patientId, patients, onPatientChange, onPatientsRefresh, onSignOut,
-                    onBack = { onTabChange(MainTab.HOME) }, onOpenFamily = onOpenFamily)
+                    onBack = { onTabChange(MainTab.HOME) }, onOpenFamily = onOpenFamily,
+                    initialSection = profileEntry)
             }
         }
     }
@@ -1104,7 +1127,14 @@ private fun MessageBubble(message: ChatMessage) {
             colors = CardDefaults.cardColors(containerColor = if (message.fromUser) AyuvanColors.Brand100 else Color.White),
             border = if (message.fromUser) null else BorderStroke(1.dp, AyuvanColors.Border),
         ) {
-            Text(message.text, modifier = Modifier.padding(14.dp), style = MaterialTheme.typography.bodyLarge)
+            Column(Modifier.padding(14.dp)) {
+                if (message.channel == "WhatsApp") {
+                    Text("WhatsApp", fontSize = 11.sp, color = AyuvanColors.Brand700,
+                        fontWeight = FontWeight.SemiBold)
+                    Spacer(Modifier.height(3.dp))
+                }
+                Text(message.text, style = MaterialTheme.typography.bodyLarge)
+            }
         }
     }
 }
@@ -1325,12 +1355,14 @@ private fun LoadError(message: String?) {
 @Composable
 private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: String,
                                 onOpenChat: (String) -> Unit, onOpenDocuments: () -> Unit,
-                                onTabChange: (MainTab) -> Unit) {
+                                onTabChange: (MainTab) -> Unit, onOpenWhatsApp: () -> Unit) {
     var health by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var care by remember(patientId) { mutableStateOf<JSONObject?>(null) }
+    var careNavigation by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var error by remember(patientId) { mutableStateOf<String?>(null) }
     var draft by rememberSaveable(patientId) { mutableStateOf("") }
     var uploadBusy by remember { mutableStateOf(false) }
+    var whatsAppStatus by remember(patientId) { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
     val voiceLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
@@ -1350,6 +1382,8 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
     LaunchedEffect(patientId) {
         if (patientId.isNotBlank()) try {
             health = api.health(patientId); care = api.care(patientId)
+            careNavigation = runCatching { api.careNavigation(patientId) }.getOrNull()
+            whatsAppStatus = runCatching { api.whatsAppLinkStatus().optString("status") }.getOrNull()
         } catch (e: Exception) { error = e.message }
     }
     val active = health?.list("episodes")?.firstOrNull { it.optString("status") == "active" }
@@ -1404,6 +1438,23 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
         }
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             LoadError(error)
+            if (careNavigation?.optString("action") == "emergency") {
+                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+                    containerColor = AyuvanColors.DangerBg), shape = RoundedCornerShape(17.dp)) {
+                    Column(Modifier.padding(17.dp)) {
+                        Text("Urgent medical help recommended", color = AyuvanColors.Danger,
+                            fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(6.dp))
+                        Text(if (patientName.startsWith("[DEMO]"))
+                            "Synthetic demo alert. Open the concern to see the emergency action."
+                            else "Open your concern for the emergency action and call option.",
+                            color = AyuvanColors.Text, fontSize = 13.sp)
+                        Spacer(Modifier.height(10.dp))
+                        AyuPrimaryButton("View urgent action", onClick = { onOpenChat("") })
+                    }
+                }
+                Spacer(Modifier.height(18.dp))
+            }
             Text(when { active != null -> "Continue where you left off"
                 nextTask != null -> "Your next step"
                 else -> "A simple place to start" },
@@ -1422,6 +1473,9 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
             Spacer(Modifier.height(15.dp))
             if (active != null) TextButton(onClick = { onTabChange(MainTab.MY_HEALTH) }) { Text("See your activity") }
             else if (nextTask != null) TextButton(onClick = { onTabChange(MainTab.CARE_PLAN) }) { Text("See My Care") }
+            if (whatsAppStatus == "available_to_verify") TextButton(onClick = onOpenWhatsApp) {
+                Text("Connect your WhatsApp history  →", fontWeight = FontWeight.SemiBold)
+            }
             TextButton(onClick = { onTabChange(MainTab.DISCOVER) }) {
                 Text("Find a healthcare facility  →", fontWeight = FontWeight.SemiBold)
             }
@@ -1432,8 +1486,11 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
 
 @Composable
 private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: String,
-                                initialMessage: String, onInitialConsumed: () -> Unit, onBack: () -> Unit) {
+                                initialMessage: String, onInitialConsumed: () -> Unit, onBack: () -> Unit,
+                                onFindCare: (String, String) -> Unit) {
+    val context = LocalContext.current
     var chat by remember(patientId) { mutableStateOf<JSONObject?>(null) }
+    var careNavigation by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var composer by rememberSaveable(patientId) { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -1442,6 +1499,7 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
     var pendingReplyId by remember(patientId) { mutableStateOf<String?>(null) }
     val listState = rememberLazyListState()
     var showTextAnswer by rememberSaveable(patientId) { mutableStateOf(false) }
+    var showEmergencyHistory by rememberSaveable(patientId) { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     fun send(text: String, replyId: String? = null, retry: Boolean = false) {
         if (text.isBlank() || busy) return
@@ -1483,18 +1541,27 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
     val messages = chat?.list("messages") ?: emptyList()
     val question = chat?.optJSONObject("question")
     val options = question?.list("options") ?: emptyList()
+    val emergency = careNavigation?.optString("action") == "emergency"
+    LaunchedEffect(patientId, messages.size) {
+        if (patientId.isNotBlank() && messages.isNotEmpty())
+            careNavigation = runCatching { api.careNavigation(patientId) }.getOrNull()
+    }
     LaunchedEffect(messages.size, pendingText, busy, options.size) {
         if (listState.layoutInfo.totalItemsCount > 0)
             listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
     }
-    val lastQuestionText = messages.lastOrNull { it.optString("direction") == "outgoing" }
+    val lastQuestionText = messages.lastOrNull {
+        it.optString("direction") == "outgoing" && it.optString("channel", "App") == "App"
+    }
         ?.optString("text").orEmpty()
-    val lastConcern = messages.lastOrNull { it.optString("direction") == "incoming" }
+    val lastConcern = messages.lastOrNull {
+        it.optString("direction") == "incoming" && it.optString("channel", "App") == "App"
+    }
         ?.optString("text").orEmpty()
     Scaffold(containerColor = Color.White,
         topBar = { AyuPageHeader(if (options.isNotEmpty()) "Your concern" else "Talk to AYUVAN", onBack) },
         bottomBar = {
-            if (options.isEmpty() || showTextAnswer) {
+            if (!emergency && (options.isEmpty() || showTextAnswer)) {
                 Row(modifier = Modifier.fillMaxWidth().background(Color.White).imePadding().padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(value = composer, onValueChange = { composer = it.take(4000) },
@@ -1507,7 +1574,40 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
                 }
             }
         }) { padding ->
-        if (options.isNotEmpty() && !busy && pendingText == null) {
+        if (emergency && !showEmergencyHistory) {
+            Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
+                .padding(horizontal = 22.dp)) {
+                Spacer(Modifier.height(24.dp))
+                Text("URGENT NEXT STEP", color = AyuvanColors.Danger,
+                    fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                Spacer(Modifier.height(12.dp))
+                Text("Seek emergency medical help now", color = AyuvanColors.Text,
+                    fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(14.dp))
+                Text(careNavigation?.optString("message").orEmpty(),
+                    color = AyuvanColors.SecondaryText, fontSize = 16.sp, lineHeight = 23.sp)
+                if (patientName.startsWith("[DEMO]")) {
+                    Spacer(Modifier.height(12.dp))
+                    Text("Synthetic evaluation scenario; this is not a real patient assessment.",
+                        color = AyuvanColors.Danger, fontSize = 13.sp)
+                }
+                Spacer(Modifier.height(24.dp))
+                AyuPrimaryButton("Call 112 now", onClick = {
+                    context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:112")))
+                })
+                Spacer(Modifier.height(12.dp))
+                OutlinedButton(onClick = { onFindCare("emergency department", "Hospitals") },
+                    modifier = Modifier.fillMaxWidth()) { Text("Find nearby emergency care") }
+                Spacer(Modifier.height(10.dp))
+                Text("A map search must not delay emergency help.",
+                    color = AyuvanColors.SecondaryText, fontSize = 13.sp)
+                Spacer(Modifier.height(20.dp))
+                if (lastConcern.isNotBlank()) AyuDetailRow(R.drawable.ayu_activity,
+                    "Your latest report", lastConcern)
+                TextButton(onClick = { showEmergencyHistory = true }) { Text("View conversation history") }
+                Spacer(Modifier.height(24.dp))
+            }
+        } else if (options.isNotEmpty() && !busy && pendingText == null && !emergency) {
             Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp)) {
                 Spacer(Modifier.height(22.dp))
@@ -1539,12 +1639,53 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
         } else {
             LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(padding)
                 .padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                item { Spacer(Modifier.height(8.dp)); ChatSafetyNote(); LoadError(error) }
+                item {
+                    Spacer(Modifier.height(8.dp))
+                    if (emergency) TextButton(onClick = { showEmergencyHistory = false }) {
+                        Text("Back to emergency action")
+                    }
+                    ChatSafetyNote(); LoadError(error)
+                }
                 if (messages.isEmpty()) item { AyuEmpty(R.drawable.ayu_ill_voice,
                     "Tell us what is bothering you", "You don’t need medical terms. Describe it in your own words.") }
                 items(messages, key = { it.optString("id") }) { m ->
                     MessageBubble(ChatMessage(m.optString("id"), m.optString("text"),
-                        m.optString("direction") == "incoming"))
+                        m.optString("direction") == "incoming", channel = m.optString("channel", "App")))
+                }
+                if (options.isEmpty() && careNavigation?.optString("action") == "find_clinician") item {
+                    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = AyuvanColors.Brand100)) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text("Find professional care", fontWeight = FontWeight.Bold,
+                                color = AyuvanColors.Text, fontSize = 17.sp)
+                            Spacer(Modifier.height(5.dp))
+                            Text(careNavigation?.optString("message").orEmpty(),
+                                color = AyuvanColors.SecondaryText, fontSize = 13.sp)
+                            Spacer(Modifier.height(12.dp))
+                            AyuPrimaryButton("Find a general physician", onClick = {
+                                onFindCare("general physician", "Doctors")
+                            })
+                        }
+                    }
+                }
+                if (options.isEmpty() && careNavigation?.optString("action") == "emergency") item {
+                    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = AyuvanColors.DangerBg)) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text("Seek emergency medical help now", fontWeight = FontWeight.Bold,
+                                color = AyuvanColors.Danger, fontSize = 19.sp)
+                            Spacer(Modifier.height(6.dp))
+                            Text(careNavigation?.optString("message").orEmpty(),
+                                color = AyuvanColors.Text, fontSize = 14.sp)
+                            Spacer(Modifier.height(12.dp))
+                            AyuPrimaryButton("Call 112", onClick = {
+                                context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:112")))
+                            })
+                            TextButton(onClick = { onFindCare("emergency department", "Hospitals") }) {
+                                Text("Find emergency care on a map")
+                            }
+                        }
+                    }
                 }
                 if (pendingText != null) item(key = "pending-message") {
                     Column {
@@ -1567,7 +1708,8 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
 @Composable
 private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                   onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
-                                  initialSection: String, onBackToHome: () -> Unit) {
+                                  initialSection: String, onBackToHome: () -> Unit,
+                                  onOpenChat: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var data by remember(patientId) { mutableStateOf<JSONObject?>(null) }
@@ -1578,6 +1720,7 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     var recordsSection by rememberSaveable(patientId) { mutableStateOf("Timeline") }
     var recordFilter by rememberSaveable(patientId) { mutableStateOf("All") }
     var selectedDocumentId by rememberSaveable(patientId) { mutableStateOf<String?>(null) }
+    var selectedEpisodeId by rememberSaveable(patientId) { mutableStateOf<String?>(null) }
     LaunchedEffect(initialSection, patientId) { recordsSection = initialSection }
     var recordSearch by rememberSaveable(patientId) { mutableStateOf("") }
     var addKind by remember { mutableStateOf<String?>(null) }
@@ -1639,21 +1782,49 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     val episodes = data?.list("episodes") ?: emptyList()
     val docRows = documents?.list("documents") ?: emptyList()
     val selectedDocument = docRows.firstOrNull { it.optString("id") == selectedDocumentId }
-    BackHandler(enabled = selectedDocument != null || recordsSection != "Timeline") {
-        if (selectedDocument != null) selectedDocumentId = null else recordsSection = "Timeline"
+    val selectedEpisode = episodes.firstOrNull { it.optString("id") == selectedEpisodeId }
+    BackHandler(enabled = selectedDocument != null || selectedEpisode != null || recordsSection != "Timeline") {
+        if (selectedDocument != null) selectedDocumentId = null
+        else if (selectedEpisode != null) selectedEpisodeId = null
+        else recordsSection = "Timeline"
     }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         AyuPageHeader(when { selectedDocument != null -> "Record detail"
+            selectedEpisode != null -> "Concern timeline"
             recordsSection == "Medical profile" -> "Health profile"
             recordsSection == "Documents" -> "Medical records"
             else -> "Records" },
             onBack = { when { selectedDocument != null -> selectedDocumentId = null
+                selectedEpisode != null -> selectedEpisodeId = null
                 recordsSection != "Timeline" -> recordsSection = "Timeline"
                 else -> onBackToHome() } })
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             Spacer(Modifier.height(12.dp))
             LoadError(error)
             when {
+                selectedEpisode != null -> {
+                    AyuTitle(selectedEpisode.optString("symptom", "Health concern"),
+                        "Patient-reported history across connected channels.")
+                    Spacer(Modifier.height(14.dp))
+                    AyuDetailRow(R.drawable.ayu_activity, "Status", selectedEpisode.optString("status"))
+                    Spacer(Modifier.height(18.dp))
+                    Text("Reported changes", fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                        color = AyuvanColors.Text)
+                    Spacer(Modifier.height(9.dp))
+                    val events = selectedEpisode.list("events")
+                    if (events.isEmpty()) Text("No detailed updates recorded yet.",
+                        color = AyuvanColors.SecondaryText, fontSize = 13.sp)
+                    events.forEach { event ->
+                        AyuDetailRow(R.drawable.ayu_activity,
+                            "${event.optString("recorded_at").take(10)} · ${event.optString("source")}",
+                            event.optString("symptom"), modifier = Modifier.padding(bottom = 8.dp))
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    AyuPrimaryButton("Continue conversation", onOpenChat)
+                    TextButton(onClick = { correctionEpisode = selectedEpisode }) {
+                        Text("Correct a reported symptom")
+                    }
+                }
                 selectedDocument != null -> {
                     AyuTitle("Medical document", "Original file and reviewed information.")
                     Spacer(Modifier.height(14.dp))
@@ -1666,6 +1837,24 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                     Spacer(Modifier.height(12.dp))
                     AyuCardRow(R.drawable.ayu_file_check, "Processing status",
                         selectedDocument.optString("processing_status"), onClick = {})
+                    selectedDocument.optJSONObject("extraction")?.let { extraction ->
+                        val result = extraction.optJSONObject("result")
+                        val title = result?.optString("title").orEmpty()
+                        val notes = result?.optString("notes").orEmpty()
+                        if (title.isNotBlank()) {
+                            Spacer(Modifier.height(8.dp))
+                            AyuDetailRow(R.drawable.ayu_file_check, "Extracted title", title)
+                        }
+                        if (notes.isNotBlank()) {
+                            Spacer(Modifier.height(8.dp))
+                            AyuDetailRow(R.drawable.ayu_info, "Recorded note", notes)
+                        }
+                        if (extraction.optString("verification_status") == "demo_sample") {
+                            Spacer(Modifier.height(8.dp))
+                            Text("Synthetic sample data for evaluation only.",
+                                color = AyuvanColors.Warning, fontSize = 13.sp)
+                        }
+                    }
                     Spacer(Modifier.height(18.dp))
                     AyuPrimaryButton("View original", onClick = { scope.launch {
                         try { previewMime = selectedDocument.optString("content_type"); previewPage = 0
@@ -1726,7 +1915,8 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                             modifier = Modifier.padding(bottom = 8.dp))
                         else AyuCardRow(R.drawable.ayu_activity, row.optString("symptom", "Symptom update"),
                             "${row.optString("last_reported_at").take(10)} · Patient-reported",
-                            onClick = { correctionEpisode = row }, modifier = Modifier.padding(bottom = 8.dp))
+                            onClick = { selectedEpisodeId = row.optString("id") },
+                            modifier = Modifier.padding(bottom = 8.dp))
                     }
                     Spacer(Modifier.height(12.dp))
                     AyuCardRow(R.drawable.ayu_file, "Health profile",
@@ -1734,6 +1924,9 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                     Spacer(Modifier.height(8.dp))
                     AyuCardRow(R.drawable.ayu_upload, "Add a medical record", "Photo or document",
                         onClick = { recordsSection = "Documents" })
+                    Spacer(Modifier.height(8.dp))
+                    AyuCardRow(R.drawable.ayu_message_circle, "Conversation history",
+                        "View app and linked WhatsApp messages", onClick = onOpenChat)
                 }
                 recordsSection == "Medical profile" -> {
                     AyuTitle("Your medical overview", "Only known and verified information.")
@@ -2115,12 +2308,17 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String, onFindCare: (
 }
 
 @Composable
-private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
+private fun ConnectedDiscoverScreen(api: MobileApi, initialQuery: String,
+                                    initialCategory: String, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var query by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf(initialQuery) }
     var area by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("Doctors") }
+    var category by rememberSaveable { mutableStateOf(initialCategory) }
+    LaunchedEffect(initialQuery, initialCategory) {
+        if (initialQuery.isNotBlank()) query = initialQuery
+        category = initialCategory
+    }
     var results by remember { mutableStateOf<JSONObject?>(null) }
     var selectedPlace by remember { mutableStateOf<JSONObject?>(null) }
     var viewMode by rememberSaveable { mutableStateOf("List") }
@@ -2136,9 +2334,11 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
                 else {
                     currentLocation = LatLng(found.first.latitude, found.first.longitude)
                     if (found.second.isNotBlank()) area = found.second
-                    else error = "We found your location. Enter a nearby city to search facilities."
+                    results = api.discover(query.trim(), category, area.trim(),
+                        found.first.latitude, found.first.longitude)
                 }
             } catch (_: SecurityException) { error = "Location permission is needed. You can search by city instead." }
+            catch (e: Exception) { error = e.message ?: "Facility search is unavailable right now." }
             busy = false
         } else error = "Location permission was declined. You can search by city instead."
     }
@@ -2171,7 +2371,9 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
             } else {
                 AyuTitle("Find healthcare near you", "Search by location or service.")
                 Spacer(Modifier.height(18.dp))
-                OutlinedTextField(value = area, onValueChange = { area = it.take(100) },
+                OutlinedTextField(value = area, onValueChange = {
+                    area = it.take(100); currentLocation = null
+                },
                     modifier = Modifier.fillMaxWidth(), label = { Text("City, neighbourhood or PIN") },
                     placeholder = { Text("e.g. Andheri, Mumbai") }, singleLine = true)
                 TextButton(onClick = {
@@ -2184,9 +2386,11 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
                                 if (found != null) {
                                     currentLocation = LatLng(found.first.latitude, found.first.longitude)
                                     if (found.second.isNotBlank()) area = found.second
-                                    else error = "Enter a nearby city to search facilities."
+                                results = api.discover(query.trim(), category, area.trim(),
+                                    found.first.latitude, found.first.longitude)
                                 } else error = "Location unavailable. Search by city instead."
-                            } catch (_: SecurityException) { error = "Location permission is needed." }
+                        } catch (_: SecurityException) { error = "Location permission is needed." }
+                        catch (e: Exception) { error = e.message ?: "Facility search is unavailable right now." }
                             busy = false
                         }
                     else locationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
@@ -2205,9 +2409,11 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
                 }
                 Spacer(Modifier.height(14.dp))
                 AyuPrimaryButton(if (busy) "Searching…" else "Search facilities",
-                    enabled = !busy && area.trim().length >= 3, onClick = {
+                    enabled = !busy && (area.trim().length >= 3 || currentLocation != null), onClick = {
                         scope.launch { busy = true; error = null
-                            try { results = api.discover(query.trim(), category, area.trim()); selectedPlace = null }
+                            try { results = api.discover(query.trim(), category, area.trim(),
+                                currentLocation?.latitude, currentLocation?.longitude)
+                                selectedPlace = null }
                             catch (e: Exception) { error = e.message }; busy = false }
                     })
                 Spacer(Modifier.height(14.dp)); LoadError(error)
@@ -2242,7 +2448,7 @@ private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
 private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                    onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
                                    onSignOut: () -> Unit, onBack: () -> Unit,
-                                   onOpenFamily: () -> Unit) {
+                                   onOpenFamily: () -> Unit, initialSection: String) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val requestNotificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -2264,7 +2470,8 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     var deletePassword by remember { mutableStateOf("") }
     var exportPayload by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
-    var profileSection by rememberSaveable { mutableStateOf("Overview") }
+    var profileSection by rememberSaveable { mutableStateOf(initialSection) }
+    LaunchedEffect(initialSection) { profileSection = initialSection }
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) try {
             context.contentResolver.openOutputStream(uri)?.use { it.write((exportPayload ?: "{}").toByteArray()) }

@@ -24,6 +24,7 @@ data class ChatMessage(
     val text: String,
     val fromUser: Boolean,
     val kind: ChatMessageKind = ChatMessageKind.TEXT,
+    val channel: String = "App",
 )
 
 enum class ChatMessageKind { TEXT, QUESTION, SAFETY }

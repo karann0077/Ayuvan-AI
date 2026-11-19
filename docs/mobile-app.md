@@ -14,11 +14,11 @@
 | App area | Backend behavior |
 | --- | --- |
 | Account | Register, login, session restore, profile update, password change, family creation with caregiver attestation, logout, account deletion |
-| Symptom chat | Mobile messages use the existing extraction, question, safety and review engine; mobile and WhatsApp conversations remain separate channels but share the selected patient's longitudinal record |
+| Symptom chat | Mobile messages use the existing extraction, question, safety and review engine. After verified WhatsApp linking, the app conversation and symptom timeline display both channels with source labels; questions remain scoped to the active app conversation. |
 | My Health | Episodes and corrections, conditions, allergies, medicines, health summary and medical records |
 | Documents | Private Google Cloud Storage upload/download; Gemini extraction is an unverified draft; only patient-selected facts are added to the record |
 | Care Plan | Patient-created tasks can be added, edited, completed and deleted. Android WorkManager schedules one-time local notifications when consent and OS permission are granted |
-| Discover | Backend-only Places API (New) Text Search, explicit area input, Google Maps attribution and links that open the map; 40 search attempts per account and 100 total attempts per rolling day, with a five-second per-account cooldown |
+| Discover | Backend-only Places API (New) Text Search by city or consented device coordinates, Google Maps attribution, in-app map with result pins and external directions; 40 search attempts per account and 100 total attempts per rolling day, with a five-second per-account cooldown |
 | Profile | Purpose-specific consent, verified WhatsApp history merge, complete JSON export, individual document deletion and account-owned data deletion. An older separately linked WhatsApp profile can still be deleted independently |
 
 ## Cloud configuration

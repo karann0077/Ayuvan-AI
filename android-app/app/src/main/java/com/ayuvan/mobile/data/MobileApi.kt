@@ -135,6 +135,7 @@ class MobileApi(private val context: Context) {
         JSONObject().put("current_password", current).put("new_password", next))
     suspend fun me() = json("GET", "/me")
     suspend fun health(patientId: String) = json("GET", "/patients/$patientId/health")
+    suspend fun careNavigation(patientId: String) = json("GET", "/patients/$patientId/care-navigation")
     suspend fun summary(patientId: String) = json("GET", "/patients/$patientId/summary")
     suspend fun chat(patientId: String) = json("GET", "/patients/$patientId/chat")
     suspend fun send(patientId: String, text: String, replyId: String? = null,
@@ -182,8 +183,12 @@ class MobileApi(private val context: Context) {
         request("GET", "/patients/$patientId/documents/$documentId/download", download = true)
     suspend fun deleteDocument(patientId: String, documentId: String) =
         json("DELETE", "/patients/$patientId/documents/$documentId")
-    suspend fun discover(query: String, category: String, area: String) = json("GET",
-        "/discover?query=${segment(query)}&category=${segment(category)}&area=${segment(area)}")
+    suspend fun discover(query: String, category: String, area: String,
+                         latitude: Double? = null, longitude: Double? = null): JSONObject {
+        val location = if (latitude != null && longitude != null)
+            "&latitude=$latitude&longitude=$longitude" else ""
+        return json("GET", "/discover?query=${segment(query)}&category=${segment(category)}&area=${segment(area)}$location")
+    }
     suspend fun createFamily(name: String, relationship: String, birthDate: String?, sex: String?) =
         json("POST", "/patients", JSONObject().put("name", name).put("relationship", relationship)
             .put("authorized_caregiver", true).also {
@@ -202,6 +207,7 @@ class MobileApi(private val context: Context) {
     suspend fun setConsent(patientId: String, purpose: String, granted: Boolean) =
         json("POST", "/patients/$patientId/consents", JSONObject().put("purpose", purpose).put("granted", granted))
     suspend fun requestWhatsAppLink() = json("POST", "/whatsapp-link/request")
+    suspend fun whatsAppLinkStatus() = json("GET", "/whatsapp-link/status")
     suspend fun verifyWhatsAppLink(code: String) = json("POST", "/whatsapp-link/verify", JSONObject().put("code", code))
     suspend fun export() = json("GET", "/export")
     suspend fun deleteAccount(password: String) = json("POST", "/auth/delete", JSONObject().put("password", password))

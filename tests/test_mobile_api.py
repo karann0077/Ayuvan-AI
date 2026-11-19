@@ -6,8 +6,8 @@ from sqlalchemy.pool import StaticPool
 from app.core.config import Settings
 from app.db.base import Base
 from app.db.models import (
-    ConsentRecord, Conversation, ExternalIdentity, HealthEpisode, MedicalCondition,
-    Message, PatientAccess, PatientProfile, User,
+    ClinicalAssessment, ConsentRecord, Conversation, ExternalIdentity, HealthEpisode,
+    MedicalCondition, Message, PatientAccess, PatientProfile, SymptomEvent, User,
 )
 from app.db.session import get_db
 from app.main import create_app
@@ -125,17 +125,24 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     db.add(ExternalIdentity(user_id=whatsapp_user.id, provider="whatsapp",
                             external_id="919876543240", is_active=True))
     db.add(MedicalCondition(patient_id=whatsapp_patient.id, name="Migraine"))
-    db.add(HealthEpisode(patient_id=whatsapp_patient.id, primary_symptom="cough",
-                         normalized_symptom="cough", summary={"note": "Earlier WhatsApp report"}))
+    episode = HealthEpisode(patient_id=whatsapp_patient.id, primary_symptom="cough",
+                            normalized_symptom="cough", summary={"note": "Earlier WhatsApp report"})
+    db.add(episode)
     db.add(Conversation(patient_id=whatsapp_patient.id, channel="whatsapp", state={}))
-    db.add(Message(patient_id=whatsapp_patient.id, provider="whatsapp",
-                   provider_message_id="wa-history-1", direction="incoming", message_type="text",
-                   content="I have a cough", processing_status="processed", metadata_json={}))
+    whatsapp_message = Message(patient_id=whatsapp_patient.id, provider="whatsapp",
+                               provider_message_id="wa-history-1", direction="incoming", message_type="text",
+                               content="I have a cough", processing_status="processed", metadata_json={})
+    db.add(whatsapp_message)
+    db.flush()
+    db.add(SymptomEvent(episode_id=episode.id, source_message_id=whatsapp_message.id,
+                        symptom="cough", source_type="patient_reported", details={}))
     db.add(ConsentRecord(patient_id=whatsapp_patient.id, purpose="notifications", status="withdrawn"))
     db.commit()
     whatsapp_patient_id = whatsapp_patient.id
     db_generator.close()
     assert client.get(f"/api/v1/mobile/patients/{whatsapp_patient_id}/health", headers=headers).status_code == 404
+    assert all(item["channel"] == "App" for item in client.get(
+        f"/api/v1/mobile/patients/{mobile_patient_id}/chat", headers=headers).json()["messages"])
 
     sent = []
     async def fake_send(self, to, text):
@@ -155,6 +162,10 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     health = client.get(f"/api/v1/mobile/patients/{mobile_patient_id}/health", headers=headers).json()
     assert {item["name"] for item in health["conditions"]} == {"Asthma", "Migraine"}
     assert {item["symptom"] for item in health["episodes"]} == {"headache", "cough"}
+    assert next(item for item in health["episodes"] if item["symptom"] == "cough")["events"][0]["source"] == "WhatsApp"
+    merged_chat = client.get(f"/api/v1/mobile/patients/{mobile_patient_id}/chat", headers=headers).json()
+    assert {item["channel"] for item in merged_chat["messages"]} == {"App", "WhatsApp"}
+    assert any(item["text"] == "I have a cough" for item in merged_chat["messages"])
     assert client.get(f"/api/v1/mobile/patients/{whatsapp_patient_id}/health", headers=headers).status_code == 404
     assert client.post("/api/v1/mobile/whatsapp-link/request", headers=headers).json()["status"] == "already_linked"
     db_generator = client.app.dependency_overrides[get_db]()
@@ -172,6 +183,27 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     assert db.query(ExternalIdentity).filter_by(external_id="919876543240").first() is None
     assert db.query(PatientProfile).filter_by(id=mobile_patient_id).first() is None
     db_generator.close()
+
+
+def test_care_navigation_uses_recorded_action_without_diagnosing(monkeypatch):
+    client = client_with_database(monkeypatch)
+    headers, patient_id = register(client, "9876543271", "Care Patient")
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    episode = HealthEpisode(patient_id=patient_id, primary_symptom="headache",
+                            normalized_symptom="headache", status="active", summary={})
+    db.add(episode)
+    db.flush()
+    db.add(ClinicalAssessment(patient_id=patient_id, episode_id=episode.id,
+                              pathway_name="test_pathway", pathway_version="test-1",
+                              outcome="timely_assessment", inputs={}))
+    db.commit()
+    db_generator.close()
+    response = client.get(f"/api/v1/mobile/patients/{patient_id}/care-navigation", headers=headers)
+    assert response.status_code == 200
+    assert response.json()["facility_type"] == "General physician"
+    assert response.json()["query"] == "general physician"
+    assert "neurologist" not in response.text.lower()
 
 
 def test_previously_verified_separate_whatsapp_profile_is_combined(monkeypatch):
