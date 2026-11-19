@@ -12,6 +12,8 @@ This implementation uses the supplied `AYUVAN_Frontend_Design_Handoff_v1.0` as a
 | Discover | Find care from Home; map and result list |
 | Profile | Account from the Home or Records avatar |
 
+The secondary Profile route now separates Account, Privacy, and Help controls, keeping consent and deletion actions out of the everyday account view.
+
 Chat is a focused route without the bottom bar. Sending shows the user's message and an indeterminate waiting indicator immediately. The client keeps the same message ID for a safe retry after a network error, and chat scrolls to the latest content. It never fabricates an AI response while processing. Home can also upload a PDF or image through the existing API and then opens Records → Documents directly.
 
 Find care uses the existing backend's Google Places results. Those pins are shown on the Google Maps SDK map, and the list works if location permission is declined. Precise coordinates remain on the device; only a city or area string is submitted for search. The app asks for location permission only when the user taps **Use my current location**. Directions open in Google Maps.

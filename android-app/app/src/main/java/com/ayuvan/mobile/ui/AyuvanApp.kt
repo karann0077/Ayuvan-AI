@@ -2021,6 +2021,7 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     var deletePassword by remember { mutableStateOf("") }
     var exportPayload by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
+    var profileSection by rememberSaveable { mutableStateOf("Account") }
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
         if (uri != null) try {
             context.contentResolver.openOutputStream(uri)?.use { it.write((exportPayload ?: "{}").toByteArray()) }
@@ -2048,10 +2049,18 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
             Text("Account", style = MaterialTheme.typography.titleLarge)
         }
         Spacer(Modifier.height(22.dp))
-        Text("Profile", style = MaterialTheme.typography.displaySmall)
-        Text("Manage your account, family, preferences and privacy.", color = AyuvanColors.SecondaryText)
+        Text("Your profile", style = MaterialTheme.typography.headlineMedium)
+        Text("Manage your account and privacy.", color = AyuvanColors.SecondaryText)
         Spacer(Modifier.height(16.dp)); LoadError(error)
         if (message != null) Text(message!!, color = AyuvanColors.Success)
+        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf("Account", "Privacy", "Help").forEach { section ->
+                AssistChip(onClick = { profileSection = section }, label = { Text(section) },
+                    leadingIcon = if (profileSection == section) ({ Icon(Icons.Default.Check, null) }) else null)
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        if (profileSection == "Account") {
         Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
             Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Image(painterResource(R.drawable.avatar_default), null, Modifier.size(54.dp).clip(CircleShape))
@@ -2087,6 +2096,14 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
                         ({ Icon(Icons.Default.Check, null) }) else null)
             }
         }
+        Spacer(Modifier.height(18.dp))
+        OutlinedButton(onClick = { changePasswordDialog = true }, modifier = Modifier.fillMaxWidth()) {
+            Text("Change password")
+        }
+        OutlinedButton(onClick = { scope.launch { try { api.logout() } catch (_: Exception) { api.clearSession() }
+            onSignOut() } }, modifier = Modifier.fillMaxWidth()) { Text("Sign out") }
+        }
+        if (profileSection == "Privacy") {
         Spacer(Modifier.height(20.dp))
         Text("Privacy choices", style = MaterialTheme.typography.titleLarge)
         listOf("health_processing" to "Health record processing", "ai_assistance" to "AI assistance",
@@ -2134,21 +2151,23 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
                 Uri.parse("https://karann0077.github.io/Ayuvan-AI/terms/")))
         }, modifier = Modifier.fillMaxWidth()) { Text("Terms of service") }
         OutlinedButton(onClick = {
-            context.startActivity(Intent(Intent.ACTION_SENDTO,
-                Uri.parse("mailto:rajkaran3765@gmail.com?subject=AYUVAN%20app%20support")))
-        }, modifier = Modifier.fillMaxWidth()) { Text("Help and support") }
-        OutlinedButton(onClick = {
             context.startActivity(Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://karann0077.github.io/Ayuvan-AI/data-deletion/")))
         }, modifier = Modifier.fillMaxWidth()) { Text("Data deletion information") }
         Spacer(Modifier.height(12.dp))
-        OutlinedButton(onClick = { scope.launch { try { api.logout() } catch (_: Exception) { api.clearSession() }
-            onSignOut() } }, modifier = Modifier.fillMaxWidth()) { Text("Sign out") }
-        OutlinedButton(onClick = { changePasswordDialog = true }, modifier = Modifier.fillMaxWidth()) {
-            Text("Change password")
-        }
         TextButton(onClick = { deleteDialog = true }, modifier = Modifier.fillMaxWidth()) {
             Text("Delete account and app-owned data", color = AyuvanColors.Danger)
+        }
+        }
+        if (profileSection == "Help") {
+            Text("Need help?", style = MaterialTheme.typography.titleLarge)
+            Text("Questions about your account or the app? Contact AYUVAN support.",
+                color = AyuvanColors.SecondaryText)
+            Spacer(Modifier.height(16.dp))
+            OutlinedButton(onClick = {
+                context.startActivity(Intent(Intent.ACTION_SENDTO,
+                    Uri.parse("mailto:rajkaran3765@gmail.com?subject=AYUVAN%20app%20support")))
+            }, modifier = Modifier.fillMaxWidth()) { Text("Email support") }
         }
         Spacer(Modifier.height(26.dp))
     }
