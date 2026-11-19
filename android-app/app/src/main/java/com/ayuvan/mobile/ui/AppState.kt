@@ -2,8 +2,8 @@ package com.ayuvan.mobile.ui
 
 enum class MainTab(val label: String) {
     HOME("Home"),
-    MY_HEALTH("My Health"),
-    CARE_PLAN("Care Plan"),
+    MY_HEALTH("Records"),
+    CARE_PLAN("My Care"),
     DISCOVER("Discover"),
     PROFILE("Profile"),
 }

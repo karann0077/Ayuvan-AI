@@ -3,6 +3,8 @@
 package com.ayuvan.mobile.ui
 
 import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfRenderer
@@ -10,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.BackHandler
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -26,12 +29,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -101,6 +106,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
 import com.ayuvan.mobile.R
 import com.ayuvan.mobile.data.MobileApi
 import com.ayuvan.mobile.data.ReminderScheduler
@@ -122,11 +129,15 @@ fun AyuvanApp() {
     var finishedOnboarding by remember { mutableStateOf(false) }
     var tabName by rememberSaveable { mutableStateOf(MainTab.HOME.name) }
     var showChat by rememberSaveable { mutableStateOf(false) }
+    var chatSeed by rememberSaveable { mutableStateOf("") }
     val selectedPatient = patients.rows().firstOrNull { it.optString("id") == selectedPatientId }
         ?.optString("display_name") ?: "My Profile"
 
     val onboardingStep = OnboardingStep.valueOf(stepName)
     val selectedTab = MainTab.valueOf(tabName)
+    BackHandler(enabled = showChat || selectedTab == MainTab.DISCOVER || selectedTab == MainTab.PROFILE) {
+        if (showChat) showChat = false else tabName = MainTab.HOME.name
+    }
 
     suspend fun refreshAccount() {
         val account = api.me()
@@ -161,6 +172,8 @@ fun AyuvanApp() {
                 patientName = selectedPatient,
                 patientId = selectedPatientId,
                 api = api,
+                initialMessage = chatSeed,
+                onInitialConsumed = { chatSeed = "" },
                 onBack = { showChat = false },
             )
         } else {
@@ -179,7 +192,7 @@ fun AyuvanApp() {
                     stepName = OnboardingStep.WELCOME.name
                 },
                 onTabChange = { tabName = it.name },
-                onOpenChat = { showChat = true },
+                onOpenChat = { text -> chatSeed = text; showChat = true },
             )
         }
     }
@@ -498,19 +511,22 @@ private fun MainShell(
     onPatientsRefresh: (JSONArray) -> Unit,
     onSignOut: () -> Unit,
     onTabChange: (MainTab) -> Unit,
-    onOpenChat: () -> Unit,
+    onOpenChat: (String) -> Unit,
 ) {
     Scaffold(
         containerColor = AyuvanColors.Page,
-        bottomBar = { MainNavigation(selectedTab, onTabChange) },
+        bottomBar = { if (selectedTab in listOf(MainTab.HOME, MainTab.CARE_PLAN, MainTab.MY_HEALTH))
+            MainNavigation(selectedTab, onTabChange) },
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (selectedTab) {
                 MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat, onTabChange)
-                MainTab.MY_HEALTH -> ConnectedHealthScreen(api, patientId, patients, onPatientChange, onPatientsRefresh)
+                MainTab.MY_HEALTH -> ConnectedHealthScreen(api, patientId, patients, onPatientChange, onPatientsRefresh,
+                    onProfile = { onTabChange(MainTab.PROFILE) })
                 MainTab.CARE_PLAN -> ConnectedCareScreen(api, patientId)
-                MainTab.DISCOVER -> ConnectedDiscoverScreen(api)
-                MainTab.PROFILE -> ConnectedProfileScreen(api, patientId, patients, onPatientChange, onPatientsRefresh, onSignOut)
+                MainTab.DISCOVER -> ConnectedDiscoverScreen(api, onBack = { onTabChange(MainTab.HOME) })
+                MainTab.PROFILE -> ConnectedProfileScreen(api, patientId, patients, onPatientChange, onPatientsRefresh, onSignOut,
+                    onBack = { onTabChange(MainTab.HOME) })
             }
         }
     }
@@ -519,22 +535,22 @@ private fun MainShell(
 @Composable
 private fun MainNavigation(selected: MainTab, onSelect: (MainTab) -> Unit) {
     NavigationBar(containerColor = Color.White, tonalElevation = 2.dp) {
-        MainTab.entries.forEach { tab ->
+        listOf(MainTab.HOME, MainTab.CARE_PLAN, MainTab.MY_HEALTH).forEach { tab ->
             NavigationBarItem(
                 selected = tab == selected,
                 onClick = { onSelect(tab) },
                 icon = { AssetIcon(tabIcon(tab), tab.label, Modifier.size(25.dp)) },
-                label = { Text(tab.label, maxLines = 1, fontSize = 11.sp) },
+                label = { Text(tab.label, maxLines = 1, fontSize = 12.sp) },
             )
         }
     }
 }
 
 private fun tabIcon(tab: MainTab) = when (tab) {
-    MainTab.HOME -> R.drawable.icon_home
-    MainTab.MY_HEALTH -> R.drawable.icon_my_health
-    MainTab.CARE_PLAN -> R.drawable.icon_care_plan
-    MainTab.DISCOVER -> R.drawable.icon_discover
+    MainTab.HOME -> R.drawable.handoff_home
+    MainTab.MY_HEALTH -> R.drawable.handoff_folder
+    MainTab.CARE_PLAN -> R.drawable.handoff_calendar
+    MainTab.DISCOVER -> R.drawable.handoff_map_pin
     MainTab.PROFILE -> R.drawable.icon_profile
 }
 
@@ -570,9 +586,12 @@ private fun HomeScreen(patientName: String, onOpenChat: () -> Unit, onTabChange:
 
 @Composable
 private fun AppHeader(onNotifications: () -> Unit = {}, showNotificationButton: Boolean = false,
-                      hasReminder: Boolean = false) {
+                      hasReminder: Boolean = false, onProfile: (() -> Unit)? = null) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Image(painter = painterResource(R.drawable.ayuvan_logo_horizontal), contentDescription = "AYUVAN", modifier = Modifier.width(128.dp).height(40.dp), contentScale = ContentScale.Fit)
+        Image(painterResource(R.drawable.handoff_leaf), null, Modifier.size(28.dp))
+        Spacer(Modifier.width(6.dp))
+        Text("AYUVAN", color = AyuvanColors.Brand700, style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold)
         Spacer(Modifier.weight(1f))
         if (showNotificationButton) Box(contentAlignment = Alignment.TopEnd) {
             IconButton(onClick = onNotifications) { AssetIcon(R.drawable.icon_notifications, "Open care reminders", Modifier.size(25.dp)) }
@@ -580,8 +599,9 @@ private fun AppHeader(onNotifications: () -> Unit = {}, showNotificationButton: 
                 .background(AyuvanColors.Brand600, CircleShape))
         }
         Spacer(Modifier.width(5.dp))
-        Image(painter = painterResource(R.drawable.avatar_default), contentDescription = null,
-            modifier = Modifier.size(38.dp).clip(CircleShape))
+        IconButton(onClick = { onProfile?.invoke() }, enabled = onProfile != null) {
+            Icon(Icons.Default.Person, "Open profile", tint = AyuvanColors.Brand700)
+        }
     }
 }
 
@@ -1155,7 +1175,12 @@ private fun PrimaryButton(label: String, onClick: () -> Unit, enabled: Boolean =
 
 @Composable
 private fun BrandMark() {
-    Image(painter = painterResource(R.drawable.ayuvan_logo_horizontal), contentDescription = "AYUVAN", modifier = Modifier.width(142.dp).height(44.dp), contentScale = ContentScale.Fit)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(painterResource(R.drawable.handoff_leaf), null, Modifier.size(32.dp))
+        Spacer(Modifier.width(6.dp))
+        Text("AYUVAN", color = AyuvanColors.Brand700, style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold)
+    }
 }
 
 @Composable
@@ -1244,10 +1269,11 @@ private fun LoadError(message: String?) {
 
 @Composable
 private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: String,
-                                onOpenChat: () -> Unit, onTabChange: (MainTab) -> Unit) {
+                                onOpenChat: (String) -> Unit, onTabChange: (MainTab) -> Unit) {
     var health by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var care by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var error by remember(patientId) { mutableStateOf<String?>(null) }
+    var draft by rememberSaveable(patientId) { mutableStateOf("") }
     LaunchedEffect(patientId) {
         if (patientId.isNotBlank()) try {
             health = api.health(patientId); care = api.care(patientId)
@@ -1255,98 +1281,130 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
     }
     val episodes = health?.list("episodes")?.filter { it.optString("status") == "active" } ?: emptyList()
     val tasks = care?.list("tasks") ?: emptyList()
-    val completed = tasks.count { it.optString("status") == "completed" }
     val upcoming = tasks.filter { it.optString("status") == "pending" }.minByOrNull { it.optString("due_at") }
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Box(modifier = Modifier.fillMaxWidth().height(228.dp)) {
-            Image(painter = painterResource(R.drawable.bg_header_misty_hills), contentDescription = null,
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
+        Spacer(Modifier.height(12.dp))
+        AppHeader(onNotifications = { onTabChange(MainTab.CARE_PLAN) }, showNotificationButton = upcoming != null,
+            hasReminder = upcoming != null, onProfile = { onTabChange(MainTab.PROFILE) })
+        Spacer(Modifier.height(24.dp))
+        Box(Modifier.fillMaxWidth().height(154.dp).clip(RoundedCornerShape(20.dp))) {
+            Image(painterResource(R.drawable.handoff_home_landscape), null,
                 modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            Column(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp, vertical = 16.dp)) {
-                AppHeader(onNotifications = { onTabChange(MainTab.CARE_PLAN) }, showNotificationButton = true,
-                    hasReminder = upcoming != null)
-                Spacer(Modifier.height(24.dp))
-                Text("Hello,", style = MaterialTheme.typography.headlineMedium)
-                Text(patientName, style = MaterialTheme.typography.headlineMedium)
-                Text("Your personal health companion", color = AyuvanColors.SecondaryText)
-            }
+            Text("How can we help\nyou today?", style = MaterialTheme.typography.headlineMedium,
+                color = AyuvanColors.Text, fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(20.dp))
         }
-        Column(modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 30.dp)) {
-            TalkToAyuvanCard(onOpenChat)
-            Spacer(Modifier.height(20.dp))
-            QuickActionGrid(onTabChange)
-            Spacer(Modifier.height(24.dp))
-            LoadError(error)
-            Text("Your Health at a Glance", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(10.dp))
-            Card(modifier = Modifier.fillMaxWidth().clickable { onTabChange(MainTab.CARE_PLAN) },
-                colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
-                Column(Modifier.padding(18.dp)) {
-                    Text("Care plan progress", style = MaterialTheme.typography.titleMedium)
-                    Text("$completed of ${tasks.size} tasks completed", color = AyuvanColors.SecondaryText)
-                    Spacer(Modifier.height(10.dp))
-                    LinearProgressIndicator(progress = { if (tasks.isEmpty()) 0f else completed.toFloat() / tasks.size },
-                        modifier = Modifier.fillMaxWidth(), color = AyuvanColors.Success)
+        Spacer(Modifier.height(8.dp))
+        Text("For $patientName · Tell us what is happening in your own words.",
+            color = AyuvanColors.SecondaryText)
+        Spacer(Modifier.height(20.dp))
+        Card(colors = CardDefaults.cardColors(containerColor = Color.White),
+            border = BorderStroke(1.dp, AyuvanColors.Border), shape = RoundedCornerShape(20.dp)) {
+            Column(Modifier.padding(16.dp)) {
+                OutlinedTextField(value = draft, onValueChange = { draft = it.take(4000) },
+                    modifier = Modifier.fillMaxWidth(), minLines = 3, maxLines = 5,
+                    placeholder = { Text("Describe how you feel or ask a health question…") },
+                    label = { Text("Your message") })
+                Spacer(Modifier.height(12.dp))
+                Button(onClick = { val text = draft.trim(); draft = ""; onOpenChat(text) },
+                    enabled = draft.isNotBlank(), modifier = Modifier.fillMaxWidth().height(52.dp)) {
+                    Text("Send to AYUVAN"); Spacer(Modifier.width(8.dp)); Icon(Icons.AutoMirrored.Filled.Send, null)
+                }
+                TextButton(onClick = { onOpenChat("") }, modifier = Modifier.fillMaxWidth()) {
+                    Text("Continue conversation")
                 }
             }
-            Spacer(Modifier.height(22.dp))
-            Text("Active health concerns", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(10.dp))
-            if (episodes.isEmpty()) EmptyInformationCard(R.drawable.icon_heart_pulse,
-                "No active concern recorded", "Share a concern in chat when you need to.")
-            else episodes.take(2).forEach { episode ->
-                BasicRowCard(onClick = onOpenChat, leadingIcon = R.drawable.icon_heart_pulse,
-                    title = episode.optString("symptom", "Health concern"),
-                    subtitle = episode.optString("last_reported_at").take(10),
-                    trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
-                Spacer(Modifier.height(8.dp))
-            }
-            Spacer(Modifier.height(22.dp))
-            Text("Upcoming reminders", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(10.dp))
-            if (upcoming == null) EmptyInformationCard(R.drawable.icon_care_plan,
-                "No reminders yet", "Add a medicine or follow-up reminder in Care Plan.")
-            else BasicRowCard(onClick = { onTabChange(MainTab.CARE_PLAN) },
-                leadingIcon = R.drawable.icon_care_plan, title = upcoming.optString("description"),
-                subtitle = upcoming.optString("due_at").take(16),
-                trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
         }
+        Spacer(Modifier.height(24.dp))
+        LoadError(error)
+        when {
+            episodes.isNotEmpty() -> BasicRowCard(onClick = { onOpenChat("") },
+                leadingIcon = R.drawable.icon_heart_pulse, title = "Continue your concern",
+                subtitle = "${episodes.first().optString("symptom", "Health concern")} · ${episodes.first().optString("last_reported_at").take(10)}",
+                trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
+            upcoming != null -> BasicRowCard(onClick = { onTabChange(MainTab.CARE_PLAN) },
+                leadingIcon = R.drawable.icon_care_plan, title = "Next in your care",
+                subtitle = upcoming.optString("description"),
+                trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
+            else -> Text("A simple place to start. Share a concern and we’ll help you understand the next step.",
+                color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 12.dp))
+        }
+        Spacer(Modifier.height(16.dp))
+        TextButton(onClick = { onTabChange(MainTab.DISCOVER) }) {
+            Text("Find a healthcare facility  →")
+        }
+        Spacer(Modifier.height(24.dp))
     }
 }
 
 @Composable
-private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: String, onBack: () -> Unit) {
+private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: String,
+                                initialMessage: String, onInitialConsumed: () -> Unit, onBack: () -> Unit) {
     var chat by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var composer by rememberSaveable(patientId) { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    var pendingText by remember(patientId) { mutableStateOf<String?>(null) }
+    var pendingId by remember(patientId) { mutableStateOf<String?>(null) }
+    var pendingReplyId by remember(patientId) { mutableStateOf<String?>(null) }
+    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    LaunchedEffect(patientId) {
-        if (patientId.isNotBlank()) try { chat = api.chat(patientId) } catch (e: Exception) { error = e.message }
-    }
-    fun send(text: String, replyId: String? = null) {
+    fun send(text: String, replyId: String? = null, retry: Boolean = false) {
         if (text.isBlank() || busy) return
+        val outgoing = text.trim()
+        val id = if (retry) pendingId ?: java.util.UUID.randomUUID().toString()
+                 else java.util.UUID.randomUUID().toString()
+        pendingText = outgoing; pendingId = id; pendingReplyId = replyId
+        if (!retry && composer.trim() == outgoing) composer = ""
+        busy = true
         scope.launch {
-            busy = true; error = null
-            try { chat = api.send(patientId, text.trim(), replyId); composer = "" }
-            catch (e: Exception) { error = e.message; runCatching { chat = api.chat(patientId) } }
+            error = null
+            try {
+                chat = api.send(patientId, outgoing, replyId, id)
+                pendingText = null; pendingId = null; pendingReplyId = null
+            } catch (e: Exception) {
+                error = "Message status is uncertain. Check the conversation or retry safely. ${e.message ?: ""}"
+                runCatching { chat = api.chat(patientId) }
+                if (chat?.list("messages")?.any { it.optString("text") == outgoing &&
+                            it.optString("direction") == "incoming" &&
+                            it.optString("status") == "processed" } == true) {
+                    pendingText = null; pendingId = null; pendingReplyId = null; error = null
+                }
+            }
             busy = false
+        }
+    }
+    LaunchedEffect(patientId) {
+        if (patientId.isNotBlank()) try {
+            val loaded = api.chat(patientId)
+            if (pendingText == null) chat = loaded
+        } catch (e: Exception) { error = e.message }
+    }
+    LaunchedEffect(patientId, initialMessage) {
+        if (patientId.isNotBlank() && initialMessage.isNotBlank()) {
+            onInitialConsumed()
+            send(initialMessage)
         }
     }
     val messages = chat?.list("messages") ?: emptyList()
     val question = chat?.optJSONObject("question")
     val options = question?.list("options") ?: emptyList()
+    LaunchedEffect(messages.size, pendingText, busy, options.size) {
+        if (listState.layoutInfo.totalItemsCount > 0)
+            listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+    }
     Scaffold(containerColor = AyuvanColors.Page,
         topBar = { TopAppBar(title = { Text("Talk to AYUVAN · $patientName", style = MaterialTheme.typography.titleMedium) },
             navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") } }) },
-        bottomBar = { Row(modifier = Modifier.fillMaxWidth().background(Color.White).padding(12.dp),
+        bottomBar = { Row(modifier = Modifier.fillMaxWidth().background(Color.White).imePadding().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(value = composer, onValueChange = { composer = it.take(4000) },
                 modifier = Modifier.weight(1f), placeholder = { Text("Describe a health concern…") }, maxLines = 4)
             IconButton(onClick = { send(composer) }, enabled = !busy && composer.isNotBlank()) {
-                Icon(Icons.AutoMirrored.Filled.Send, "Send", tint = AyuvanColors.Brand700)
+                Icon(Icons.AutoMirrored.Filled.Send, "Send message", tint = AyuvanColors.Brand700)
             }
         } }) { padding ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item { Spacer(Modifier.height(8.dp)); ChatSafetyNote(); LoadError(error) }
             if (messages.isEmpty()) item { MessageBubble(ChatMessage("welcome", "Tell me what is happening. I will ask only the details needed to understand your concern.", false)) }
@@ -1354,11 +1412,23 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
                 MessageBubble(ChatMessage(m.optString("id"), m.optString("text"),
                     m.optString("direction") == "incoming"))
             }
+            if (pendingText != null) item(key = "pending-message") {
+                Column {
+                    MessageBubble(ChatMessage("pending", pendingText!!, true))
+                    Text(if (busy) "Sending · waiting for AYUVAN…" else "Could not confirm delivery",
+                        color = AyuvanColors.SecondaryText, modifier = Modifier.padding(8.dp))
+                    if (busy) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                    else TextButton(onClick = { send(pendingText!!, pendingReplyId, retry = true) }) {
+                        Text("Retry this message")
+                    }
+                }
+            }
             if (options.isNotEmpty()) item {
                 Card(colors = CardDefaults.cardColors(containerColor = Color.White),
                     shape = RoundedCornerShape(20.dp)) {
                     Column(Modifier.padding(14.dp)) {
-                        Text("Choose an answer", style = MaterialTheme.typography.titleMedium)
+                        Text(question?.optString("text").orEmpty().ifBlank { "Choose an answer" },
+                            style = MaterialTheme.typography.titleMedium)
                         options.forEach { option ->
                             OutlinedButton(onClick = { send(option.optString("label"), option.optString("id")) },
                                 enabled = !busy, modifier = Modifier.fillMaxWidth()) { Text(option.optString("label")) }
@@ -1373,7 +1443,8 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
 
 @Composable
 private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: JSONArray,
-                                  onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit) {
+                                  onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
+                                  onProfile: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var data by remember(patientId) { mutableStateOf<JSONObject?>(null) }
@@ -1381,6 +1452,8 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     var error by remember(patientId) { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
+    var recordsSection by rememberSaveable(patientId) { mutableStateOf("Timeline") }
+    var recordSearch by rememberSaveable(patientId) { mutableStateOf("") }
     var addKind by remember { mutableStateOf<String?>(null) }
     var editItemId by remember { mutableStateOf<String?>(null) }
     var addName by remember { mutableStateOf("") }
@@ -1430,10 +1503,12 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     val episodes = data?.list("episodes") ?: emptyList()
     val docRows = documents?.list("documents") ?: emptyList()
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Box(Modifier.fillMaxWidth().height(190.dp)) {
-            Image(painterResource(R.drawable.bg_header_misty_hills), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            Column(Modifier.padding(20.dp)) { AppHeader(); Spacer(Modifier.height(20.dp)); Text("My Health", style = MaterialTheme.typography.displaySmall)
-                Text("Your health information, all in one place", color = AyuvanColors.SecondaryText) }
+        Column(Modifier.padding(20.dp)) {
+            AppHeader(onProfile = onProfile)
+            Spacer(Modifier.height(18.dp))
+            Text("Your records", style = MaterialTheme.typography.headlineMedium)
+            Text("A clear history for your next conversation with a clinician.",
+                color = AyuvanColors.SecondaryText)
         }
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1448,19 +1523,33 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                         onClick = { expanded = false; onPatientChange(patient.optString("id")) }) }
                 }
                 Spacer(Modifier.width(8.dp))
-                OutlinedButton(onClick = { familyDialog = true }) { Text("+ Family") }
+                TextButton(onClick = { familyDialog = true }) { Text("Add family") }
             }
             Spacer(Modifier.height(14.dp)); LoadError(error)
-            Text("Health Timeline", style = MaterialTheme.typography.titleLarge)
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf("Timeline", "Medical profile", "Documents").forEach { section ->
+                    AssistChip(onClick = { recordsSection = section }, label = { Text(section) },
+                        leadingIcon = if (recordsSection == section) ({ Icon(Icons.Default.Check, null) }) else null)
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+            if (recordsSection == "Timeline") {
+            OutlinedTextField(value = recordSearch, onValueChange = { recordSearch = it.take(80) },
+                label = { Text("Search concerns") }, modifier = Modifier.fillMaxWidth())
+            Spacer(Modifier.height(12.dp))
+            Text("Health timeline", style = MaterialTheme.typography.titleLarge)
             Spacer(Modifier.height(8.dp))
             if (episodes.isEmpty()) EmptyInformationCard(R.drawable.icon_timeline, "No symptoms recorded", "Your WhatsApp and app history appears here after verified linking.")
-            else episodes.forEach { episode ->
+            else episodes.filter { recordSearch.isBlank() || it.optString("symptom").contains(recordSearch, true) ||
+                it.optString("last_reported_at").contains(recordSearch, true) }.forEach { episode ->
                 BasicRowCard(onClick = { correctionEpisode = episode }, leadingIcon = R.drawable.icon_heart_pulse,
                     title = episode.optString("symptom", "Concern"),
                     subtitle = "${episode.optString("status")} · ${episode.optString("last_reported_at").take(10)} · Tap to correct",
                     trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
                 Spacer(Modifier.height(8.dp))
             }
+            }
+            if (recordsSection == "Medical profile") {
             Spacer(Modifier.height(20.dp))
             listOf("conditions" to "Conditions", "allergies" to "Allergies", "medications" to "Medicines").forEach { (kind, title) ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1484,6 +1573,11 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                 }
                 Spacer(Modifier.height(8.dp))
             }
+            Spacer(Modifier.height(12.dp))
+            FilledTonalButton(onClick = { action { summaryText = formatHealthSummary(api.summary(patientId)) } },
+                modifier = Modifier.fillMaxWidth()) { Text("Prepare health summary") }
+            }
+            if (recordsSection == "Documents") {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Medical Records", style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
                 TextButton(onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) }) { Text("Upload") }
@@ -1517,9 +1611,7 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
                     }
                 }
             }
-            Spacer(Modifier.height(12.dp))
-            FilledTonalButton(onClick = { action { summaryText = formatHealthSummary(api.summary(patientId)) } },
-                modifier = Modifier.fillMaxWidth()) { Text("Generate health summary") }
+            }
         }
     }
     if (addKind != null) AlertDialog(onDismissRequest = { addKind = null },
@@ -1650,6 +1742,7 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
     var description by rememberSaveable(patientId) { mutableStateOf("") }
     var due by rememberSaveable(patientId) { mutableStateOf("") }
     var editingTaskId by remember(patientId) { mutableStateOf<String?>(null) }
+    var showTaskEditor by remember { mutableStateOf(false) }
     var deleteTaskId by remember(patientId) { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
     var notificationConsent by remember(patientId) { mutableStateOf(false) }
@@ -1672,31 +1765,28 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
     val tasks = data?.list("tasks") ?: emptyList()
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
         Spacer(Modifier.height(16.dp)); AppHeader(); Spacer(Modifier.height(22.dp))
-        Text("Care Plan", style = MaterialTheme.typography.displaySmall)
-        Text("Track medicines, follow-ups and tasks you add. Patient-created reminders are labelled as such.",
+        Text("My Care", style = MaterialTheme.typography.headlineMedium)
+        Text("Today · Focus on what matters next.",
             color = AyuvanColors.SecondaryText)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Notify me about due tasks", modifier = Modifier.weight(1f))
-            Checkbox(checked = notificationConsent, onCheckedChange = { checked ->
-                refresh { api.setConsent(patientId, "notifications", checked); notificationConsent = checked }
-                if (checked && Build.VERSION.SDK_INT >= 33)
-                    requestPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            })
-        }
-        Text("Notifications may arrive around the scheduled time; use your usual medicine alarm for time-critical doses.",
-            color = AyuvanColors.MutedText, style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.height(16.dp)); LoadError(error)
+        Text("Your next actions", style = MaterialTheme.typography.titleLarge)
+        if (tasks.isEmpty()) Text("No confirmed tasks yet. You can add a personal reminder below.",
+            color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 12.dp))
+        Spacer(Modifier.height(12.dp))
+        TextButton(onClick = { showTaskEditor = !showTaskEditor }) {
+            Text(if (showTaskEditor) "Close reminder form" else "+ Add a personal reminder")
+        }
+        if (showTaskEditor || editingTaskId != null) {
         Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
             Column(Modifier.padding(16.dp)) {
-                Text(if (editingTaskId == null) "Add a reminder" else "Edit reminder",
+                Text(if (editingTaskId == null) "Personal reminder" else "Edit reminder",
                     style = MaterialTheme.typography.titleLarge)
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(value = description, onValueChange = { description = it.take(1000) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("Task or medicine reminder") })
+                    modifier = Modifier.fillMaxWidth(), label = { Text("What do you need to do?") })
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(value = due, onValueChange = { due = it.take(16) },
-                    modifier = Modifier.fillMaxWidth(), label = { Text("When (YYYY-MM-DD HH:MM, optional)") },
-                    placeholder = { Text("2026-11-20 09:00") })
+                    modifier = Modifier.fillMaxWidth(), label = { Text("When (YYYY-MM-DD HH:MM, optional)") })
                 Spacer(Modifier.height(10.dp))
                 Button(onClick = {
                     val dueAt = try {
@@ -1709,21 +1799,27 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
                     refresh {
                         if (taskId == null) api.addTask(patientId, value, dueAt)
                         else api.editTask(patientId, taskId, value, dueAt)
-                        description = ""; due = ""; editingTaskId = null
+                        description = ""; due = ""; editingTaskId = null; showTaskEditor = false
                     }
                 }, enabled = !busy && description.trim().length >= 2) {
                     Text(if (editingTaskId == null) "Save reminder" else "Save changes")
                 }
-                if (editingTaskId != null) TextButton(onClick = {
-                    editingTaskId = null; description = ""; due = ""
-                }) { Text("Cancel edit") }
             }
         }
-        Spacer(Modifier.height(22.dp))
-        Text("Your tasks", style = MaterialTheme.typography.titleLarge)
-        Spacer(Modifier.height(10.dp))
-        if (tasks.isEmpty()) EmptyInformationCard(R.drawable.icon_care_plan, "No tasks yet", "Add your next step above.")
-        else tasks.forEach { task ->
+        }
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Notify me about due tasks", modifier = Modifier.weight(1f))
+            Checkbox(checked = notificationConsent, onCheckedChange = { checked ->
+                refresh { api.setConsent(patientId, "notifications", checked); notificationConsent = checked }
+                if (checked && Build.VERSION.SDK_INT >= 33)
+                    requestPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            })
+        }
+        Text("Notifications may arrive around the scheduled time; use your usual medicine alarm for time-critical doses.",
+            color = AyuvanColors.MutedText, style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(14.dp))
+        tasks.forEach { task ->
             Card(Modifier.fillMaxWidth().padding(bottom = 8.dp), colors = CardDefaults.cardColors(containerColor = Color.White),
                 shape = RoundedCornerShape(18.dp)) {
                 Column {
@@ -1743,6 +1839,7 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
                     Modifier.fillMaxWidth().padding(horizontal = 14.dp), horizontalArrangement = Arrangement.End) {
                     TextButton(onClick = {
                         editingTaskId = task.optString("id")
+                        showTaskEditor = true
                         description = task.optString("description")
                         due = try {
                             java.time.Instant.parse(task.optString("due_at"))
@@ -1769,30 +1866,67 @@ private fun ConnectedCareScreen(api: MobileApi, patientId: String) {
 }
 
 @Composable
-private fun ConnectedDiscoverScreen(api: MobileApi) {
+private fun ConnectedDiscoverScreen(api: MobileApi, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var query by rememberSaveable { mutableStateOf("") }
     var area by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("Doctors") }
     var results by remember { mutableStateOf<JSONObject?>(null) }
+    var selectedPlace by remember { mutableStateOf<JSONObject?>(null) }
+    var currentLocation by remember { mutableStateOf<LatLng?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
+    val locationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
+        if (granted.values.any { it }) scope.launch {
+            busy = true; error = null
+            try {
+                val found = findCurrentArea(context)
+                if (found == null) error = "Location is unavailable. Enter a city or neighbourhood instead."
+                else {
+                    currentLocation = LatLng(found.first.latitude, found.first.longitude)
+                    if (found.second.isNotBlank()) area = found.second
+                    else error = "We found your location. Enter a nearby city to search facilities."
+                }
+            } catch (_: SecurityException) { error = "Location permission is needed. You can search by city instead." }
+            busy = false
+        } else error = "Location permission was declined. You can search by city instead."
+    }
+    val places = results?.list("places") ?: emptyList()
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Box(Modifier.fillMaxWidth().height(190.dp)) {
-            Image(painterResource(R.drawable.bg_header_misty_hills), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-            Column(Modifier.padding(20.dp)) { AppHeader(); Spacer(Modifier.height(20.dp))
-                Text("Discover Healthcare", style = MaterialTheme.typography.headlineMedium)
-                Text("Find doctors and facilities near your chosen area.", color = AyuvanColors.SecondaryText) }
-        }
         Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
-            OutlinedTextField(value = query, onValueChange = { query = it.take(100) },
-                modifier = Modifier.fillMaxWidth(), label = { Text("Specialty or service (optional)") },
-                placeholder = { Text("Dermatologist, X-ray…") })
-            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
+                Text("Find care", style = MaterialTheme.typography.titleLarge)
+            }
+            Spacer(Modifier.height(18.dp))
+            Text("Find healthcare near you", style = MaterialTheme.typography.headlineMedium)
+            Text("Search by area or service.", color = AyuvanColors.SecondaryText)
+            Spacer(Modifier.height(20.dp))
             OutlinedTextField(value = area, onValueChange = { area = it.take(100) },
                 modifier = Modifier.fillMaxWidth(), label = { Text("City or neighbourhood") },
                 placeholder = { Text("e.g. Andheri, Mumbai") })
+            TextButton(onClick = {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                    scope.launch {
+                        busy = true; error = null
+                        try {
+                            val found = findCurrentArea(context)
+                            if (found != null) {
+                                currentLocation = LatLng(found.first.latitude, found.first.longitude)
+                                if (found.second.isNotBlank()) area = found.second
+                                else error = "Enter a nearby city to search facilities."
+                            } else error = "Location unavailable. Search by city instead."
+                        } catch (_: SecurityException) { error = "Location permission is needed." }
+                        busy = false
+                    }
+                else locationPermission.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION))
+            }) { Text("⌖  Use my current location") }
+            OutlinedTextField(value = query, onValueChange = { query = it.take(100) },
+                modifier = Modifier.fillMaxWidth(), label = { Text("Specialty or service (optional)") },
+                placeholder = { Text("Dermatologist, X-ray…") })
             Spacer(Modifier.height(10.dp))
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("Doctors", "Hospitals", "Diagnostics", "Clinics").forEach { item ->
@@ -1801,32 +1935,40 @@ private fun ConnectedDiscoverScreen(api: MobileApi) {
                 }
             }
             Spacer(Modifier.height(12.dp))
-            PrimaryButton("Search", enabled = !busy && area.trim().length >= 3, onClick = {
+            PrimaryButton(if (busy) "Searching…" else "Search facilities", enabled = !busy && area.trim().length >= 3, onClick = {
                 scope.launch { busy = true; error = null
-                    try { results = api.discover(query.trim(), category, area.trim()) }
+                    try { results = api.discover(query.trim(), category, area.trim()); selectedPlace = null }
                     catch (e: Exception) { error = e.message }; busy = false }
             })
-            if (area.trim().length >= 3) TextButton(onClick = {
-                val maps = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(area.trim() + " healthcare")}"
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(maps)))
-            }, modifier = Modifier.fillMaxWidth()) { Text("View area on Google Maps") }
             Spacer(Modifier.height(15.dp)); LoadError(error)
-            val places = results?.list("places") ?: emptyList()
-            if (results != null) Text("Results from Google Maps", style = MaterialTheme.typography.labelLarge,
-                color = AyuvanColors.SecondaryText)
+            Text("Map overview", style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(10.dp))
+            Card(shape = RoundedCornerShape(20.dp), border = BorderStroke(1.dp, AyuvanColors.Border)) {
+                CareMap(places, currentLocation, selectedPlace) { selectedPlace = it }
+            }
+            Text("Map and facility details from Google Maps", style = MaterialTheme.typography.bodySmall,
+                color = AyuvanColors.SecondaryText, modifier = Modifier.padding(vertical = 8.dp))
+            if (selectedPlace != null) {
+                Text(selectedPlace!!.optString("name"), style = MaterialTheme.typography.titleMedium)
+                Text(selectedPlace!!.optString("address"), color = AyuvanColors.SecondaryText)
+                TextButton(onClick = {
+                    val url = selectedPlace!!.optString("maps_url")
+                    if (url.startsWith("https://")) context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }) { Text("Directions in Google Maps  →") }
+            }
+            if (results != null) Text("Facilities", style = MaterialTheme.typography.titleLarge)
             if (results != null && places.isEmpty()) EmptyInformationCard(R.drawable.icon_location_pin,
                 "No results found", "Try another area or specialty.")
             places.forEach { place ->
                 Spacer(Modifier.height(8.dp))
                 BasicRowCard(onClick = {
-                    val url = place.optString("maps_url")
-                    if (url.startsWith("https://")) context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    selectedPlace = place
                 }, leadingIcon = R.drawable.icon_location_pin,
                     title = place.optString("name"), subtitle = place.optString("address"),
                     trailing = { Icon(Icons.AutoMirrored.Filled.ArrowForward, null) })
             }
-            if (results == null) EmptyInformationCard(R.drawable.icon_location_pin,
-                "Search by area", "Enter a city or neighbourhood to see live results.")
+            if (results == null) Text("Search by area to see live facility results.",
+                color = AyuvanColors.SecondaryText)
         }
     }
 }
@@ -1834,7 +1976,7 @@ private fun ConnectedDiscoverScreen(api: MobileApi) {
 @Composable
 private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                    onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
-                                   onSignOut: () -> Unit) {
+                                   onSignOut: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val requestNotificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -1877,7 +2019,12 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     fun granted(purpose: String) = consentRows.firstOrNull { it.optString("purpose") == purpose }
         ?.optString("status") == "granted"
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp)) {
-        Spacer(Modifier.height(16.dp)); AppHeader(); Spacer(Modifier.height(22.dp))
+        Spacer(Modifier.height(12.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back") }
+            Text("Account", style = MaterialTheme.typography.titleLarge)
+        }
+        Spacer(Modifier.height(22.dp))
         Text("Profile", style = MaterialTheme.typography.displaySmall)
         Text("Manage your account, family, preferences and privacy.", color = AyuvanColors.SecondaryText)
         Spacer(Modifier.height(16.dp)); LoadError(error)

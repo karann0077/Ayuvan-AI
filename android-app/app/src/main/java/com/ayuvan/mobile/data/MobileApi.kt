@@ -137,8 +137,9 @@ class MobileApi(private val context: Context) {
     suspend fun health(patientId: String) = json("GET", "/patients/$patientId/health")
     suspend fun summary(patientId: String) = json("GET", "/patients/$patientId/summary")
     suspend fun chat(patientId: String) = json("GET", "/patients/$patientId/chat")
-    suspend fun send(patientId: String, text: String, replyId: String? = null): JSONObject {
-        val payload = JSONObject().put("text", text).put("client_message_id", java.util.UUID.randomUUID().toString())
+    suspend fun send(patientId: String, text: String, replyId: String? = null,
+                     clientMessageId: String = java.util.UUID.randomUUID().toString()): JSONObject {
+        val payload = JSONObject().put("text", text).put("client_message_id", clientMessageId)
         if (replyId != null) payload.put("reply_id", replyId)
         return json("POST", "/patients/$patientId/chat/messages", payload)
     }
