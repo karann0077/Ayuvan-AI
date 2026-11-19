@@ -128,6 +128,7 @@ fun AyuvanApp() {
     var stepName by rememberSaveable { mutableStateOf(OnboardingStep.WELCOME.name) }
     var finishedOnboarding by remember { mutableStateOf(false) }
     var tabName by rememberSaveable { mutableStateOf(MainTab.HOME.name) }
+    var recordsEntry by rememberSaveable { mutableStateOf("Timeline") }
     var showChat by rememberSaveable { mutableStateOf(false) }
     var chatSeed by rememberSaveable { mutableStateOf("") }
     val selectedPatient = patients.rows().firstOrNull { it.optString("id") == selectedPatientId }
@@ -182,6 +183,7 @@ fun AyuvanApp() {
                 patientId = selectedPatientId,
                 patients = patients,
                 selectedTab = selectedTab,
+                recordsEntry = recordsEntry,
                 selectedPatient = selectedPatient,
                 onPatientChange = { id -> selectedPatientId = id },
                 onPatientsRefresh = { refreshed -> patients = refreshed },
@@ -193,6 +195,7 @@ fun AyuvanApp() {
                 },
                 onTabChange = { tabName = it.name },
                 onOpenChat = { text -> chatSeed = text; showChat = true },
+                onOpenDocuments = { recordsEntry = "Documents"; tabName = MainTab.MY_HEALTH.name },
             )
         }
     }
@@ -506,12 +509,14 @@ private fun MainShell(
     patientId: String,
     patients: JSONArray,
     selectedTab: MainTab,
+    recordsEntry: String,
     selectedPatient: String,
     onPatientChange: (String) -> Unit,
     onPatientsRefresh: (JSONArray) -> Unit,
     onSignOut: () -> Unit,
     onTabChange: (MainTab) -> Unit,
     onOpenChat: (String) -> Unit,
+    onOpenDocuments: () -> Unit,
 ) {
     Scaffold(
         containerColor = AyuvanColors.Page,
@@ -520,9 +525,9 @@ private fun MainShell(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (selectedTab) {
-                MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat, onTabChange)
+                MainTab.HOME -> ConnectedHomeScreen(api, patientId, selectedPatient, onOpenChat, onOpenDocuments, onTabChange)
                 MainTab.MY_HEALTH -> ConnectedHealthScreen(api, patientId, patients, onPatientChange, onPatientsRefresh,
-                    onProfile = { onTabChange(MainTab.PROFILE) })
+                    initialSection = recordsEntry, onProfile = { onTabChange(MainTab.PROFILE) })
                 MainTab.CARE_PLAN -> ConnectedCareScreen(api, patientId)
                 MainTab.DISCOVER -> ConnectedDiscoverScreen(api, onBack = { onTabChange(MainTab.HOME) })
                 MainTab.PROFILE -> ConnectedProfileScreen(api, patientId, patients, onPatientChange, onPatientsRefresh, onSignOut,
@@ -1269,11 +1274,22 @@ private fun LoadError(message: String?) {
 
 @Composable
 private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: String,
-                                onOpenChat: (String) -> Unit, onTabChange: (MainTab) -> Unit) {
+                                onOpenChat: (String) -> Unit, onOpenDocuments: () -> Unit,
+                                onTabChange: (MainTab) -> Unit) {
     var health by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var care by remember(patientId) { mutableStateOf<JSONObject?>(null) }
     var error by remember(patientId) { mutableStateOf<String?>(null) }
     var draft by rememberSaveable(patientId) { mutableStateOf("") }
+    var uploadBusy by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val uploadLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null && !uploadBusy) scope.launch {
+            uploadBusy = true; error = null
+            try { api.upload(patientId, uri); onOpenDocuments() }
+            catch (e: Exception) { error = e.message ?: "Upload failed. Please try again." }
+            uploadBusy = false
+        }
+    }
     LaunchedEffect(patientId) {
         if (patientId.isNotBlank()) try {
             health = api.health(patientId); care = api.care(patientId)
@@ -1312,6 +1328,12 @@ private fun ConnectedHomeScreen(api: MobileApi, patientId: String, patientName: 
                 }
                 TextButton(onClick = { onOpenChat("") }, modifier = Modifier.fillMaxWidth()) {
                     Text("Continue conversation")
+                }
+                TextButton(onClick = { uploadLauncher.launch(arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")) },
+                    enabled = !uploadBusy, modifier = Modifier.fillMaxWidth()) {
+                    Image(painterResource(R.drawable.handoff_paperclip), null, Modifier.size(22.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(if (uploadBusy) "Uploading report…" else "Attach a prescription or report")
                 }
             }
         }
@@ -1444,7 +1466,7 @@ private fun ConnectedChatScreen(api: MobileApi, patientId: String, patientName: 
 @Composable
 private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: JSONArray,
                                   onPatientChange: (String) -> Unit, onPatientsRefresh: (JSONArray) -> Unit,
-                                  onProfile: () -> Unit) {
+                                  initialSection: String, onProfile: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var data by remember(patientId) { mutableStateOf<JSONObject?>(null) }
@@ -1453,6 +1475,7 @@ private fun ConnectedHealthScreen(api: MobileApi, patientId: String, patients: J
     var busy by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var recordsSection by rememberSaveable(patientId) { mutableStateOf("Timeline") }
+    LaunchedEffect(initialSection, patientId) { recordsSection = initialSection }
     var recordSearch by rememberSaveable(patientId) { mutableStateOf("") }
     var addKind by remember { mutableStateOf<String?>(null) }
     var editItemId by remember { mutableStateOf<String?>(null) }
