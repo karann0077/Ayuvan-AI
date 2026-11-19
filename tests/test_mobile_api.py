@@ -1,9 +1,14 @@
+import hashlib
+import hmac
+import json
+from datetime import datetime, timedelta, timezone
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from app.core.config import Settings
+from app.core.config import Settings, get_settings
 from app.db.base import Base
 from app.db.models import (
     ClinicalAssessment, ConsentRecord, Conversation, ExternalIdentity, HealthEpisode,
@@ -151,6 +156,7 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     monkeypatch.setattr("app.api.mobile.WhatsAppClient.send_text", fake_send)
     requested = client.post("/api/v1/mobile/whatsapp-link/request", headers=headers)
     assert requested.status_code == 200, requested.text
+    assert client.get("/api/v1/mobile/whatsapp-link/status", headers=headers).json()["code_delivery_status"] == "accepted"
     assert client.post("/api/v1/mobile/whatsapp-link/verify", headers=headers,
                        json={"code": "000000"}).status_code == 400
     code = sent[0].split("code: ")[1][:6]
@@ -173,6 +179,7 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     identity = db.query(ExternalIdentity).filter_by(external_id="919876543240").one()
     assert db.query(PatientProfile).filter_by(user_id=identity.user_id).one().id == mobile_patient_id
     assert db.query(Message).filter_by(provider_message_id="wa-history-1").one().patient_id == mobile_patient_id
+    assert db.query(Message).filter_by(provider_message_id="provider-id").one().content is None
     assert db.query(ConsentRecord).filter_by(patient_id=mobile_patient_id, purpose="notifications").order_by(
         ConsentRecord.created_at.desc()).first().status == "withdrawn"
     db_generator.close()
@@ -183,6 +190,63 @@ def test_whatsapp_history_requires_code_before_account_can_read_it(monkeypatch):
     assert db.query(ExternalIdentity).filter_by(external_id="919876543240").first() is None
     assert db.query(PatientProfile).filter_by(id=mobile_patient_id).first() is None
     db_generator.close()
+
+
+def test_link_code_requires_recent_whatsapp_contact_and_tracks_delivery(monkeypatch):
+    client = client_with_database(monkeypatch)
+    headers, _ = register(client, "9876543290", "Link account")
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    whatsapp_user = User()
+    db.add(whatsapp_user)
+    db.flush()
+    whatsapp_patient = PatientProfile(user_id=whatsapp_user.id)
+    db.add(whatsapp_patient)
+    db.flush()
+    db.add(ExternalIdentity(user_id=whatsapp_user.id, provider="whatsapp",
+                            external_id="919876543290", is_active=True))
+    old = datetime.now(timezone.utc) - timedelta(days=2)
+    incoming = Message(patient_id=whatsapp_patient.id, provider="whatsapp",
+                       provider_message_id="wa-old-contact", direction="incoming",
+                       message_type="text", content="Hello", message_timestamp=old,
+                       created_at=old, metadata_json={})
+    db.add(incoming)
+    db.commit()
+    db_generator.close()
+
+    sent = []
+    async def fake_send(self, to, text):
+        sent.append((to, text))
+        return "wa-link-provider-id"
+    monkeypatch.setattr("app.api.mobile.WhatsAppClient.send_text", fake_send)
+    stale = client.post("/api/v1/mobile/whatsapp-link/request", headers=headers)
+    assert stale.status_code == 409
+    assert "Send AYUVAN a WhatsApp message first" in stale.json()["detail"]
+    assert sent == []
+
+    db_generator = client.app.dependency_overrides[get_db]()
+    db = next(db_generator)
+    db.query(Message).filter_by(provider_message_id="wa-old-contact").one().message_timestamp = datetime.now(timezone.utc)
+    db.commit()
+    db_generator.close()
+    requested = client.post("/api/v1/mobile/whatsapp-link/request", headers=headers)
+    assert requested.status_code == 200, requested.text
+    assert len(sent) == 1
+    assert client.get("/api/v1/mobile/whatsapp-link/status", headers=headers).json()["code_delivery_status"] == "accepted"
+
+    app_secret = "test-app-secret"
+    client.app.dependency_overrides[get_settings] = lambda: Settings(meta_app_secret=app_secret)
+    payload = {"entry": [{"changes": [{"value": {"statuses": [{
+        "id": "wa-link-provider-id", "status": "failed", "errors": [{"code": 131047, "message": "outside window"}]
+    }]}}]}]}
+    body = json.dumps(payload).encode()
+    signature = "sha256=" + hmac.new(app_secret.encode(), body, hashlib.sha256).hexdigest()
+    response = client.post("/api/v1/webhooks/whatsapp", content=body,
+                           headers={"X-Hub-Signature-256": signature})
+    assert response.status_code == 200, response.text
+    status = client.get("/api/v1/mobile/whatsapp-link/status", headers=headers).json()
+    assert status["code_delivery_status"] == "failed"
+    assert status["code_delivery_error_codes"] == [131047]
 
 
 def test_care_navigation_uses_recorded_action_without_diagnosing(monkeypatch):

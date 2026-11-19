@@ -1028,16 +1028,34 @@ async def request_whatsapp_link(session: MobileSession = Depends(get_current_ses
         WhatsAppLinkChallenge.created_at > datetime.now(timezone.utc) - timedelta(minutes=2)))
     if recent:
         raise HTTPException(status_code=429, detail="Wait two minutes before requesting another code")
+    last_incoming = db.scalar(select(Message).where(
+        Message.patient_id == patient.id, Message.provider == "whatsapp",
+        Message.direction == "incoming",
+    ).order_by(func.coalesce(Message.message_timestamp, Message.created_at).desc()))
+    last_contact = (last_incoming.message_timestamp or last_incoming.created_at) if last_incoming else None
+    if last_contact and last_contact.tzinfo is None:
+        last_contact = last_contact.replace(tzinfo=timezone.utc)
+    if last_contact is None or last_contact.astimezone(timezone.utc) <= datetime.now(timezone.utc) - timedelta(hours=23):
+        raise HTTPException(status_code=409, detail=(
+            "Send AYUVAN a WhatsApp message first, then request a code in the app. "
+            "WhatsApp requires a recent message before we can send this code."))
     code = f"{secrets.randbelow(1_000_000):06d}"
     challenge = WhatsAppLinkChallenge(id=str(uuid.uuid4()), account_user_id=session.user_id, patient_id=patient.id,
                                       code_hash="", expires_at=datetime.now(timezone.utc) + timedelta(minutes=10))
     challenge.code_hash = hashlib.sha256((challenge.id + ":" + code).encode()).hexdigest()
     try:
-        await WhatsAppClient(get_settings()).send_text(
+        provider_id = await WhatsAppClient(get_settings()).send_text(
             normalized, f"AYUVAN account link code: {code}. It expires in 10 minutes. Never share this code.")
     except Exception:
         raise HTTPException(status_code=503, detail="Could not send the WhatsApp code. Try again after messaging AYUVAN") from None
+    if not provider_id:
+        raise HTTPException(status_code=503, detail="WhatsApp is unavailable. No link code was created")
     db.add(challenge)
+    db.add(Message(patient_id=patient.id, provider="whatsapp",
+                   provider_message_id=provider_id, direction="outgoing",
+                   message_type="verification", content=None, content_reference=challenge.id,
+                   processing_status="sent", message_timestamp=datetime.now(timezone.utc),
+                   metadata_json={"purpose": "whatsapp_link", "delivery_status": "accepted"}))
     db.commit()
     return {"status": "code_sent"}
 
@@ -1052,8 +1070,24 @@ def whatsapp_link_status(session: MobileSession = Depends(get_current_session),
     identity = db.scalar(select(ExternalIdentity).where(
         ExternalIdentity.provider == "whatsapp", ExternalIdentity.is_active.is_(True),
         ExternalIdentity.external_id.in_((credential.phone, credential.phone.lstrip("+")))))
-    return {"status": "linked" if identity and identity.user_id == session.user_id
-            else "available_to_verify" if identity else "no_history"}
+    result = {"status": "linked" if identity and identity.user_id == session.user_id
+              else "available_to_verify" if identity else "no_history"}
+    if identity and result["status"] == "available_to_verify":
+        challenge = db.scalar(select(WhatsAppLinkChallenge).where(
+            WhatsAppLinkChallenge.account_user_id == session.user_id,
+            WhatsAppLinkChallenge.used_at.is_(None),
+        ).order_by(WhatsAppLinkChallenge.created_at.desc()))
+        if challenge and challenge.expires_at.replace(tzinfo=timezone.utc) > datetime.now(timezone.utc):
+            sent = db.scalar(select(Message).where(
+                Message.patient_id == challenge.patient_id,
+                Message.provider == "whatsapp", Message.message_type == "verification",
+                Message.content_reference == challenge.id,
+            ).order_by(Message.created_at.desc()))
+            if sent:
+                result["code_delivery_status"] = (sent.metadata_json or {}).get("delivery_status", "accepted")
+                result["code_delivery_error_codes"] = (sent.metadata_json or {}).get("delivery_error_codes", [])
+                result["code_expires_at"] = challenge.expires_at.isoformat()
+    return result
 
 
 @router.post("/whatsapp-link/verify")

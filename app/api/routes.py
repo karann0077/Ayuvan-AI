@@ -82,7 +82,11 @@ async def receive_whatsapp_webhook(
                 Message.direction == "outgoing",
             ))
             if outgoing:
-                outgoing.metadata_json = {**(outgoing.metadata_json or {}), "delivery_status": delivery_status}
+                error_codes = [error.get("code") for error in (status_update.get("errors") or [])
+                               if isinstance(error, dict) and isinstance(error.get("code"), int)]
+                outgoing.metadata_json = {**(outgoing.metadata_json or {}),
+                                          "delivery_status": delivery_status,
+                                          "delivery_error_codes": error_codes}
                 db.commit()
     return {"status": "accepted", "queued": str(queued)}
 

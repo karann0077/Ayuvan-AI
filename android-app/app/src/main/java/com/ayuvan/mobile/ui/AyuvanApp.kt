@@ -116,6 +116,7 @@ import com.ayuvan.mobile.R
 import com.ayuvan.mobile.data.MobileApi
 import com.ayuvan.mobile.data.ReminderScheduler
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -2462,6 +2463,9 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
     var newSex by remember { mutableStateOf("") }
     var linkDialog by remember { mutableStateOf(false) }
     var linkCode by remember { mutableStateOf("") }
+    var linkError by remember { mutableStateOf<String?>(null) }
+    var codeDelivery by remember { mutableStateOf<String?>(null) }
+    var whatsappStatus by remember { mutableStateOf<String?>(null) }
     var deleteDialog by remember { mutableStateOf(false) }
     var changePasswordDialog by remember { mutableStateOf(false) }
     var currentPassword by remember { mutableStateOf("") }
@@ -2478,8 +2482,20 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
             message = "Export saved to your chosen location"
         } catch (e: Exception) { error = e.message }
     }
-    LaunchedEffect(patientId) { try { account = api.me(); consents = api.consents(patientId) }
+    LaunchedEffect(patientId) { try {
+        account = api.me(); consents = api.consents(patientId)
+        whatsappStatus = runCatching { api.whatsAppLinkStatus().optString("status") }.getOrNull()
+    }
         catch (e: Exception) { error = e.message } }
+    LaunchedEffect(linkDialog) {
+        while (linkDialog) {
+            runCatching { api.whatsAppLinkStatus() }.onSuccess { status ->
+                whatsappStatus = status.optString("status")
+                codeDelivery = status.optString("code_delivery_status").ifBlank { null }
+            }
+            delay(3000)
+        }
+    }
     fun action(block: suspend () -> Unit) { scope.launch { busy = true; error = null; message = null
         try { block(); account = api.me()
             if (account?.optJSONArray("patients")?.rows()?.any { it.optString("id") == patientId } == true)
@@ -2592,27 +2608,29 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
             Spacer(Modifier.height(7.dp))
             AyuDetailRow(R.drawable.ayu_bell, "Optional reminders", "You control what you receive.")
             Spacer(Modifier.height(15.dp))
-            Text(if (linkedProfile == null) "Status: Not linked" else "Status: Linked",
+            Text(if (linkedProfile == null && whatsappStatus != "linked") "Status: Not linked" else "Status: Linked",
                 fontSize = 13.sp, color = AyuvanColors.SecondaryText)
             Spacer(Modifier.height(10.dp))
-            if (linkedProfile == null) AyuPrimaryButton("Link securely", enabled = !busy, onClick = { action {
+            if (linkedProfile == null && whatsappStatus != "linked") AyuPrimaryButton("Link securely", enabled = !busy, onClick = { action {
                     val result = api.requestWhatsAppLink()
                     if (result.optString("status") == "code_sent") {
-                        linkDialog = true
-                        message = "We sent a code to your WhatsApp number. Enter it here."
+                        linkCode = ""; linkError = null; codeDelivery = "accepted"; linkDialog = true
+                        message = "Meta accepted the code request. Checking WhatsApp delivery…"
                     } else {
                         onPatientsRefresh(result.optJSONArray("patients") ?: JSONArray())
+                        whatsappStatus = "linked"
                         message = "Your WhatsApp history and app health record are connected."
                     }
                 } })
-            else {
+            else if (linkedProfile != null) {
                 AyuPrimaryButton("Open linked health record", onClick = {
                     onPatientChange(linkedProfile.optString("id")); onBack()
                 })
                 TextButton(onClick = { whatsappDeleteDialog = true }) {
                     Text("Delete linked WhatsApp health history", color = AyuvanColors.Danger)
                 }
-            }
+            } else Text("Your WhatsApp and app history now share this profile.",
+                color = AyuvanColors.SecondaryText, fontSize = 13.sp)
         }
         if (profileSection == "Account") {
         Card(colors = CardDefaults.cardColors(containerColor = Color.White), shape = RoundedCornerShape(20.dp)) {
@@ -2681,13 +2699,16 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
         OutlinedButton(onClick = { action {
             val result = api.requestWhatsAppLink()
             if (result.optString("status") == "code_sent") {
-                linkDialog = true
-                message = "We sent a code to your WhatsApp number. Enter it here."
+                linkCode = ""; linkError = null; codeDelivery = "accepted"; linkDialog = true
+                message = "Meta accepted the code request. Checking WhatsApp delivery…"
             } else {
                 onPatientsRefresh(result.optJSONArray("patients") ?: JSONArray())
+                whatsappStatus = "linked"
                 message = "Your WhatsApp history and app health record are connected."
             }
-        } }, modifier = Modifier.fillMaxWidth(), enabled = !busy) { Text("Link WhatsApp history") }
+        } }, modifier = Modifier.fillMaxWidth(), enabled = !busy && whatsappStatus != "linked") {
+            Text(if (whatsappStatus == "linked") "WhatsApp history connected" else "Link WhatsApp history")
+        }
         Text("Linking requires a code sent to your WhatsApp. Your phone and password alone cannot expose an existing medical record.",
             style = MaterialTheme.typography.bodyMedium, color = AyuvanColors.SecondaryText)
         if (patients.rows().any { it.optString("role") == "linked" }) TextButton(
@@ -2745,16 +2766,32 @@ private fun ConnectedProfileScreen(api: MobileApi, patientId: String, patients: 
         } }, enabled = newName.trim().length >= 2) { Text("Save") } },
         dismissButton = { TextButton(onClick = { nameDialog = false }) { Text("Cancel") } })
     if (linkDialog) AlertDialog(onDismissRequest = { linkDialog = false }, title = { Text("Verify WhatsApp link") },
-        text = { OutlinedTextField(value = linkCode, onValueChange = { linkCode = it.filter(Char::isDigit).take(6) },
-            label = { Text("Six-digit code") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)) },
-        confirmButton = { TextButton(onClick = { linkDialog = false; action {
-            val linked = api.verifyWhatsAppLink(linkCode)
-            val linkedPatients = linked.optJSONArray("patients") ?: JSONArray()
-            onPatientsRefresh(linkedPatients)
-            linkedPatients.rows().firstOrNull { it.optString("role") == "owner" && it.optString("relationship") == "self" }
-                ?.optString("id")?.let(onPatientChange)
-            message = "Your WhatsApp history and app health record are now combined."
-        } }, enabled = linkCode.length == 6) { Text("Link") } },
+        text = { Column {
+            Text(when (codeDelivery) {
+                "failed" -> "WhatsApp could not deliver the code. Message AYUVAN on WhatsApp, then request a new code after two minutes."
+                "delivered", "read" -> "Code delivered to WhatsApp. Enter it below."
+                else -> "Waiting for WhatsApp delivery. Meta accepting the request does not mean the code has arrived."
+            }, color = if (codeDelivery == "failed") AyuvanColors.Danger else AyuvanColors.SecondaryText,
+                fontSize = 13.sp)
+            Spacer(Modifier.height(10.dp))
+            OutlinedTextField(value = linkCode, onValueChange = { linkCode = it.filter(Char::isDigit).take(6) },
+                label = { Text("Six-digit code") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+            if (linkError != null) Text(linkError!!, color = AyuvanColors.Danger, fontSize = 13.sp)
+        } },
+        confirmButton = { TextButton(onClick = { scope.launch {
+            busy = true; linkError = null
+            try {
+                val linked = api.verifyWhatsAppLink(linkCode)
+                val linkedPatients = linked.optJSONArray("patients") ?: JSONArray()
+                onPatientsRefresh(linkedPatients)
+                linkedPatients.rows().firstOrNull { it.optString("role") == "owner" && it.optString("relationship") == "self" }
+                    ?.optString("id")?.let(onPatientChange)
+                whatsappStatus = "linked"; linkDialog = false
+                message = "Your WhatsApp history and app health record are now combined."
+                account = api.me()
+            } catch (e: Exception) { linkError = e.message ?: "The code could not be verified" }
+            busy = false
+        } }, enabled = linkCode.length == 6 && codeDelivery != "failed" && !busy) { Text("Link") } },
         dismissButton = { TextButton(onClick = { linkDialog = false }) { Text("Cancel") } })
     if (deleteDialog) AlertDialog(onDismissRequest = { deleteDialog = false }, title = { Text("Delete account?") },
         text = { Column {

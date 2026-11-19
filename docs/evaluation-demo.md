@@ -20,7 +20,7 @@ The fake document contains no real drug name, dose or treatment instruction. His
 
 ## Show the real WhatsApp and app link
 
-The existing app account for the test recipient has a separate WhatsApp record. Sign in to that account, open **Profile → WhatsApp**, request a link code and enter the code delivered to that WhatsApp number. Only after successful verification will AYUVAN merge that WhatsApp patient's records into the app profile. Then **Records → Concern timeline** and **Conversation history** show both sources with channel labels. The synthetic demo account does not have a WhatsApp identity and cannot receive WhatsApp messages.
+The existing app account for the test recipient has a separate WhatsApp record. First send a fresh message to AYUVAN from that WhatsApp number. Then sign in to the app account, open **Profile → WhatsApp**, request a link code, wait for delivery status and enter the code. Only after successful verification will AYUVAN merge that WhatsApp patient's records into the app profile. Then **Records → Concern timeline** and **Conversation history** show both sources with channel labels. The synthetic demo account does not have a WhatsApp identity and cannot receive WhatsApp messages.
 
 ## Show nearby care
 
